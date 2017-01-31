@@ -19,7 +19,7 @@ public class JsonStructWriter implements StructWriter {
     }
 
     @Override
-    public StructWriter beginList() throws IOException {
+    public StructWriter beginList(int size) throws IOException {
         return null;
     }
 
@@ -29,7 +29,7 @@ public class JsonStructWriter implements StructWriter {
     }
 
     @Override
-    public StructWriter beginMap() throws IOException {
+    public StructWriter beginMap(int size) throws IOException {
         return null;
     }
 

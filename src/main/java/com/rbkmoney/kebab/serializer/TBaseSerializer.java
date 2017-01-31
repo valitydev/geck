@@ -43,7 +43,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         boolean isBinary = fieldValueMetaData.isBinary();
 
         if (isBinary) {
-            out.binaryValue((byte[]) object);
+            out.value((byte[]) object);
         } else {
             switch (type) {
                 case BOOLEAN:
@@ -83,7 +83,7 @@ public class TBaseSerializer implements Serializer<TBase> {
     }
 
     private void write(StructWriter out, Set objectSet, SetMetaData metaData) throws IOException {
-        out.beginList();
+        out.beginList(objectSet.size());
         for (Object object : objectSet) {
             write(out, object, metaData.getElementMetaData());
         }
@@ -91,7 +91,7 @@ public class TBaseSerializer implements Serializer<TBase> {
     }
 
     private void write(StructWriter out, List objectList, ListMetaData metaData) throws IOException {
-        out.beginList();
+        out.beginList(objectList.size());
         for (Object object : objectList) {
             write(out, object, metaData.getElementMetaData());
         }
@@ -100,7 +100,7 @@ public class TBaseSerializer implements Serializer<TBase> {
 
 
     private void write(StructWriter out, Map objectMap, MapMetaData metaData) throws IOException {
-        out.beginMap();
+        out.beginMap(objectMap.size());
         for (Map.Entry entry : (Set<Map.Entry>) objectMap.entrySet()) {
             out.beginKey();
             write(out, entry.getKey(), metaData.getKeyMetaData());

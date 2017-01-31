@@ -12,11 +12,11 @@ public interface StructWriter extends Closeable {
 
     StructWriter endStruct() throws IOException;
 
-    StructWriter beginList() throws IOException;
+    StructWriter beginList(int size) throws IOException;
 
     StructWriter endList() throws IOException;
 
-    StructWriter beginMap() throws IOException;
+    StructWriter beginMap(int size) throws IOException;
 
     StructWriter endMap() throws IOException;
 
