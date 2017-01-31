@@ -43,7 +43,7 @@ public class ByteStack {
         if (size == 0) {
             throw new RuntimeException("No more elements");
         }
-        return stack[size];
+        return stack[size - 1];
     }
 
     public final int size() {
