@@ -8,44 +8,44 @@ import java.io.IOException;
  */
 public interface StructWriter extends Closeable {
 
-    StructWriter beginStruct() throws IOException;
+    void beginStruct() throws IOException;
 
-    StructWriter endStruct() throws IOException;
+    void endStruct() throws IOException;
 
-    StructWriter beginList(int size) throws IOException;
+    void beginList(int size) throws IOException;
 
-    StructWriter endList() throws IOException;
+    void endList() throws IOException;
 
-    StructWriter beginMap(int size) throws IOException;
+    void beginMap(int size) throws IOException;
 
-    StructWriter endMap() throws IOException;
+    void endMap() throws IOException;
 
-    StructWriter beginKey() throws IOException;
+    void beginKey() throws IOException;
 
-    StructWriter endKey() throws IOException;
+    void endKey() throws IOException;
 
-    StructWriter beginValue() throws IOException;
+    void beginValue() throws IOException;
 
-    StructWriter endValue() throws IOException;
+    void endValue() throws IOException;
 
-    StructWriter name(String name) throws IOException;
+    void name(String name) throws IOException;
 
-    StructWriter value(boolean value) throws IOException;
+    void value(boolean value) throws IOException;
 
-    StructWriter value(String value) throws IOException;
+    void value(String value) throws IOException;
 
-    StructWriter value(byte value) throws IOException;
+    void value(byte value) throws IOException;
 
-    StructWriter value(short value) throws IOException;
+    void value(short value) throws IOException;
 
-    StructWriter value(int value) throws IOException;
+    void value(int value) throws IOException;
 
-    StructWriter value(double value) throws IOException;
+    void value(double value) throws IOException;
 
-    StructWriter value(long value) throws IOException;
+    void value(long value) throws IOException;
 
-    StructWriter value(byte[] value) throws IOException;
+    void value(byte[] value) throws IOException;
 
-    StructWriter nullValue() throws IOException;
+    void nullValue() throws IOException;
 
 }

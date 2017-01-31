@@ -9,103 +9,103 @@ import java.io.IOException;
  */
 public class JsonStructWriter implements StructWriter {
     @Override
-    public StructWriter beginStruct() throws IOException {
-        return null;
+    public void beginStruct() throws IOException {
+
     }
 
     @Override
-    public StructWriter endStruct() throws IOException {
-        return null;
+    public void endStruct() throws IOException {
+
     }
 
     @Override
-    public StructWriter beginList(int size) throws IOException {
-        return null;
+    public void beginList(int size) throws IOException {
+
     }
 
     @Override
-    public StructWriter endList() throws IOException {
-        return null;
+    public void endList() throws IOException {
+
     }
 
     @Override
-    public StructWriter beginMap(int size) throws IOException {
-        return null;
+    public void beginMap(int size) throws IOException {
+
     }
 
     @Override
-    public StructWriter endMap() throws IOException {
-        return null;
+    public void endMap() throws IOException {
+
     }
 
     @Override
-    public StructWriter beginKey() throws IOException {
-        return null;
+    public void beginKey() throws IOException {
+
     }
 
     @Override
-    public StructWriter endKey() throws IOException {
-        return null;
+    public void endKey() throws IOException {
+
     }
 
     @Override
-    public StructWriter beginValue() throws IOException {
-        return null;
+    public void beginValue() throws IOException {
+
     }
 
     @Override
-    public StructWriter endValue() throws IOException {
-        return null;
+    public void endValue() throws IOException {
+
     }
 
     @Override
-    public StructWriter name(String name) throws IOException {
-        return null;
+    public void name(String name) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(boolean value) throws IOException {
-        return null;
+    public void value(boolean value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(String value) throws IOException {
-        return null;
+    public void value(String value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(byte value) throws IOException {
-        return null;
+    public void value(byte value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(short value) throws IOException {
-        return null;
+    public void value(short value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(int value) throws IOException {
-        return null;
+    public void value(int value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(double value) throws IOException {
-        return null;
+    public void value(double value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(long value) throws IOException {
-        return null;
+    public void value(long value) throws IOException {
+
     }
 
     @Override
-    public StructWriter value(byte[] value) throws IOException {
-        return null;
+    public void value(byte[] value) throws IOException {
+
     }
 
     @Override
-    public StructWriter nullValue() throws IOException {
-        return null;
+    public void nullValue() throws IOException {
+
     }
 
     @Override
