@@ -6,18 +6,29 @@ package com.rbkmoney.kebab;
 public final class ByteStack {
     private byte[] stack;
     private int size;
+    private final boolean defaultValSet;
+    private final byte defaultVal;
 
+    public ByteStack() {
+        this(10);
+    }
 
     public ByteStack(final int initialCapacity) {
+        this(false, (byte) 0, initialCapacity);
+    }
+
+    public ByteStack(final byte defaultVal, final int initialCapacity) {
+        this(true, defaultVal, initialCapacity);
+    }
+
+    private ByteStack(final boolean defaultValSet, final byte defaultVal, final int initialCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Size must be > 0");
         }
         this.stack = new byte[initialCapacity];
         this.size = 0;
-    }
-
-    public ByteStack() {
-        this(10);
+        this.defaultValSet = defaultValSet;
+        this.defaultVal = defaultVal;
     }
 
     public void push(final byte item) {
@@ -34,14 +45,22 @@ public final class ByteStack {
 
     public byte pop() {
         if (size == 0) {
-            throw new RuntimeException("No more elements");
+            if (defaultValSet) {
+                return defaultVal;
+            } else {
+                throw new RuntimeException("No more elements");
+            }
         }
         return stack[--size];
     }
 
     public byte peek() {
         if (size == 0) {
-            throw new RuntimeException("No more elements");
+            if (defaultValSet) {
+                return defaultVal;
+            } else {
+                throw new RuntimeException("No more elements");
+            }
         }
         return stack[size - 1];
     }
