@@ -4,13 +4,18 @@ package com.rbkmoney.kebab;
  * Created by vpankrashkin on 31.01.17.
  */
 public final class ByteStack {
+    private static final int INITIAL_CAPACITY = 10;
     private byte[] stack;
     private int size;
     private final boolean defaultValSet;
     private final byte defaultVal;
 
     public ByteStack() {
-        this(10);
+        this(INITIAL_CAPACITY);
+    }
+
+    public ByteStack(final byte defaultVal) {
+        this(true, defaultVal, INITIAL_CAPACITY);
     }
 
     public ByteStack(final int initialCapacity) {
