@@ -3,7 +3,7 @@ package com.rbkmoney.kebab;
 /**
  * Created by vpankrashkin on 31.01.17.
  */
-public class ByteStack {
+public final class ByteStack {
     private byte[] stack;
     private int size;
 
@@ -20,7 +20,7 @@ public class ByteStack {
         this(10);
     }
 
-    public final void push(final byte item) {
+    public void push(final byte item) {
         if (size == stack.length) {
             byte[] newStack = new byte[size << 1];
             for (int i = 0; i < stack.length; ++i) {
@@ -32,25 +32,25 @@ public class ByteStack {
     }
 
 
-    public final byte pop() {
+    public byte pop() {
         if (size == 0) {
             throw new RuntimeException("No more elements");
         }
         return stack[--size];
     }
 
-    public final byte peek() {
+    public byte peek() {
         if (size == 0) {
             throw new RuntimeException("No more elements");
         }
         return stack[size - 1];
     }
 
-    public final int size() {
+    public int size() {
         return size;
     }
 
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return size == 0;
     }
 
