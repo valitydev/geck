@@ -4,7 +4,6 @@ import com.rbkmoney.kebab.test.Fail;
 import com.rbkmoney.kebab.test.Ids;
 import com.rbkmoney.kebab.test.Status;
 import com.rbkmoney.kebab.test.TestObject;
-import com.rbkmoney.kebab.thrift.ThriftElement;
 import org.junit.Test;
 
 import java.util.*;

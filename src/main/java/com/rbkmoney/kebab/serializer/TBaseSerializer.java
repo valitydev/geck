@@ -64,6 +64,9 @@ public class TBaseSerializer implements Serializer<TBase> {
                 case LONG:
                     out.value((long) object);
                     break;
+                case DOUBLE:
+                    out.value((double) object);
+                    break;
                 case LIST:
                     write(out, (List) object, (ListMetaData) fieldValueMetaData);
                     break;
