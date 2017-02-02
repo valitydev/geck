@@ -2,8 +2,10 @@ package com.rbkmoney.kebab;
 
 import com.rbkmoney.kebab.serializer.TBaseSerializer;
 import com.rbkmoney.kebab.writer.JsonStructWriter;
+import com.rbkmoney.kebab.writer.MsgPackWriter;
 import org.apache.thrift.TBase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -24,7 +26,18 @@ public class Kebab<T extends TBase> {
     }
 
     public byte[] toMsgPack(T src) {
-        throw new UnsupportedOperationException("under contruction");
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            MsgPackWriter writer = new MsgPackWriter(os, true);
+            TBaseSerializer serializer = new TBaseSerializer();
+
+            serializer.write(writer, src);
+            writer.close();
+            return os.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
