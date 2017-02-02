@@ -36,19 +36,17 @@ public class KebabTest {
         testObject.setFuck(Arrays.asList(suk, suk, suk));
 
         Fail fail = new Fail();
-
         fail.setReasons(new HashSet<>(Arrays.asList("kek1", "kek2")));
-
+        testObject.setStatus(Status.fail(new Fail(fail)));
         Map<String, Integer> map = new HashMap<>();
         map.put("kek1", 455);
         map.put("kek2", 564);
         map.put("kek3", 565);
+        map.put(null, null);
         testObject.setMaps(map);
 
-        testObject.setStatus(Status.fail(new Fail(fail)));
-
         Kebab kebab = new Kebab();
-        kebab.toJson(testObject);
+        System.out.println(kebab.toJson(testObject));
     }
 
 }

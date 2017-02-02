@@ -9,6 +9,7 @@ import java.util.Arrays;
  */
 public enum ThriftType {
 
+    NULL(-1),
     BOOLEAN(TType.BOOL),
     BYTE(TType.BYTE),
     DOUBLE(TType.DOUBLE),
@@ -20,7 +21,8 @@ public enum ThriftType {
     LIST(TType.LIST),
     SET(TType.SET),
     MAP(TType.MAP),
-    STRUCT(TType.STRUCT);
+    STRUCT(TType.STRUCT),
+    BINARY(21);
 
     int code;
 

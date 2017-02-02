@@ -5,6 +5,7 @@ import com.rbkmoney.kebab.StructWriter;
 import com.rbkmoney.kebab.ThriftType;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
+import org.apache.thrift.TFieldRequirementType;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
@@ -19,26 +20,38 @@ public class TBaseSerializer implements Serializer<TBase> {
 
     @Override
     public void write(StructWriter out, TBase value) throws IOException {
-        out.beginStruct();
-
         if (value == null) {
             out.nullValue();
+            return;
         }
+
+        writeStruct(out, value);
+    }
+
+    private void writeStruct(StructWriter out, TBase value) throws IOException {
+        out.beginStruct();
 
         TFieldIdEnum[] tFieldIdEnums = value.getFields();
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = value.getFieldMetaData();
 
         for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
+            FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
             if (value.isSet(tFieldIdEnum)) {
                 out.name(tFieldIdEnum.getFieldName());
-                FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
                 write(out, value.getFieldValue(tFieldIdEnum), fieldMetaData.valueMetaData);
+            } else if (fieldMetaData.requirementType == TFieldRequirementType.REQUIRED) {
+                throw new IllegalStateException(String.format("Field '%s' is required and must not be null", tFieldIdEnum.getFieldName()));
             }
         }
         out.endStruct();
     }
 
     private void write(StructWriter out, Object object, FieldValueMetaData fieldValueMetaData) throws IOException {
+        if (object == null) {
+            out.nullValue();
+            return;
+        }
+
         ThriftType type = ThriftType.findByCode(fieldValueMetaData.getType());
         boolean isBinary = fieldValueMetaData.isBinary();
 
@@ -67,17 +80,20 @@ public class TBaseSerializer implements Serializer<TBase> {
                 case DOUBLE:
                     out.value((double) object);
                     break;
+                case ENUM:
+                    out.value(object.toString());
+                    break;
                 case LIST:
-                    write(out, (List) object, (ListMetaData) fieldValueMetaData);
+                    writeList(out, (List) object, (ListMetaData) fieldValueMetaData);
                     break;
                 case SET:
-                    write(out, (Set) object, (SetMetaData) fieldValueMetaData);
+                    writeSet(out, (Set) object, (SetMetaData) fieldValueMetaData);
                     break;
                 case MAP:
-                    write(out, (Map) object, (MapMetaData) fieldValueMetaData);
+                    writeMap(out, (Map) object, (MapMetaData) fieldValueMetaData);
                     break;
                 case STRUCT:
-                    write(out, (TBase) object);
+                    writeStruct(out, (TBase) object);
                     break;
                 default:
                     throw new IllegalStateException(String.format("Type '%s' not found", type));
@@ -85,7 +101,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         }
     }
 
-    private void write(StructWriter out, Set objectSet, SetMetaData metaData) throws IOException {
+    private void writeSet(StructWriter out, Set objectSet, SetMetaData metaData) throws IOException {
         out.beginList(objectSet.size());
         for (Object object : objectSet) {
             write(out, object, metaData.getElementMetaData());
@@ -93,7 +109,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         out.endList();
     }
 
-    private void write(StructWriter out, List objectList, ListMetaData metaData) throws IOException {
+    private void writeList(StructWriter out, List objectList, ListMetaData metaData) throws IOException {
         out.beginList(objectList.size());
         for (Object object : objectList) {
             write(out, object, metaData.getElementMetaData());
@@ -102,7 +118,7 @@ public class TBaseSerializer implements Serializer<TBase> {
     }
 
 
-    private void write(StructWriter out, Map objectMap, MapMetaData metaData) throws IOException {
+    private void writeMap(StructWriter out, Map objectMap, MapMetaData metaData) throws IOException {
         out.beginMap(objectMap.size());
         for (Map.Entry entry : (Set<Map.Entry>) objectMap.entrySet()) {
             out.beginKey();
