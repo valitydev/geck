@@ -8,7 +8,6 @@ import org.apache.thrift.TBase;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 
 /**
  * Created by tolkonepiu on 24/01/2017.
@@ -16,14 +15,16 @@ import java.io.Writer;
 public class Kebab<T extends TBase> {
 
     public String toJson(T src) {
-        StringWriter writer = new StringWriter();
-        Serializer serializer = new TBaseSerializer();
         try {
-            serializer.write(new JsonStructWriter(writer), src);
+            StringWriter writer = new StringWriter();
+            Serializer serializer = new TBaseSerializer();
+            JsonStructWriter jsonStructWriter = new JsonStructWriter(writer);
+            serializer.write(jsonStructWriter, src);
+            jsonStructWriter.close();
+            return writer.toString();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        return writer.toString();
     }
 
     public byte[] toMsgPack(T src, boolean useDict) {

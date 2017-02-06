@@ -35,6 +35,8 @@ public class JsonStructWriter implements StructWriter {
 
     private final Writer out;
 
+    private final boolean pretty;
+
     private ByteStack stack = new ByteStack();
 
     {
@@ -42,8 +44,13 @@ public class JsonStructWriter implements StructWriter {
     }
 
     public JsonStructWriter(Writer out) {
-        Objects.requireNonNull(out);
+        this(out, false);
+    }
+
+    public JsonStructWriter(Writer out, boolean pretty) {
+        Objects.requireNonNull(out, "Writer must not be null");
         this.out = out;
+        this.pretty = pretty;
     }
 
     private void writeBeforeValue(ThriftType type) throws IOException {
@@ -60,9 +67,11 @@ public class JsonStructWriter implements StructWriter {
     }
 
     private void newline() throws IOException {
-        out.write("\n");
-        for (int i = 0; i < stack.size(); i++) {
-            out.write(' ');
+        if (pretty) {
+            out.write("\n");
+            for (int i = 0; i < stack.size(); i++) {
+                out.write(' ');
+            }
         }
     }
 
@@ -195,7 +204,7 @@ public class JsonStructWriter implements StructWriter {
 
     @Override
     public void name(String name) throws IOException {
-        Objects.requireNonNull(name);
+        Objects.requireNonNull(name, "JSON name must not be null");
 
         if (stack.peek() == NONEMPTY_STRUCT) {
             out.write(',');
@@ -256,7 +265,7 @@ public class JsonStructWriter implements StructWriter {
     public void close() throws IOException {
         out.close();
 
-        if (stack.size() > 1 || stack.size() == 1 && stack.peek() == NONEMPTY_DOCUMENT) {
+        if (stack.size() > 1 || stack.size() == 1 && stack.peek() != NONEMPTY_DOCUMENT) {
             throw new BadFormatException();
         }
     }

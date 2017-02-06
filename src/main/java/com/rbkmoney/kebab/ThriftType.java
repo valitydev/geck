@@ -2,8 +2,6 @@ package com.rbkmoney.kebab;
 
 import org.apache.thrift.protocol.TType;
 
-import java.util.Arrays;
-
 /**
  * Created by tolkonepiu on 12/01/2017.
  */
@@ -35,10 +33,12 @@ public enum ThriftType {
     }
 
     public static ThriftType findByCode(int code) {
-        return Arrays.stream(values())
-                .filter(t -> t.getCode() == code)
-                .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+        for (ThriftType type : values()) {
+            if (type.getCode() == code) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Thrift type not found by code '%d'", code));
     }
 
 }

@@ -1,14 +1,18 @@
 package com.rbkmoney.kebab;
 
+import com.rbkmoney.kebab.serializer.TBaseSerializer;
 import com.rbkmoney.kebab.test.*;
 import com.rbkmoney.kebab.writer.WriterStub;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TCompactProtocol;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
@@ -22,11 +26,20 @@ public class KebabTest {
     Kebab kebab = new Kebab();
 
     @Test
-    public void kebabTesting() {
+    public void tBaseSerializerTest() throws IOException {
+        TestObject testObject = getTestObject();
+        long start = System.currentTimeMillis();
+        new TBaseSerializer().write(new MockStructWriter(), testObject);
+        long end = System.currentTimeMillis();
+        System.out.println("TBaseSerializer: execution time " + (end - start) + " ms");
+    }
+
+    @Test
+    public void jsonTest() throws JSONException {
         TestObject testObject = getTestObject();
 
-
-        kebab.toJson(testObject);
+        String json = kebab.toJson(testObject);
+        new JSONObject(json);
     }
 
     @Test
@@ -35,9 +48,9 @@ public class KebabTest {
         byte[] msgPack = kebab.toMsgPack(testObject, true);
         byte[] tCompact = new TSerializer(new TCompactProtocol.Factory()).serialize(testObject);
         byte[] tBinary = new TSerializer(new TBinaryProtocol.Factory()).serialize(testObject);
-        System.out.println("MsgPack:"+msgPack.length);
-        System.out.println("Compact:"+tCompact.length);
-        System.out.println("Binary:"+tBinary.length);
+        System.out.println("MsgPack:" + msgPack.length);
+        System.out.println("Compact:" + tCompact.length);
+        System.out.println("Binary:" + tBinary.length);
 
         ByteArrayOutputStream bos1 = new ByteArrayOutputStream(msgPack.length);
         GZIPOutputStream gzip1 = new GZIPOutputStream(bos1);
@@ -61,7 +74,7 @@ public class KebabTest {
     }
 
     @Test
-    public void msgPackTestList() throws Exception{
+    public void msgPackTestList() throws Exception {
         TestObject testObject = getTestObject();
         List<Status> lists = Collections.nCopies(1000, Status.unknown(new Unknown("SomeData")));
         testObject.setStatuses(lists);
@@ -69,9 +82,9 @@ public class KebabTest {
         byte[] msgPack = kebab.toMsgPack(testObject, true);
         byte[] tCompact = new TSerializer(new TCompactProtocol.Factory()).serialize(testObject);
         byte[] tBinary = new TSerializer(new TBinaryProtocol.Factory()).serialize(testObject);
-        System.out.println("MsgPack:"+msgPack.length);
-        System.out.println("Compact:"+tCompact.length);
-        System.out.println("Binary:"+tBinary.length);
+        System.out.println("MsgPack:" + msgPack.length);
+        System.out.println("Compact:" + tCompact.length);
+        System.out.println("Binary:" + tBinary.length);
 
         ByteArrayOutputStream bos1 = new ByteArrayOutputStream(msgPack.length);
         GZIPOutputStream gzip1 = new GZIPOutputStream(bos1);
@@ -95,7 +108,7 @@ public class KebabTest {
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
         IntConsumer stubConsumer = i -> kebab.write(testObject, writerStub);
         IntConsumer msgPackConsumer = i -> kebab.toMsgPack(testObject, useDict);
-        IntConsumer tWriter  = i -> {
+        IntConsumer tWriter = i -> {
             try {
                 serializer.serialize(testObject);
             } catch (TException e) {
@@ -107,7 +120,7 @@ public class KebabTest {
 
         long startTime = System.currentTimeMillis();
         IntStream.range(0, 100000).forEach(consumer);
-        System.out.println("Time:"+(System.currentTimeMillis() - startTime));
+        System.out.println("Time:" + (System.currentTimeMillis() - startTime));
         System.out.println("неопределенность".getBytes().length);
         System.out.println(Base64.getEncoder().withoutPadding().encode("неопределенность".getBytes()).length);
     }

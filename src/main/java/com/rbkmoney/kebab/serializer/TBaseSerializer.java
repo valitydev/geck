@@ -128,7 +128,6 @@ public class TBaseSerializer implements Serializer<TBase> {
         out.endList();
     }
 
-
     private void writeMap(StructWriter out, Map objectMap, MapMetaData metaData) throws IOException {
         out.beginMap(objectMap.size());
         for (Map.Entry entry : (Set<Map.Entry>) objectMap.entrySet()) {
