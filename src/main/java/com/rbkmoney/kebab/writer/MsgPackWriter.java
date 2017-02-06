@@ -36,7 +36,7 @@ public class MsgPackWriter implements StructWriter {
     }
 
     @Override
-    public void beginStruct() throws IOException {
+    public void beginStruct(int size) throws IOException {
         msgPacker.packExtensionTypeHeader(startStruct, 0);
     }
 

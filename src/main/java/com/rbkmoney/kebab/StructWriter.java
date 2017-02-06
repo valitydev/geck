@@ -8,7 +8,7 @@ import java.io.IOException;
  */
 public interface StructWriter extends Closeable {
 
-    void beginStruct() throws IOException;
+    void beginStruct(int size) throws IOException;
 
     void endStruct() throws IOException;
 

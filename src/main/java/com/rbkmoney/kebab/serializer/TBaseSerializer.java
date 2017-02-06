@@ -29,10 +29,11 @@ public class TBaseSerializer implements Serializer<TBase> {
     }
 
     private void writeStruct(StructWriter out, TBase value) throws IOException {
-        out.beginStruct();
-
         TFieldIdEnum[] tFieldIdEnums = value.getFields();
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = value.getFieldMetaData();
+        int size = getFieldsCount(value, tFieldIdEnums);
+
+        out.beginStruct(size);
 
         for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
             FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
@@ -44,6 +45,16 @@ public class TBaseSerializer implements Serializer<TBase> {
             }
         }
         out.endStruct();
+    }
+
+    private int getFieldsCount(TBase value, TFieldIdEnum[] tFieldIdEnums) {
+        int size = 0;
+        for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
+            if (value.isSet(tFieldIdEnum)) {
+                size++;
+            }
+        }
+        return size;
     }
 
     private void write(StructWriter out, Object object, FieldValueMetaData fieldValueMetaData) throws IOException {
