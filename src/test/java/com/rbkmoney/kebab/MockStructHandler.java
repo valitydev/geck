@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Created by tolkonepiu on 03/02/2017.
  */
-public class MockStructWriter implements StructWriter {
+public class MockStructHandler implements StructHandler {
     @Override
     public void beginStruct(int size) throws IOException {
         //do nothing
@@ -107,7 +107,7 @@ public class MockStructWriter implements StructWriter {
     }
 
     @Override
-    public void close() throws IOException {
-        //do nothing
+    public Object getResult() throws IOException {
+        return null;
     }
 }

@@ -1,6 +1,6 @@
-package com.rbkmoney.kebab.writer;
+package com.rbkmoney.kebab.handler;
 
-import com.rbkmoney.kebab.StructWriter;
+import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.exception.BadFormatException;
 import gnu.trove.map.hash.TObjectCharHashMap;
 import org.msgpack.core.MessagePack;
@@ -9,21 +9,21 @@ import org.msgpack.core.MessagePacker;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static com.rbkmoney.kebab.writer.StringUtil.compressAsciiString;
-import static com.rbkmoney.kebab.writer.StringUtil.toAsciiBytes;
+import static com.rbkmoney.kebab.handler.StringUtil.compressAsciiString;
+import static com.rbkmoney.kebab.handler.StringUtil.toAsciiBytes;
 
 /**
  * Created by vpankrashkin on 31.01.17.
  */
-public class MsgPackWriter implements StructWriter {
+public class MsgPackHandler implements StructHandler<OutputStream> {
     private static final byte nop = 0;
     private static final byte startStruct = 1;
     private static final byte endStruct = 2;
     private static final byte startList = 3;
     private static final byte endList = 4;
     private static final byte startMap = 5;
-    private static final byte endMap= 6;
-    private static final byte startMapKey= 7;
+    private static final byte endMap = 6;
+    private static final byte startMapKey = 7;
     private static final byte endMapKey = 8;
     private static final byte startMapValue = 9;
     private static final byte endMapValue = 10;
@@ -39,7 +39,7 @@ public class MsgPackWriter implements StructWriter {
     private final char noDictEntryValue = 0;
     private char nextDictIdx = 0;
 
-    public MsgPackWriter(OutputStream stream, boolean autoClose, boolean useDictionary) {
+    public MsgPackHandler(OutputStream stream, boolean autoClose, boolean useDictionary) {
         this.autoClose = autoClose;
         this.msgPacker = MessagePack.newDefaultPacker(stream);
         this.useDictionary = useDictionary;
@@ -58,7 +58,7 @@ public class MsgPackWriter implements StructWriter {
 
     /**
      * @param size if >= 0, expected to be defined list size; if < 0, means stream mode with not fixed size
-     * */
+     */
     @Override
     public void beginList(int size) throws IOException {
         if (size >= 0) {
@@ -111,7 +111,7 @@ public class MsgPackWriter implements StructWriter {
 
     /**
      * @param name - only ASCII symbols expected
-     * */
+     */
     @Override
     public void name(String name) throws IOException {
         int length = name.length();
@@ -140,7 +140,7 @@ public class MsgPackWriter implements StructWriter {
 
     @Override
     public void value(String value) throws IOException {
-       msgPacker.packString(value);
+        msgPacker.packString(value);
     }
 
     @Override
@@ -180,12 +180,14 @@ public class MsgPackWriter implements StructWriter {
     }
 
     @Override
-    public void close() throws IOException {
+    public OutputStream getResult() throws IOException {
         if (autoClose) {
             msgPacker.close();
         } else {
             msgPacker.flush();
         }
+
+        return null;
     }
 
 }

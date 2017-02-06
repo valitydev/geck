@@ -1,13 +1,13 @@
-package com.rbkmoney.kebab.writer;
+package com.rbkmoney.kebab.handler;
 
-import com.rbkmoney.kebab.StructWriter;
+import com.rbkmoney.kebab.StructHandler;
 
 import java.io.IOException;
 
 /**
  * Created by vpankrashkin on 03.02.17.
  */
-public class WriterStub implements StructWriter {
+public class HandlerStub implements StructHandler {
     @Override
     public void beginStruct(int size) throws IOException {
 
@@ -109,7 +109,8 @@ public class WriterStub implements StructWriter {
     }
 
     @Override
-    public void close() throws IOException {
-
+    public Object getResult() throws IOException {
+        return null;
     }
+
 }

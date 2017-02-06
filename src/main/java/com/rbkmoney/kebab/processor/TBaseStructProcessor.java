@@ -1,7 +1,7 @@
-package com.rbkmoney.kebab.serializer;
+package com.rbkmoney.kebab.processor;
 
-import com.rbkmoney.kebab.Serializer;
-import com.rbkmoney.kebab.StructWriter;
+import com.rbkmoney.kebab.StructProcessor;
+import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.ThriftType;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
@@ -16,19 +16,21 @@ import java.util.Set;
 /**
  * Created by tolkonepiu on 27/01/2017.
  */
-public class TBaseSerializer implements Serializer<TBase> {
+public class TBaseStructProcessor implements StructProcessor<TBase> {
 
     @Override
-    public void write(StructWriter out, TBase value) throws IOException {
+    public <R> R process(TBase value, StructHandler<R> handler) throws IOException {
         if (value == null) {
-            out.nullValue();
-            return;
+            handler.nullValue();
+            return null;
         }
 
-        writeStruct(out, value);
+        writeStruct(handler, value);
+
+        return handler.getResult();
     }
 
-    private void writeStruct(StructWriter out, TBase value) throws IOException {
+    private void writeStruct(StructHandler out, TBase value) throws IOException {
         TFieldIdEnum[] tFieldIdEnums = value.getFields();
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = value.getFieldMetaData();
         int size = getFieldsCount(value, tFieldIdEnums);
@@ -57,7 +59,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         return size;
     }
 
-    private void write(StructWriter out, Object object, FieldValueMetaData fieldValueMetaData) throws IOException {
+    private void write(StructHandler out, Object object, FieldValueMetaData fieldValueMetaData) throws IOException {
         if (object == null) {
             out.nullValue();
             return;
@@ -112,7 +114,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         }
     }
 
-    private void writeSet(StructWriter out, Set objectSet, SetMetaData metaData) throws IOException {
+    private void writeSet(StructHandler out, Set objectSet, SetMetaData metaData) throws IOException {
         out.beginList(objectSet.size());
         for (Object object : objectSet) {
             write(out, object, metaData.getElementMetaData());
@@ -120,7 +122,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         out.endList();
     }
 
-    private void writeList(StructWriter out, List objectList, ListMetaData metaData) throws IOException {
+    private void writeList(StructHandler out, List objectList, ListMetaData metaData) throws IOException {
         out.beginList(objectList.size());
         for (Object object : objectList) {
             write(out, object, metaData.getElementMetaData());
@@ -128,7 +130,7 @@ public class TBaseSerializer implements Serializer<TBase> {
         out.endList();
     }
 
-    private void writeMap(StructWriter out, Map objectMap, MapMetaData metaData) throws IOException {
+    private void writeMap(StructHandler out, Map objectMap, MapMetaData metaData) throws IOException {
         out.beginMap(objectMap.size());
         for (Map.Entry entry : (Set<Map.Entry>) objectMap.entrySet()) {
             out.beginKey();

@@ -1,7 +1,7 @@
-package com.rbkmoney.kebab.writer;
+package com.rbkmoney.kebab.handler;
 
 import com.rbkmoney.kebab.ByteStack;
-import com.rbkmoney.kebab.StructWriter;
+import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.ThriftType;
 import com.rbkmoney.kebab.exception.BadFormatException;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Created by tolkonepiu on 27/01/2017.
  */
-public class JsonStructWriter implements StructWriter {
+public class JsonStructHandler implements StructHandler<String> {
 
     static final byte EMPTY_STRUCT = 1;
 
@@ -43,11 +43,11 @@ public class JsonStructWriter implements StructWriter {
         stack.push(EMPTY_DOCUMENT);
     }
 
-    public JsonStructWriter(Writer out) {
+    public JsonStructHandler(Writer out) {
         this(out, false);
     }
 
-    public JsonStructWriter(Writer out, boolean pretty) {
+    public JsonStructHandler(Writer out, boolean pretty) {
         Objects.requireNonNull(out, "Writer must not be null");
         this.out = out;
         this.pretty = pretty;
@@ -262,11 +262,14 @@ public class JsonStructWriter implements StructWriter {
     }
 
     @Override
-    public void close() throws IOException {
+    public String getResult() throws IOException {
         out.close();
 
         if (stack.size() > 1 || stack.size() == 1 && stack.peek() != NONEMPTY_DOCUMENT) {
             throw new BadFormatException();
         }
+
+        return out.toString();
     }
+
 }

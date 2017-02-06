@@ -1,12 +1,11 @@
 package com.rbkmoney.kebab;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 /**
  * Created by tolkonepiu on 26/01/2017.
  */
-public interface StructWriter extends Closeable {
+public interface StructHandler<R> {
 
     void beginStruct(int size) throws IOException;
 
@@ -47,5 +46,7 @@ public interface StructWriter extends Closeable {
     void value(byte[] value) throws IOException;
 
     void nullValue() throws IOException;
+
+    R getResult() throws IOException;
 
 }

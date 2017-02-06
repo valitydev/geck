@@ -1,8 +1,8 @@
 package com.rbkmoney.kebab;
 
-import com.rbkmoney.kebab.serializer.TBaseSerializer;
+import com.rbkmoney.kebab.processor.TBaseStructProcessor;
 import com.rbkmoney.kebab.test.*;
-import com.rbkmoney.kebab.writer.WriterStub;
+import com.rbkmoney.kebab.handler.HandlerStub;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -29,7 +29,7 @@ public class KebabTest {
     public void tBaseSerializerTest() throws IOException {
         TestObject testObject = getTestObject();
         long start = System.currentTimeMillis();
-        new TBaseSerializer().write(new MockStructWriter(), testObject);
+        new TBaseStructProcessor().process(testObject, new MockStructHandler());
         long end = System.currentTimeMillis();
         System.out.println("TBaseSerializer: execution time " + (end - start) + " ms");
     }
@@ -104,7 +104,7 @@ public class KebabTest {
         boolean useDict = true;
         TestObject testObject = getTestObject(100, () -> Status.unknown(new Unknown("SomeData")));
         //warmup
-        WriterStub writerStub = new WriterStub();
+        HandlerStub writerStub = new HandlerStub();
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
         IntConsumer stubConsumer = i -> kebab.write(testObject, writerStub);
         IntConsumer msgPackConsumer = i -> kebab.toMsgPack(testObject, useDict);

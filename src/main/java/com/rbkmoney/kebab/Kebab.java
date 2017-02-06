@@ -1,8 +1,8 @@
 package com.rbkmoney.kebab;
 
-import com.rbkmoney.kebab.serializer.TBaseSerializer;
-import com.rbkmoney.kebab.writer.JsonStructWriter;
-import com.rbkmoney.kebab.writer.MsgPackWriter;
+import com.rbkmoney.kebab.handler.JsonStructHandler;
+import com.rbkmoney.kebab.handler.MsgPackHandler;
+import com.rbkmoney.kebab.processor.TBaseStructProcessor;
 import org.apache.thrift.TBase;
 
 import java.io.ByteArrayOutputStream;
@@ -17,11 +17,9 @@ public class Kebab<T extends TBase> {
     public String toJson(T src) {
         try {
             StringWriter writer = new StringWriter();
-            Serializer serializer = new TBaseSerializer();
-            JsonStructWriter jsonStructWriter = new JsonStructWriter(writer);
-            serializer.write(jsonStructWriter, src);
-            jsonStructWriter.close();
-            return writer.toString();
+            TBaseStructProcessor structProcessor = new TBaseStructProcessor();
+            JsonStructHandler jsonStructHandler = new JsonStructHandler(writer);
+            return  structProcessor.process(src, jsonStructHandler);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -30,11 +28,10 @@ public class Kebab<T extends TBase> {
     public byte[] toMsgPack(T src, boolean useDict) {
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            MsgPackWriter writer = new MsgPackWriter(os, true, true);
-            TBaseSerializer serializer = new TBaseSerializer();
+            MsgPackHandler handler = new MsgPackHandler(os, true, true);
+            TBaseStructProcessor serializer = new TBaseStructProcessor();
 
-            serializer.write(writer, src);
-            writer.close();
+            serializer.process(src, handler);
             return os.toByteArray();
 
         } catch (IOException e) {
@@ -42,10 +39,10 @@ public class Kebab<T extends TBase> {
         }
     }
 
-    public byte[] write(T src, StructWriter writer) {
-        Serializer serializer = new TBaseSerializer();
+    public byte[] write(T src, StructHandler writer) {
+        StructProcessor structProcessor = new TBaseStructProcessor();
         try {
-            serializer.write(writer, src);
+            structProcessor.process(src, writer);
             return new byte[0];
         } catch (IOException ex) {
             throw new RuntimeException(ex);

@@ -1,4 +1,4 @@
-package com.rbkmoney.kebab.writer;
+package com.rbkmoney.kebab.handler;
 
 import com.rbkmoney.kebab.exception.BadFormatException;
 
