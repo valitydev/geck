@@ -9,6 +9,7 @@ struct TestObject {
     6: required Status status
     7: required list<set<string>> fuck
     8: optional map<string, i32> maps
+    9: optional list<Status> statuses;
 }
 
 union Status {

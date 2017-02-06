@@ -1,0 +1,70 @@
+package com.rbkmoney.kebab.writer;
+
+import com.rbkmoney.kebab.exception.BadFormatException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static com.rbkmoney.kebab.writer.StringUtil.intToString;
+import static com.rbkmoney.kebab.writer.StringUtil.isAsciiString;
+import static org.junit.Assert.*;
+import static java.lang.System.*;
+
+/**
+ * Created by vpankrashkin on 03.02.17.
+ */
+@RunWith(Parameterized.class)
+public class StringUtilCompressingTest {
+    private String testString;
+    private int expectedLen;
+
+    public StringUtilCompressingTest(String testString, int expectedLen) {
+        this.testString = testString;
+        this.expectedLen = expectedLen;
+    }
+
+    @Test
+    public void test() throws BadFormatException {
+        assertTrue(isAsciiString(testString));
+        out.println("Original:");
+        testString.chars().forEach(c -> out.print(intToString(c, 8, 8) + " "));
+        out.println();
+        byte[] data = StringUtil.compressAsciiString(testString);
+        assertEquals(expectedLen, data.length);
+        out.println("Compressed:");
+        for (int i = 0; i < data.length; ++i) {
+            out.print(intToString(((int)data[i]) & 0xFF, 8, 8) + " ");
+        }
+        out.println();
+         StringUtil.decompressAsciiString(data);
+        assertEquals(testString, StringUtil.decompressAsciiString(data));
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {"", 0},
+                {"_ame}mm", 5},
+                {"a", 1},
+                {"0", 1},
+                {"ab", 2},
+                {"abc", 2},
+                {"abcd", 3},
+                {"abcde", 4},
+                {"abcde1", 6}
+        });
+    }
+
+    @Test
+    public void  bytesTest() throws BadFormatException {
+        String str = "_ame}mm";
+        byte[] data = StringUtil.compressAsciiString(str);
+        assertArrayEquals(new byte[]{(byte) 0b10000100, 0b01101111, 0b00111111, (byte) 0b11011110, (byte) 0b11110000}, data);
+        StringUtil.decompressAsciiString(data);
+        assertEquals(str, StringUtil.decompressAsciiString(data));
+    }
+
+}

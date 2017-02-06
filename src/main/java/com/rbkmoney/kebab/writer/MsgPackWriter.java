@@ -2,12 +2,15 @@ package com.rbkmoney.kebab.writer;
 
 import com.rbkmoney.kebab.StructWriter;
 import com.rbkmoney.kebab.exception.BadFormatException;
+import gnu.trove.map.hash.TObjectCharHashMap;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.Deflater;
+
+import static com.rbkmoney.kebab.writer.StringUtil.compressAsciiString;
+import static com.rbkmoney.kebab.writer.StringUtil.toAsciiBytes;
 
 /**
  * Created by vpankrashkin on 31.01.17.
@@ -26,23 +29,31 @@ public class MsgPackWriter implements StructWriter {
     private static final byte endMapValue = 10;
     private static final byte pointName = 11;
     private static final byte pointValue = 12;
+    private static final byte pointDictionary = 13;
+    private static final byte pointDictionaryRef = 14;
 
     private final boolean autoClose;
+    private final boolean useDictionary;
     private final MessagePacker msgPacker;
+    private final TObjectCharHashMap<String> dictionary;
+    private final char noDictEntryValue = 0;
+    private char nextDictIdx = 0;
 
-    public MsgPackWriter(OutputStream stream, boolean autoClose) {
+    public MsgPackWriter(OutputStream stream, boolean autoClose, boolean useDictionary) {
         this.autoClose = autoClose;
         this.msgPacker = MessagePack.newDefaultPacker(stream);
+        this.useDictionary = useDictionary;
+        this.dictionary = useDictionary ? new TObjectCharHashMap<>(64, 0.5f, noDictEntryValue) : null;
     }
 
     @Override
     public void beginStruct(int size) throws IOException {
-        msgPacker.packExtensionTypeHeader(startStruct, 0);
+        msgPacker.packExtensionTypeHeader(startStruct, size);
     }
 
     @Override
     public void endStruct() throws IOException {
-        msgPacker.packExtensionTypeHeader(endStruct, 0);
+        //msgPacker.packExtensionTypeHeader(endStruct, 0);
     }
 
     /**
@@ -53,7 +64,8 @@ public class MsgPackWriter implements StructWriter {
         if (size >= 0) {
             msgPacker.packArrayHeader(size);
         } else {
-            msgPacker.packExtensionTypeHeader(startList, 0);
+            throw new BadFormatException("Unsupported option");
+            //msgPacker.packExtensionTypeHeader(startList, 0);
         }
     }
 
@@ -67,33 +79,34 @@ public class MsgPackWriter implements StructWriter {
         if (size >= 0) {
             msgPacker.packMapHeader(size);
         } else {
-            msgPacker.packExtensionTypeHeader(startMap, 0);
+            throw new BadFormatException("Unsupported option");
+            //msgPacker.packExtensionTypeHeader(startMap, 0);
         }
     }
 
     @Override
     public void endMap() throws IOException {
-        msgPacker.packExtensionTypeHeader(endMap, 0);
+        //msgPacker.packExtensionTypeHeader(endMap, 0);
     }
 
     @Override
     public void beginKey() throws IOException {
-        msgPacker.packExtensionTypeHeader(startMapKey, 0);
+        //msgPacker.packExtensionTypeHeader(startMapKey, 0);
     }
 
     @Override
     public void endKey() throws IOException {
-        msgPacker.packExtensionTypeHeader(endMapKey, 0);
+        //msgPacker.packExtensionTypeHeader(endMapKey, 0);
     }
 
     @Override
     public void beginValue() throws IOException {
-        msgPacker.packExtensionTypeHeader(startMapValue, 0);
+        //msgPacker.packExtensionTypeHeader(startMapValue, 0);
     }
 
     @Override
     public void endValue() throws IOException {
-        msgPacker.packExtensionTypeHeader(endMapValue, 0);
+        //msgPacker.packExtensionTypeHeader(endMapValue, 0);
     }
 
     /**
@@ -102,20 +115,22 @@ public class MsgPackWriter implements StructWriter {
     @Override
     public void name(String name) throws IOException {
         int length = name.length();
-        byte[] data = name.getBytes();
-        if (length != data.length) {
-            throw new BadFormatException("Only ASCII symbols're expected");
+        if (useDictionary && length > 3) {
+            char idx;
+            if ((idx = dictionary.putIfAbsent(name, nextDictIdx)) == noDictEntryValue) {
+                byte[] data = compressAsciiString(name);
+                msgPacker.packExtensionTypeHeader(pointDictionary, data.length);
+                msgPacker.writePayload(data);
+                msgPacker.packInt(nextDictIdx++);
+            } else {
+                msgPacker.packExtensionTypeHeader(pointDictionaryRef, 0);
+                msgPacker.packInt(idx);
+            }
+        } else {
+            byte[] data = toAsciiBytes(name);
+            msgPacker.packRawStringHeader(length);
+            msgPacker.writePayload(data);
         }
-        msgPacker.packRawStringHeader(length);
-        msgPacker.writePayload(data);
-
-        // Compress the bytes
-        byte[] output = new byte[100];
-        Deflater compresser = new Deflater();
-        compresser.setInput(data);
-        compresser.finish();
-        int compressedDataLength = compresser.deflate(output);
-        compresser.end();
     }
 
     @Override
@@ -125,7 +140,7 @@ public class MsgPackWriter implements StructWriter {
 
     @Override
     public void value(String value) throws IOException {
-        msgPacker.packString(value);
+       msgPacker.packString(value);
     }
 
     @Override
@@ -172,4 +187,5 @@ public class MsgPackWriter implements StructWriter {
             msgPacker.flush();
         }
     }
+
 }
