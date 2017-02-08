@@ -33,12 +33,6 @@ public interface StructHandler<R> {
 
     void value(String value) throws IOException;
 
-    void value(byte value) throws IOException;
-
-    void value(short value) throws IOException;
-
-    void value(int value) throws IOException;
-
     void value(double value) throws IOException;
 
     void value(long value) throws IOException;
