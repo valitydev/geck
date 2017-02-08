@@ -1,8 +1,10 @@
 package com.rbkmoney.kebab;
 
-import com.rbkmoney.kebab.processor.TBaseStructProcessor;
-import com.rbkmoney.kebab.test.*;
 import com.rbkmoney.kebab.handler.HandlerStub;
+import com.rbkmoney.kebab.processor.TBaseStructProcessor;
+import com.rbkmoney.kebab.test.Status;
+import com.rbkmoney.kebab.test.TestObject;
+import com.rbkmoney.kebab.test.Unknown;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -14,16 +16,23 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.IntConsumer;
-import java.util.function.Supplier;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import java.util.zip.GZIPOutputStream;
+
+import static com.rbkmoney.kebab.KebabUtil.getTestObject;
+import static org.junit.Assert.*;
 
 /**
  * Created by tolkonepiu on 25/01/2017.
  */
 public class KebabTest {
     Kebab kebab = new Kebab();
+
+    @Test
+    public void testKebab() {
+        assertTrue(kebab.remove());
+    }
 
     @Test
     public void tBaseSerializerTest() throws IOException {
@@ -102,71 +111,38 @@ public class KebabTest {
     @Test
     public void testPerformance() {
         boolean useDict = true;
-        TestObject testObject = getTestObject(100, () -> Status.unknown(new Unknown("SomeData")));
-        //warmup
+        TestObject testObject = getTestObject(100, i -> Status.unknown(new Unknown("SomeData")));
         HandlerStub writerStub = new HandlerStub();
-        TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
-        IntConsumer stubConsumer = i -> kebab.write(testObject, writerStub);
-        IntConsumer msgPackConsumer = i -> kebab.toMsgPack(testObject, useDict);
-        IntConsumer tWriter = i -> {
+        TSerializer binarySerializer = new TSerializer(new TBinaryProtocol.Factory());
+        IntFunction<Integer> stubConsumer = i -> kebab.write(testObject, writerStub).length;
+        IntFunction<Integer> msgPackConsumer = i -> kebab.toMsgPack(testObject, useDict).length;
+        IntFunction<Integer> jsonConsumer = i -> kebab.toJson(testObject).length();
+        IntFunction<Integer> tBinaryWriter = i -> {
             try {
-                serializer.serialize(testObject);
+                return binarySerializer.serialize(testObject).length;
             } catch (TException e) {
                 e.printStackTrace();
+                throw new RuntimeException(e);
             }
         };
-        IntConsumer consumer = tWriter;
-        IntStream.range(0, 100000).forEach(consumer);
+        List<Map.Entry<String, IntFunction<Integer>>> consumers = Arrays.asList(
+                new AbstractMap.SimpleEntry("Stub", stubConsumer),
+                new AbstractMap.SimpleEntry("TBinary", tBinaryWriter),
+                new AbstractMap.SimpleEntry("MsgPack", msgPackConsumer),
+                new AbstractMap.SimpleEntry("Json", jsonConsumer)
+        );
+        System.out.println("Warmup...");
+        consumers.stream().forEach(entry -> IntStream.range(0, 100000).forEach(i -> entry.getValue().apply(i)));
 
-        long startTime = System.currentTimeMillis();
-        IntStream.range(0, 100000).forEach(consumer);
-        System.out.println("Time:" + (System.currentTimeMillis() - startTime));
-        System.out.println("неопределенность".getBytes().length);
-        System.out.println(Base64.getEncoder().withoutPadding().encode("неопределенность".getBytes()).length);
+        System.out.println("Test...");
+        consumers.stream().forEach(entry -> {
+            long startTime = System.currentTimeMillis();
+            int bytes = IntStream.range(0, 50000).map(i -> entry.getValue().apply(i)).sum();
+            System.out.println(entry.getKey() + "\t Time:\t" + (System.currentTimeMillis() - startTime) + "\t Bytes:\t" +bytes);
+        });
+
     }
 
-    private TestObject getTestObject(int statusCount, Supplier<Status> statusGen) {
-        TestObject testObject = getTestObject();
-        List<Status> lists = Collections.nCopies(statusCount, statusGen.get());
-        testObject.setStatuses(lists);
-        return testObject;
-    }
 
-    private TestObject getTestObject() {
-        TestObject testObject = new TestObject();
-        testObject.setDescription("kek");
-        testObject.setValue(2.32);
-
-        Ids ids = new Ids();
-        ids.setBigId(2141214124L);
-        ids.setId(12312);
-        ids.setMiniId((short) 2334);
-        ids.setMicroId((byte) 127);
-
-        testObject.setIds(ids);
-
-        testObject.setData(new byte[]{4, 2});
-
-        testObject.setNumbers(Arrays.asList(1, 2, 3, 4, 5));
-
-        Set<String> suk = new HashSet<>(Arrays.asList("kek1", "kek2"));
-
-        testObject.setFuck(Arrays.asList(suk, suk, suk));
-
-        Fail fail = new Fail();
-
-        fail.setReasons(new HashSet<>(Arrays.asList("kek1", "kek2")));
-
-        Map<String, Integer> map = new HashMap<>();
-        map.put("kek1", 455);
-        map.put("kek2", 564);
-        map.put("kek3", 565);
-        //map.put(null, 666);
-        //map.put("null", null);
-        testObject.setMaps(map);
-
-        testObject.setStatus(Status.fail(new Fail(fail)));
-        return testObject;
-    }
 
 }

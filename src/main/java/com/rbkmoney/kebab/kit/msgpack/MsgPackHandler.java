@@ -1,54 +1,74 @@
-package com.rbkmoney.kebab.handler;
+package com.rbkmoney.kebab.kit.msgpack;
 
 import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.exception.BadFormatException;
 import gnu.trove.map.hash.TObjectCharHashMap;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
+import org.msgpack.core.buffer.ArrayBufferOutput;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static com.rbkmoney.kebab.handler.StringUtil.compressAsciiString;
-import static com.rbkmoney.kebab.handler.StringUtil.toAsciiBytes;
-
 /**
  * Created by vpankrashkin on 31.01.17.
  */
-public class MsgPackHandler implements StructHandler<OutputStream> {
-    private static final byte nop = 0;
-    private static final byte startStruct = 1;
-    private static final byte endStruct = 2;
-    private static final byte startList = 3;
-    private static final byte endList = 4;
-    private static final byte startMap = 5;
-    private static final byte endMap = 6;
-    private static final byte startMapKey = 7;
-    private static final byte endMapKey = 8;
-    private static final byte startMapValue = 9;
-    private static final byte endMapValue = 10;
-    private static final byte pointName = 11;
-    private static final byte pointValue = 12;
-    private static final byte pointDictionary = 13;
-    private static final byte pointDictionaryRef = 14;
+public abstract class MsgPackHandler<R> implements StructHandler<R> {
 
-    private final boolean autoClose;
     private final boolean useDictionary;
-    private final MessagePacker msgPacker;
     private final TObjectCharHashMap<String> dictionary;
     private final char noDictEntryValue = 0;
     private char nextDictIdx = 0;
+    protected final MessagePacker msgPacker;
+    protected final Object dataTarget;
 
-    public MsgPackHandler(OutputStream stream, boolean autoClose, boolean useDictionary) {
-        this.autoClose = autoClose;
-        this.msgPacker = MessagePack.newDefaultPacker(stream);
+    public static MsgPackHandler<OutputStream> newStreamedInstance(OutputStream stream, boolean autoClose, boolean useDictionary) {
+        return new MsgPackHandler<OutputStream>(stream, useDictionary) {
+            @Override
+            protected MessagePacker createPacker(Object dataTarget) {
+                return MessagePack.newDefaultPacker((OutputStream) dataTarget);
+            }
+
+            @Override
+            public OutputStream getResult() throws IOException {
+                if (autoClose) {
+                    msgPacker.close();
+                } else {
+                    msgPacker.flush();
+                }
+                return (OutputStream) dataTarget;
+            }
+        };
+    }
+
+    public static MsgPackHandler<byte[]> newBufferedInstance(boolean useDictionary) {
+        return new MsgPackHandler<byte[]>(new ArrayBufferOutput(), useDictionary) {
+            @Override
+            protected MessagePacker createPacker(Object dataTarget) {
+                return MessagePack.newDefaultPacker((ArrayBufferOutput) dataTarget);
+            }
+
+            @Override
+            public byte[] getResult() throws IOException {
+                ArrayBufferOutput abo = ((ArrayBufferOutput) dataTarget);
+                msgPacker.flush();
+                byte[] result = abo.toByteArray();
+                abo.clear();
+                return result;
+            }
+        };
+    }
+
+    public MsgPackHandler(Object dataTarget, boolean useDictionary) {
+        this.dataTarget = dataTarget;
+        this.msgPacker = createPacker(dataTarget);
         this.useDictionary = useDictionary;
         this.dictionary = useDictionary ? new TObjectCharHashMap<>(64, 0.5f, noDictEntryValue) : null;
     }
 
     @Override
     public void beginStruct(int size) throws IOException {
-        msgPacker.packExtensionTypeHeader(startStruct, size);
+        msgPacker.packExtensionTypeHeader(MsgPackFlags.startStruct, size);
     }
 
     @Override
@@ -71,7 +91,7 @@ public class MsgPackHandler implements StructHandler<OutputStream> {
 
     @Override
     public void endList() throws IOException {
-        msgPacker.packExtensionTypeHeader(endList, 0);
+        //msgPacker.packExtensionTypeHeader(MsgPackFlags.endList, 0);
     }
 
     @Override
@@ -118,16 +138,16 @@ public class MsgPackHandler implements StructHandler<OutputStream> {
         if (useDictionary && length > 3) {
             char idx;
             if ((idx = dictionary.putIfAbsent(name, nextDictIdx)) == noDictEntryValue) {
-                byte[] data = compressAsciiString(name);
-                msgPacker.packExtensionTypeHeader(pointDictionary, data.length);
+                byte[] data = StringUtil.compressAsciiString(name);
+                msgPacker.packExtensionTypeHeader(MsgPackFlags.pointDictionary, data.length);
                 msgPacker.writePayload(data);
                 msgPacker.packInt(nextDictIdx++);
             } else {
-                msgPacker.packExtensionTypeHeader(pointDictionaryRef, 0);
+                msgPacker.packExtensionTypeHeader(MsgPackFlags.pointDictionaryRef, 0);
                 msgPacker.packInt(idx);
             }
         } else {
-            byte[] data = toAsciiBytes(name);
+            byte[] data = StringUtil.toAsciiBytes(name);
             msgPacker.packRawStringHeader(length);
             msgPacker.writePayload(data);
         }
@@ -141,21 +161,6 @@ public class MsgPackHandler implements StructHandler<OutputStream> {
     @Override
     public void value(String value) throws IOException {
         msgPacker.packString(value);
-    }
-
-    @Override
-    public void value(byte value) throws IOException {
-        msgPacker.packByte(value);
-    }
-
-    @Override
-    public void value(short value) throws IOException {
-        msgPacker.packShort(value);
-    }
-
-    @Override
-    public void value(int value) throws IOException {
-        msgPacker.packInt(value);
     }
 
     @Override
@@ -179,15 +184,5 @@ public class MsgPackHandler implements StructHandler<OutputStream> {
         msgPacker.packNil();
     }
 
-    @Override
-    public OutputStream getResult() throws IOException {
-        if (autoClose) {
-            msgPacker.close();
-        } else {
-            msgPacker.flush();
-        }
-
-        return null;
-    }
-
+    abstract protected MessagePacker createPacker(Object dataTarget);
 }

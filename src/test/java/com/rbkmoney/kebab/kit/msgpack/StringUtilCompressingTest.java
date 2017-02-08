@@ -1,6 +1,7 @@
-package com.rbkmoney.kebab.handler;
+package com.rbkmoney.kebab.kit.msgpack;
 
 import com.rbkmoney.kebab.exception.BadFormatException;
+import com.rbkmoney.kebab.kit.msgpack.StringUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -8,8 +9,8 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.rbkmoney.kebab.handler.StringUtil.intToString;
-import static com.rbkmoney.kebab.handler.StringUtil.isAsciiString;
+import static com.rbkmoney.kebab.kit.msgpack.StringUtil.intToString;
+import static com.rbkmoney.kebab.kit.msgpack.StringUtil.isAsciiString;
 import static org.junit.Assert.*;
 import static java.lang.System.*;
 

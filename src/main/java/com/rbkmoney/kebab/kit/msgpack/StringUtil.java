@@ -1,4 +1,4 @@
-package com.rbkmoney.kebab.handler;
+package com.rbkmoney.kebab.kit.msgpack;
 
 import com.rbkmoney.kebab.exception.BadFormatException;
 

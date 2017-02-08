@@ -74,21 +74,6 @@ public class HandlerStub implements StructHandler {
     }
 
     @Override
-    public void value(byte value) throws IOException {
-
-    }
-
-    @Override
-    public void value(short value) throws IOException {
-
-    }
-
-    @Override
-    public void value(int value) throws IOException {
-
-    }
-
-    @Override
     public void value(double value) throws IOException {
 
     }

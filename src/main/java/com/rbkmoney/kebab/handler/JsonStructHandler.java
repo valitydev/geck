@@ -227,21 +227,6 @@ public class JsonStructHandler implements StructHandler<String> {
     }
 
     @Override
-    public void value(byte value) throws IOException {
-        writeValue(Byte.toString(value), ThriftType.BYTE);
-    }
-
-    @Override
-    public void value(short value) throws IOException {
-        writeValue(Short.toString(value), ThriftType.SHORT);
-    }
-
-    @Override
-    public void value(int value) throws IOException {
-        writeValue(Integer.toString(value), ThriftType.INTEGER);
-    }
-
-    @Override
     public void value(double value) throws IOException {
         writeValue(Double.toString(value), ThriftType.DOUBLE);
     }

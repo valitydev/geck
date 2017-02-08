@@ -72,21 +72,6 @@ public class MockStructHandler implements StructHandler {
     }
 
     @Override
-    public void value(byte value) throws IOException {
-        //do nothing
-    }
-
-    @Override
-    public void value(short value) throws IOException {
-        //do nothing
-    }
-
-    @Override
-    public void value(int value) throws IOException {
-        //do nothing
-    }
-
-    @Override
     public void value(double value) throws IOException {
         //do nothing
     }

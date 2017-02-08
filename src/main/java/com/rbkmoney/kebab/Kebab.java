@@ -1,11 +1,10 @@
 package com.rbkmoney.kebab;
 
 import com.rbkmoney.kebab.handler.JsonStructHandler;
-import com.rbkmoney.kebab.handler.MsgPackHandler;
+import com.rbkmoney.kebab.kit.msgpack.MsgPackHandler;
 import com.rbkmoney.kebab.processor.TBaseStructProcessor;
 import org.apache.thrift.TBase;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -13,6 +12,10 @@ import java.io.StringWriter;
  * Created by tolkonepiu on 24/01/2017.
  */
 public class Kebab<T extends TBase> {
+
+    public boolean remove() {
+        return true;
+    }
 
     public String toJson(T src) {
         try {
@@ -27,13 +30,10 @@ public class Kebab<T extends TBase> {
 
     public byte[] toMsgPack(T src, boolean useDict) {
         try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            MsgPackHandler handler = new MsgPackHandler(os, true, true);
+            MsgPackHandler<byte[]> handler = MsgPackHandler.newBufferedInstance(useDict);
             TBaseStructProcessor serializer = new TBaseStructProcessor();
 
-            serializer.process(src, handler);
-            return os.toByteArray();
-
+            return serializer.process(src, handler);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
