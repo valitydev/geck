@@ -1,9 +1,6 @@
 package com.rbkmoney.kebab;
 
-import com.rbkmoney.kebab.test.Fail;
-import com.rbkmoney.kebab.test.Ids;
-import com.rbkmoney.kebab.test.Status;
-import com.rbkmoney.kebab.test.TestObject;
+import com.rbkmoney.kebab.test.*;
 
 import java.util.*;
 import java.util.function.IntFunction;
@@ -55,6 +52,44 @@ public class KebabUtil {
         testObject.setMaps(map);
 
         testObject.setStatus(Status.fail(new Fail(fail)));
+
+        List<Status> lists = Collections.nCopies(10, Status.unknown(new Unknown("SomeData")));
+        testObject.setStatuses(lists);
+
+        testObject.setActive(true);
+
+        Map<Map<Set<Kek>, Status>, Map<Status, Set<Ids>>> kebabMap = new HashMap<>();
+
+        Map<Set<Kek>, Status> key = new HashMap<>();
+
+        Set<Kek> keyKey = new HashSet<>();
+        keyKey.add(Kek.TEST1);
+        keyKey.add(Kek.TEST2);
+        keyKey.add(Kek.TEST3);
+
+        Status status = Status.ok(new Ok());
+        key.put(keyKey, status);
+
+        Map<Status, Set<Ids>> value = new HashMap<>();
+        Fail failKey = new Fail();
+        failKey.setReasons(new HashSet<>(Arrays.asList("qwe", "aasd", "ads")));
+
+
+        Set<Ids> valueIds = new HashSet<>();
+        valueIds.add(ids);
+
+        Ids idsTwo = new Ids();
+        idsTwo.setBigId(123123);
+        idsTwo.setId(44);
+        idsTwo.setMiniId((short) 2334);
+        idsTwo.setMicroId((byte) 12);
+        valueIds.add(idsTwo);
+        value.put(Status.fail(failKey), valueIds);
+
+        kebabMap.put(key, value);
+
+        testObject.setKebabMap(kebabMap);
+
         return testObject;
     }
 }
