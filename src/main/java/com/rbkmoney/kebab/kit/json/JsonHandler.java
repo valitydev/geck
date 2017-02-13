@@ -1,8 +1,8 @@
-package com.rbkmoney.kebab.handler;
+package com.rbkmoney.kebab.kit.json;
 
 import com.rbkmoney.kebab.ByteStack;
 import com.rbkmoney.kebab.StructHandler;
-import com.rbkmoney.kebab.ThriftType;
+import com.rbkmoney.kebab.kit.tbase.ThriftType;
 import com.rbkmoney.kebab.exception.BadFormatException;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Created by tolkonepiu on 27/01/2017.
  */
-public class JsonStructHandler implements StructHandler<String> {
+public class JsonHandler implements StructHandler<String> {
 
     static final byte EMPTY_STRUCT = 1;
 
@@ -43,11 +43,11 @@ public class JsonStructHandler implements StructHandler<String> {
         stack.push(EMPTY_DOCUMENT);
     }
 
-    public JsonStructHandler(Writer out) {
+    public JsonHandler(Writer out) {
         this(out, false);
     }
 
-    public JsonStructHandler(Writer out, boolean pretty) {
+    public JsonHandler(Writer out, boolean pretty) {
         Objects.requireNonNull(out, "Writer must not be null");
         this.out = out;
         this.pretty = pretty;

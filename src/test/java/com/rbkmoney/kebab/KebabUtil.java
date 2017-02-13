@@ -90,6 +90,8 @@ public class KebabUtil {
 
         testObject.setKebabMap(kebabMap);
 
+        testObject.setActive(true);
+
         return testObject;
     }
 }

@@ -1,5 +1,6 @@
-package com.rbkmoney.kebab;
+package com.rbkmoney.kebab.kit.tbase;
 
+import org.apache.thrift.meta_data.FieldValueMetaData;
 import org.apache.thrift.protocol.TType;
 
 /**
@@ -39,6 +40,13 @@ public enum ThriftType {
             }
         }
         throw new IllegalArgumentException(String.format("Thrift type not found by code '%d'", code));
+    }
+
+    public static ThriftType findByMetaData(FieldValueMetaData valueMetaData) {
+        if (valueMetaData.isBinary()) {
+            return ThriftType.BINARY;
+        }
+        return ThriftType.findByCode(valueMetaData.getType());
     }
 
 }

@@ -1,7 +1,7 @@
 package com.rbkmoney.kebab;
 
 import com.rbkmoney.kebab.handler.HandlerStub;
-import com.rbkmoney.kebab.processor.TBaseStructProcessor;
+import com.rbkmoney.kebab.kit.tbase.TBaseProcessor;
 import com.rbkmoney.kebab.test.Status;
 import com.rbkmoney.kebab.test.TestObject;
 import com.rbkmoney.kebab.test.Unknown;
@@ -32,15 +32,6 @@ public class KebabTest {
     @Test
     public void testKebab() {
         assertTrue(kebab.remove());
-    }
-
-    @Test
-    public void tBaseSerializerTest() throws IOException {
-        TestObject testObject = getTestObject();
-        long start = System.currentTimeMillis();
-        new TBaseStructProcessor().process(testObject, new MockStructHandler());
-        long end = System.currentTimeMillis();
-        System.out.println("TBaseSerializer: execution time " + (end - start) + " ms");
     }
 
     @Test
