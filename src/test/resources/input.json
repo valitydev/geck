@@ -1,0 +1,20 @@
+{
+  "list": [1, null],
+  "rating": {
+    "primary": {
+      "value": 3
+    },
+    "quality": {
+      "value": 3
+    },
+    "nulltest": null,
+    "list":[
+      1,
+      2,
+      3.0,
+      "abc",
+      null,
+      false
+    ]
+  }
+}

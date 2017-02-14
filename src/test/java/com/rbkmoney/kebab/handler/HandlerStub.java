@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Created by vpankrashkin on 03.02.17.
  */
-public class HandlerStub implements StructHandler {
+public class HandlerStub implements StructHandler<byte[]> {
     @Override
     public void beginStruct(int size) throws IOException {
 
@@ -94,8 +94,8 @@ public class HandlerStub implements StructHandler {
     }
 
     @Override
-    public Object getResult() throws IOException {
-        return null;
+    public byte[] getResult() throws IOException {
+        return new byte[0];
     }
 
 }

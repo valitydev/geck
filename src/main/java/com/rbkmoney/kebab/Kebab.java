@@ -11,13 +11,13 @@ import java.io.StringWriter;
 /**
  * Created by tolkonepiu on 24/01/2017.
  */
-public class Kebab<T extends TBase> {
+public class Kebab {
 
     public boolean remove() {
         return true;
     }
 
-    public String toJson(T src) {
+    public String toJson(TBase src) {
         try {
             StringWriter writer = new StringWriter();
             TBaseProcessor structProcessor = new TBaseProcessor();
@@ -28,7 +28,7 @@ public class Kebab<T extends TBase> {
         }
     }
 
-    public byte[] toMsgPack(T src, boolean useDict) {
+    public byte[] toMsgPack(TBase src, boolean useDict) {
         try {
             MsgPackHandler<byte[]> handler = MsgPackHandler.newBufferedInstance(useDict);
             TBaseProcessor serializer = new TBaseProcessor();
@@ -39,11 +39,10 @@ public class Kebab<T extends TBase> {
         }
     }
 
-    public byte[] write(T src, StructHandler writer) {
-        StructProcessor structProcessor = new TBaseProcessor();
+    public <R> R write(TBase src, StructHandler<R> writer) {
+        TBaseProcessor structProcessor = new TBaseProcessor();
         try {
-            structProcessor.process(src, writer);
-            return new byte[0];
+            return structProcessor.process(src, writer);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

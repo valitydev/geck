@@ -3,42 +3,42 @@ package com.rbkmoney.kebab;
 /**
  * Created by vpankrashkin on 31.01.17.
  */
-public final class ByteStack {
+public final class ObjectStack {
     private static final int INITIAL_CAPACITY = 16;
-    private byte[] stack;
+    private Object[] stack;
     private int size;
     private final boolean defaultValSet;
-    private final byte defaultVal;
+    private final Object defaultVal;
 
-    public ByteStack() {
+    public ObjectStack() {
         this(INITIAL_CAPACITY);
     }
 
-    public ByteStack(final byte defaultVal) {
+    public ObjectStack(final Object defaultVal) {
         this(true, defaultVal, INITIAL_CAPACITY);
     }
 
-    public ByteStack(final int initialCapacity) {
-        this(false, (byte) 0, initialCapacity);
+    public ObjectStack(final int initialCapacity) {
+        this(false, false, initialCapacity);
     }
 
-    public ByteStack(final byte defaultVal, final int initialCapacity) {
+    public ObjectStack(final Object defaultVal, final int initialCapacity) {
         this(true, defaultVal, initialCapacity);
     }
 
-    private ByteStack(final boolean defaultValSet, final byte defaultVal, final int initialCapacity) {
+    private ObjectStack(final boolean defaultValSet, final Object defaultVal, final int initialCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Size must be > 0");
         }
-        this.stack = new byte[initialCapacity];
+        this.stack = new Object[initialCapacity];
         this.size = 0;
         this.defaultValSet = defaultValSet;
         this.defaultVal = defaultVal;
     }
 
-    public void push(final byte item) {
+    public void push(final Object item) {
         if (size == stack.length) {
-            byte[] newStack = new byte[size << 1];
+            Object[] newStack = new Object[size << 1];
             for (int i = 0; i < stack.length; ++i) {
                 newStack[i] = stack[i];
             }
@@ -48,7 +48,7 @@ public final class ByteStack {
     }
 
 
-    public byte pop() {
+    public Object pop() {
         if (size == 0) {
             if (defaultValSet) {
                 return defaultVal;
@@ -56,10 +56,13 @@ public final class ByteStack {
                 throw new RuntimeException("No more elements");
             }
         }
-        return stack[--size];
+        int newSize = --size;
+        Object val = stack[newSize];
+        stack[newSize] = null;
+        return val;
     }
 
-    public byte peek() {
+    public Object peek() {
         if (size == 0) {
             if (defaultValSet) {
                 return defaultVal;

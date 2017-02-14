@@ -2,6 +2,7 @@ package com.rbkmoney.kebab.kit.msgpack;
 
 import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.exception.BadFormatException;
+import com.rbkmoney.kebab.kit.EventFlags;
 import gnu.trove.map.hash.TObjectCharHashMap;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
@@ -68,7 +69,7 @@ public abstract class MsgPackHandler<R> implements StructHandler<R> {
 
     @Override
     public void beginStruct(int size) throws IOException {
-        msgPacker.packExtensionTypeHeader(MsgPackFlags.startStruct, size);
+        msgPacker.packExtensionTypeHeader(EventFlags.startStruct, size);
     }
 
     @Override
@@ -91,7 +92,7 @@ public abstract class MsgPackHandler<R> implements StructHandler<R> {
 
     @Override
     public void endList() throws IOException {
-        //msgPacker.packExtensionTypeHeader(MsgPackFlags.endList, 0);
+        //msgPacker.packExtensionTypeHeader(EventFlags.endList, 0);
     }
 
     @Override
@@ -135,15 +136,18 @@ public abstract class MsgPackHandler<R> implements StructHandler<R> {
     @Override
     public void name(String name) throws IOException {
         int length = name.length();
+        if (length == 0) {
+            throw new BadFormatException("Name cannot be empty");
+        }
         if (useDictionary && length > 3) {
             char idx;
             if ((idx = dictionary.putIfAbsent(name, nextDictIdx)) == noDictEntryValue) {
-                byte[] data = StringUtil.compressAsciiString(name);
-                msgPacker.packExtensionTypeHeader(MsgPackFlags.pointDictionary, data.length);
+                byte[] data = StringUtil.compactAsciiString(name);
+                msgPacker.packExtensionTypeHeader(EventFlags.pointDictionary, data.length);
                 msgPacker.writePayload(data);
                 msgPacker.packInt(nextDictIdx++);
             } else {
-                msgPacker.packExtensionTypeHeader(MsgPackFlags.pointDictionaryRef, 0);
+                msgPacker.packExtensionTypeHeader(EventFlags.pointDictionaryRef, 0);
                 msgPacker.packInt(idx);
             }
         } else {

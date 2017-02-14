@@ -1,7 +1,6 @@
 package com.rbkmoney.kebab.kit.msgpack;
 
 import com.rbkmoney.kebab.exception.BadFormatException;
-import com.rbkmoney.kebab.kit.msgpack.StringUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,15 +32,15 @@ public class StringUtilCompressingTest {
         out.println("Original:");
         testString.chars().forEach(c -> out.print(intToString(c, 8, 8) + " "));
         out.println();
-        byte[] data = StringUtil.compressAsciiString(testString);
+        byte[] data = StringUtil.compactAsciiString(testString);
         assertEquals(expectedLen, data.length);
         out.println("Compressed:");
         for (int i = 0; i < data.length; ++i) {
             out.print(intToString(((int)data[i]) & 0xFF, 8, 8) + " ");
         }
         out.println();
-         StringUtil.decompressAsciiString(data);
-        assertEquals(testString, StringUtil.decompressAsciiString(data));
+         StringUtil.expandAsciiString(data);
+        assertEquals(testString, StringUtil.expandAsciiString(data));
     }
 
     @Parameterized.Parameters
@@ -62,10 +61,10 @@ public class StringUtilCompressingTest {
     @Test
     public void  bytesTest() throws BadFormatException {
         String str = "_ame}mm";
-        byte[] data = StringUtil.compressAsciiString(str);
+        byte[] data = StringUtil.compactAsciiString(str);
         assertArrayEquals(new byte[]{(byte) 0b10000100, 0b01101111, 0b00111111, (byte) 0b11011110, (byte) 0b11110000}, data);
-        StringUtil.decompressAsciiString(data);
-        assertEquals(str, StringUtil.decompressAsciiString(data));
+        StringUtil.expandAsciiString(data);
+        assertEquals(str, StringUtil.expandAsciiString(data));
     }
 
 }

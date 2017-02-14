@@ -11,7 +11,7 @@ public final class StringUtil {
     public static final Charset CHARSET = Charset.forName("UTF-8");
     private static final int LOW_ASCII_FLAG = 0x80;
 
-    static byte[] compressAsciiString(String str) throws BadFormatException {
+    static byte[] compactAsciiString(String str) throws BadFormatException {
         if (str.length() == 0) {
             return new byte[0];
         }
@@ -37,7 +37,7 @@ public final class StringUtil {
         return bytes;
     }
 
-    static String decompressAsciiString(byte[] bytes) throws BadFormatException {
+    static String expandAsciiString(byte[] bytes) throws BadFormatException {
         if (bytes.length == 0 || (bytes[0] & LOW_ASCII_FLAG) == 0) {
             return fromAsciiBytes(bytes);
         }
