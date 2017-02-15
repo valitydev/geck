@@ -14,6 +14,27 @@ struct TestObject {
     11: required map<map<set<Kek>, Status>, map<Status, set<Ids>>> kebabMap
 }
 
+struct SetTest {
+    1: required set<Ids> idsSet
+    2: required set<Status> statusSet
+}
+
+struct MapTest {
+    1: required map<Kek, string> enumMap
+    2: optional map<Ids, string> idsMap
+    3: optional map<Status, string> statusMap
+}
+
+struct HandlerTest {
+    1: required string one
+    2: required i32 two
+    3: required list<string> three
+}
+
+struct TUnionTest {
+    1: required Status status
+}
+
 union Status {
     1: Ok ok
     2: Fail fail

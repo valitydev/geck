@@ -1,8 +1,10 @@
 package com.rbkmoney.kebab.kit.tbase;
 
 import com.rbkmoney.kebab.ByteStack;
+import com.rbkmoney.kebab.ObjectStack;
 import com.rbkmoney.kebab.StructHandler;
 import com.rbkmoney.kebab.exception.BadFormatException;
+import com.rbkmoney.kebab.kit.ObjectUtil;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
@@ -12,32 +14,19 @@ import org.apache.thrift.meta_data.*;
 import java.io.IOException;
 import java.util.*;
 
+import static com.rbkmoney.kebab.kit.EventFlags.*;
+
 /**
  * Created by tolkonepiu on 08/02/2017.
  */
 public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
-    final static byte STRUCT = 1;
-
-    final static byte LIST = 2;
-
-    final static byte SET = 3;
-
-    final static byte MAP = 4;
-
-    final static byte KEY = 5;
-
-    final static byte VALUE = 6;
-
     private final Class<R> parentClass;
 
     private ByteStack stateStack = new ByteStack();
-
-    private LinkedList elementStack = new LinkedList();
-
-    private LinkedList<FieldValueMetaData> valueMetaDataStack = new LinkedList<>();
-
-    private TFieldIdEnum tFieldIdEnum;
+    private ObjectStack elementStack = new ObjectStack();
+    private ObjectStack<TFieldIdEnum> fieldStack = new ObjectStack<>();
+    private ObjectStack<FieldValueMetaData> valueMetaDataStack = new ObjectStack<>();
 
     private R result;
 
@@ -47,15 +36,17 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     @Override
     public void beginStruct(int size) throws IOException {
+
         try {
             if (stateStack.isEmpty()) {
                 TBase tBase = parentClass.newInstance();
-                addElement(STRUCT, tBase);
+                addElement(startStruct, tBase);
             } else {
                 FieldValueMetaData valueMetaData = getChildValueMetaData();
-                TBase child = ((StructMetaData) valueMetaData).getStructClass().newInstance();
-                saveValue(child, elementStack.peek());
-                addElement(STRUCT, child, valueMetaData);
+                checkType(valueMetaData, ThriftType.STRUCT);
+                TBase child = ObjectUtil.convertType(StructMetaData.class, valueMetaData)
+                        .getStructClass().newInstance();
+                addElement(startStruct, child, valueMetaData);
             }
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new IOException(ex);
@@ -68,19 +59,24 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     private void addElement(byte state, Object value, FieldValueMetaData fieldValueMetaData) {
         stateStack.push(state);
-        elementStack.addFirst(value);
-        valueMetaDataStack.addFirst(fieldValueMetaData);
+        elementStack.push(value);
+        valueMetaDataStack.push(fieldValueMetaData);
     }
 
     @Override
     public void endStruct() throws IOException {
-        checkState(STRUCT);
+        checkState(startStruct);
 
-        TBase tBase = (TBase) elementStack.pop();
+        TBase tBase = ObjectUtil.convertType(TBase.class, elementStack.peek());
+        checkRequiredFields(tBase);
+
         stateStack.pop();
+        elementStack.pop();
         valueMetaDataStack.pop();
 
-        checkRequiredFields(tBase);
+        if (!stateStack.isEmpty()) {
+            saveValue(tBase, elementStack.peek());
+        }
 
         result = (R) tBase;
     }
@@ -96,7 +92,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
             for (TFieldIdEnum field : tBase.getFields()) {
                 FieldMetaData metaData = fieldValueMetaDataMap.get(field);
                 if (metaData.requirementType == TFieldRequirementType.REQUIRED && !tBase.isSet(field)) {
-                    throw new BadFormatException(String.format("Field '%s' is required and must not be null", field.getFieldName()));
+                    throw new BadFormatException(String.format("field '%s' is required and must not be null", field.getFieldName()));
                 }
             }
         }
@@ -110,65 +106,66 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         switch (type) {
             case LIST:
                 List list = new ArrayList(size);
-                saveValue(list, elementStack.peek());
-                addElement(LIST, list, valueMetaData);
+                addElement(startList, list, valueMetaData);
                 break;
             case SET:
                 Set set = new HashSet(size);
-                saveValue(set, elementStack.peek());
-                addElement(SET, set, valueMetaData);
+                addElement(startList, set, valueMetaData);
                 break;
             default:
                 throw new BadFormatException(String.format("value expected '%s', actual collection", type));
         }
     }
 
-    private FieldValueMetaData getChildValueMetaData() {
+    private FieldValueMetaData getChildValueMetaData() throws IOException {
+        checkState(pointName, startList, startMapKey, startMapValue);
         FieldValueMetaData valueMetaData = valueMetaDataStack.peek();
         switch (stateStack.peek()) {
-            case STRUCT:
-                return TBaseUtil.getValueMetaData(tFieldIdEnum, (TBase) elementStack.peek());
-            case LIST:
-                return ((ListMetaData) valueMetaData).getElementMetaData();
-            case SET:
-                return ((SetMetaData) valueMetaData).getElementMetaData();
-            case KEY:
-                return ((MapMetaData) valueMetaData).getKeyMetaData();
-            case VALUE:
-                return ((MapMetaData) valueMetaData).getValueMetaData();
+            case pointName:
+                TBase tBase = ObjectUtil.convertType(TBase.class, elementStack.peek());
+                return TBaseUtil.getValueMetaData(fieldStack.peek(), tBase);
+            case startList:
+                CollectionMetaData collectionMetaData = ObjectUtil.convertType(CollectionMetaData.class, valueMetaData);
+                return collectionMetaData.getElementMetaData();
+            case startMapKey:
+                MapMetaData mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                return mapMetaData.getKeyMetaData();
+            case startMapValue:
+                mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                return mapMetaData.getValueMetaData();
             default:
-                return valueMetaData;
+                throw new BadFormatException(String.format("unknown state %d", stateStack.peek()));
         }
     }
 
     @Override
     public void endList() throws IOException {
-        checkState(LIST, SET);
+        checkState(startList);
         stateStack.pop();
-        elementStack.pop();
         valueMetaDataStack.pop();
+        saveValue(elementStack.pop(), elementStack.peek());
     }
 
     @Override
     public void beginMap(int size) throws IOException {
         FieldValueMetaData valueMetaData = getChildValueMetaData();
+        checkType(valueMetaData, ThriftType.MAP);
 
         Map map = new HashMap(size);
-        saveValue(map, elementStack.peek());
-        addElement(MAP, map, valueMetaData);
+        addElement(startMap, map, valueMetaData);
     }
 
     @Override
     public void endMap() throws IOException {
-        checkState(MAP);
+        checkState(startMap);
         stateStack.pop();
-        elementStack.pop();
         valueMetaDataStack.pop();
+        saveValue(elementStack.pop(), elementStack.peek());
     }
 
-    private void checkState(byte... requiredStates) throws IOException {
+    private void checkState(byte... requiredStates) throws BadFormatException {
         if (stateStack.isEmpty()) {
-            throw new BadFormatException("stack is empty");
+            throw new BadFormatException("state not found");
         }
 
         byte state = stateStack.peek();
@@ -180,49 +177,54 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         throw new BadFormatException(String.format("incorrect state %d, expected states: %s", state, Arrays.toString(requiredStates)));
     }
 
+    private void checkType(FieldValueMetaData valueMetaData, ThriftType actualType) throws BadFormatException {
+        ThriftType expectedType = ThriftType.findByMetaData(valueMetaData);
+        if (expectedType != actualType) {
+            throw new BadFormatException(String.format("incorrect type of value: expected '%s', actual '%s'", expectedType, actualType));
+        }
+    }
+
     @Override
     public void beginKey() throws IOException {
-        checkState(MAP);
-        stateStack.push(KEY);
+        checkState(startMap);
+        stateStack.push(startMapKey);
     }
 
     @Override
     public void endKey() throws IOException {
-        checkState(KEY);
+        checkState(endMapKey);
     }
 
     @Override
     public void beginValue() throws IOException {
-        checkState(KEY);
-        stateStack.push(VALUE);
+        checkState(endMapKey);
+        stateStack.push(startMapValue);
     }
 
     @Override
     public void endValue() throws IOException {
-        checkState(VALUE);
+        checkState(endMapValue);
         Object value = elementStack.pop();
         stateStack.pop();
 
-        checkState(KEY);
+        checkState(endMapKey);
         Object key = elementStack.pop();
         stateStack.pop();
 
-        checkState(MAP);
-        ((Map) elementStack.peek()).put(key, value);
+        checkState(startMap);
+        Map map = ObjectUtil.convertType(Map.class, elementStack.peek());
+        map.put(key, value);
     }
 
     @Override
     public void name(String name) throws IOException {
         Objects.requireNonNull(name, "name must not be null");
 
-        if (tFieldIdEnum != null) {
-            throw new BadFormatException("'name' have was caused");
-        }
-
-        checkState(STRUCT);
+        checkState(startStruct);
         TBase tBase = (TBase) elementStack.peek();
 
-        tFieldIdEnum = TBaseUtil.getField(name, tBase);
+        fieldStack.push(TBaseUtil.getField(name, tBase));
+        stateStack.push(pointName);
     }
 
     @Override
@@ -263,13 +265,16 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
         switch (type) {
             case BYTE:
-                value((byte) value, valueMetaData, ThriftType.BYTE);
+                byte byteValue = ObjectUtil.toByteExact(value);
+                value(byteValue, valueMetaData, ThriftType.BYTE);
                 break;
             case SHORT:
-                value((short) value, valueMetaData, ThriftType.SHORT);
+                short shortValue = ObjectUtil.toShortExact(value);
+                value(shortValue, valueMetaData, ThriftType.SHORT);
                 break;
             case INTEGER:
-                value((int) value, valueMetaData, ThriftType.INTEGER);
+                int intValue = ObjectUtil.toIntExact(value);
+                value(intValue, valueMetaData, ThriftType.INTEGER);
                 break;
             default:
                 value(value, valueMetaData, ThriftType.LONG);
@@ -283,27 +288,30 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     }
 
     private void value(Object value, FieldValueMetaData valueMetaData, ThriftType actualType) throws IOException {
-        ThriftType expectedType = ThriftType.findByMetaData(valueMetaData);
-        if (expectedType != actualType) {
-            throw new BadFormatException(String.format("incorrect type of value: expected '%s', actual '%s'", expectedType, actualType));
-        }
+        checkType(valueMetaData, actualType);
 
         saveValue(value, elementStack.peek());
     }
 
     private void saveValue(Object value, Object parent) throws IOException {
         switch (stateStack.peek()) {
-            case STRUCT:
-                ((TBase) parent).setFieldValue(tFieldIdEnum, value);
-                tFieldIdEnum = null;
+            case pointName:
+                TBase tBase = ObjectUtil.convertType(TBase.class, parent);
+                tBase.setFieldValue(fieldStack.pop(), value);
+                stateStack.pop();
                 break;
-            case LIST:
-            case SET:
-                ((Collection) parent).add(value);
+            case startList:
+                ObjectUtil.convertType(Collection.class, parent).add(value);
                 break;
-            case KEY:
-            case VALUE:
-                elementStack.addFirst(value);
+            case startMapKey:
+                elementStack.push(value);
+                stateStack.pop();
+                stateStack.push(endMapKey);
+                break;
+            case startMapValue:
+                elementStack.push(value);
+                stateStack.pop();
+                stateStack.push(endMapValue);
                 break;
         }
     }

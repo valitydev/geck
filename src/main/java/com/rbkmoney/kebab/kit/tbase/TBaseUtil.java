@@ -1,5 +1,6 @@
 package com.rbkmoney.kebab.kit.tbase;
 
+import com.rbkmoney.kebab.exception.BadFormatException;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
@@ -14,13 +15,13 @@ import java.util.Map;
  */
 public class TBaseUtil {
 
-    public static TFieldIdEnum getField(String name, TBase tBase) {
+    public static TFieldIdEnum getField(String name, TBase tBase) throws BadFormatException {
         for (TFieldIdEnum tFieldIdEnum : tBase.getFields()) {
             if (tFieldIdEnum.getFieldName().equals(name)) {
                 return tFieldIdEnum;
             }
         }
-        throw new IllegalStateException(String.format("Field '%s' not found", name));
+        throw new BadFormatException(String.format("Field '%s' not found", name));
     }
 
     public static FieldMetaData getMetaData(TFieldIdEnum tFieldIdEnum, TBase tBase) {

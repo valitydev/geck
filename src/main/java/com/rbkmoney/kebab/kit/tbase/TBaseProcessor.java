@@ -6,10 +6,13 @@ import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
 import org.apache.thrift.TUnion;
-import org.apache.thrift.meta_data.*;
+import org.apache.thrift.meta_data.CollectionMetaData;
+import org.apache.thrift.meta_data.FieldMetaData;
+import org.apache.thrift.meta_data.FieldValueMetaData;
+import org.apache.thrift.meta_data.MapMetaData;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,7 +69,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
 
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
         if (fieldMetaData.requirementType == TFieldRequirementType.REQUIRED) {
-            throw new IllegalStateException(String.format("Field '%s' is required and must not be null", tFieldIdEnum.getFieldName()));
+            throw new IllegalStateException(String.format("field '%s' is required and must not be null", tFieldIdEnum.getFieldName()));
         }
     }
 
@@ -104,11 +107,9 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                 case BINARY:
                     handler.value((byte[]) object);
                     break;
-                case LIST:
-                    processList((List) object, (ListMetaData) fieldValueMetaData, handler);
-                    break;
                 case SET:
-                    processSet((Set) object, (SetMetaData) fieldValueMetaData, handler);
+                case LIST:
+                    processList((Collection) object, (CollectionMetaData) fieldValueMetaData, handler);
                     break;
                 case MAP:
                     processMap((Map) object, (MapMetaData) fieldValueMetaData, handler);
@@ -122,17 +123,9 @@ public class TBaseProcessor implements StructProcessor<TBase> {
         }
     }
 
-    private void processSet(Set objectSet, SetMetaData metaData, StructHandler handler) throws IOException {
-        handler.beginList(objectSet.size());
-        for (Object object : objectSet) {
-            process(object, metaData.getElementMetaData(), handler);
-        }
-        handler.endList();
-    }
-
-    private void processList(List objectList, ListMetaData metaData, StructHandler handler) throws IOException {
-        handler.beginList(objectList.size());
-        for (Object object : objectList) {
+    private void processList(Collection collection, CollectionMetaData metaData, StructHandler handler) throws IOException {
+        handler.beginList(collection.size());
+        for (Object object : collection) {
             process(object, metaData.getElementMetaData(), handler);
         }
         handler.endList();

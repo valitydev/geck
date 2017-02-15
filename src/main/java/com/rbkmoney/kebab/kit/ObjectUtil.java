@@ -13,4 +13,25 @@ public class ObjectUtil {
             throw new BadFormatException(String.format("Wrong type: %s, expected: %s", val.getClass().getName(), tClass.getName()));
         }
     }
+
+    public static byte toByteExact(long value) {
+        if ((byte) value != value) {
+            throw new IllegalArgumentException("byte overflow");
+        }
+        return (byte) value;
+    }
+
+    public static short toShortExact(long value) {
+        if ((short) value != value) {
+            throw new IllegalArgumentException("short overflow");
+        }
+        return (short) value;
+    }
+
+    public static int toIntExact(long value) {
+        if ((int) value != value) {
+            throw new IllegalArgumentException("integer overflow");
+        }
+        return (int) value;
+    }
 }

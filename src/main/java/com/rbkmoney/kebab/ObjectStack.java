@@ -3,30 +3,30 @@ package com.rbkmoney.kebab;
 /**
  * Created by vpankrashkin on 31.01.17.
  */
-public final class ObjectStack {
+public final class ObjectStack<E> {
     private static final int INITIAL_CAPACITY = 16;
     private Object[] stack;
     private int size;
     private final boolean defaultValSet;
-    private final Object defaultVal;
+    private final E defaultVal;
 
     public ObjectStack() {
         this(INITIAL_CAPACITY);
     }
 
-    public ObjectStack(final Object defaultVal) {
+    public ObjectStack(final E defaultVal) {
         this(true, defaultVal, INITIAL_CAPACITY);
     }
 
     public ObjectStack(final int initialCapacity) {
-        this(false, false, initialCapacity);
+        this(false, null, initialCapacity);
     }
 
-    public ObjectStack(final Object defaultVal, final int initialCapacity) {
+    public ObjectStack(final E defaultVal, final int initialCapacity) {
         this(true, defaultVal, initialCapacity);
     }
 
-    private ObjectStack(final boolean defaultValSet, final Object defaultVal, final int initialCapacity) {
+    private ObjectStack(final boolean defaultValSet, final E defaultVal, final int initialCapacity) {
         if (initialCapacity <= 0) {
             throw new IllegalArgumentException("Size must be > 0");
         }
@@ -36,7 +36,7 @@ public final class ObjectStack {
         this.defaultVal = defaultVal;
     }
 
-    public void push(final Object item) {
+    public void push(final E item) {
         if (size == stack.length) {
             Object[] newStack = new Object[size << 1];
             for (int i = 0; i < stack.length; ++i) {
@@ -48,7 +48,7 @@ public final class ObjectStack {
     }
 
 
-    public Object pop() {
+    public E pop() {
         if (size == 0) {
             if (defaultValSet) {
                 return defaultVal;
@@ -59,10 +59,10 @@ public final class ObjectStack {
         int newSize = --size;
         Object val = stack[newSize];
         stack[newSize] = null;
-        return val;
+        return (E) val;
     }
 
-    public Object peek() {
+    public E peek() {
         if (size == 0) {
             if (defaultValSet) {
                 return defaultVal;
@@ -70,7 +70,7 @@ public final class ObjectStack {
                 throw new RuntimeException("No more elements");
             }
         }
-        return stack[size - 1];
+        return (E) stack[size - 1];
     }
 
     public int size() {
