@@ -22,7 +22,7 @@ public class Kebab {
             StringWriter writer = new StringWriter();
             TBaseProcessor structProcessor = new TBaseProcessor();
             JsonHandler jsonHandler = new JsonHandler(writer);
-            return  structProcessor.process(src, jsonHandler);
+            return  structProcessor.process(src, jsonHandler).toString();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
