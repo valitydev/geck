@@ -96,6 +96,16 @@ public abstract class MsgPackHandler<R> implements StructHandler<R> {
     }
 
     @Override
+    public void beginSet(int size) throws IOException {
+
+    }
+
+    @Override
+    public void endSet() throws IOException {
+
+    }
+
+    @Override
     public void beginMap(int size) throws IOException {
         if (size >= 0) {
             msgPacker.packMapHeader(size);

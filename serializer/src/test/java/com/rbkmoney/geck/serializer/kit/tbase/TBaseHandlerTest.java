@@ -1,8 +1,9 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
 import com.rbkmoney.geck.serializer.kit.EventFlags;
-import com.rbkmoney.geck.serializer.test.MapTest;
 import com.rbkmoney.geck.serializer.test.HandlerTest;
+import com.rbkmoney.geck.serializer.test.MapTest;
+import com.rbkmoney.geck.serializer.test.SetTest;
 import com.rbkmoney.geck.serializer.test.TUnionTest;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class TBaseHandlerTest {
 
     @Test
     public void nameAndValueTest() throws IOException {
-        TBaseHandler handler = new TBaseHandler(HandlerTest.class);
+        TBaseHandler handler = new TBaseHandler<>(HandlerTest.class);
         handler.beginStruct(3);
 
         // when method 'name' has already been called
@@ -68,13 +69,65 @@ public class TBaseHandlerTest {
         assertThatThrownBy(() -> handler.beginStruct(2))
                 .hasMessage("incorrect type of value: expected 'STRING', actual 'STRUCT'");
         assertThatThrownBy(() -> handler.beginList(3))
-                .hasMessage("value expected 'STRING', actual collection");
+                .hasMessage("value expected 'STRING', actual 'LIST'");
         assertThatThrownBy(() -> handler.beginMap(4))
                 .hasMessage("incorrect type of value: expected 'STRING', actual 'MAP'");
 
         handler.value("kek");
 
         handler.endList();
+
+        handler.endStruct();
+
+        handler.getResult();
+    }
+
+    @Test
+    public void setAndNumbersTest() throws IOException {
+        TBaseHandler handler = new TBaseHandler<>(SetTest.class);
+
+        handler.beginStruct(1);
+
+        handler.name("idsSet");
+
+        assertThatThrownBy(() -> handler.beginList(2))
+                .hasMessage("value expected 'SET', actual 'LIST'");
+
+        handler.beginSet(2);
+
+        handler.beginStruct(5);
+
+        handler.name("micro_id");
+
+        assertThatThrownBy(() -> handler.value(Short.MIN_VALUE))
+                .hasMessage("byte overflow");
+
+        handler.value(Byte.MAX_VALUE);
+
+        handler.name("mini_id");
+
+        assertThatThrownBy(() -> handler.value(Short.MAX_VALUE + 1))
+                .hasMessage("short overflow");
+
+        handler.value(Short.MIN_VALUE);
+
+        handler.name("id");
+
+        assertThatThrownBy(() -> handler.value(Long.MIN_VALUE))
+                .hasMessage("integer overflow");
+
+        handler.value(Integer.MAX_VALUE);
+
+        handler.name("big_id");
+
+        handler.value(Long.MIN_VALUE);
+
+        handler.endStruct();
+
+        assertThatThrownBy(() -> handler.endList())
+                .hasMessageContaining("incorrect state " + EventFlags.startSet);
+
+        handler.endSet();
 
         handler.endStruct();
 

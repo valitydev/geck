@@ -15,6 +15,10 @@ public interface StructHandler<R> {
 
     void endList() throws IOException;
 
+    void beginSet(int size) throws IOException;
+
+    void endSet() throws IOException;
+
     void beginMap(int size) throws IOException;
 
     void endMap() throws IOException;

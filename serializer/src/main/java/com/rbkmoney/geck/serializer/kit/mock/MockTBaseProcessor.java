@@ -1,6 +1,8 @@
 package com.rbkmoney.geck.serializer.kit.mock;
 
 import com.rbkmoney.geck.serializer.StructHandler;
+import com.rbkmoney.geck.serializer.kit.ObjectUtil;
+import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.ThriftType;
 import org.apache.thrift.*;
 import org.apache.thrift.meta_data.*;
@@ -11,7 +13,7 @@ import java.util.Map;
 /**
  * Created by tolkonepiu on 11/02/2017.
  */
-public class MockTBaseProcessor extends com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor {
+public class MockTBaseProcessor extends TBaseProcessor {
 
     private final MockMode mode;
 
@@ -82,13 +84,16 @@ public class MockTBaseProcessor extends com.rbkmoney.geck.serializer.kit.tbase.T
                 handler.value(RandomUtil.randomByteArray(maxContainerSize));
                 break;
             case LIST:
-                processList(((ListMetaData) valueMetaData).getElementMetaData(), handler);
+                ListMetaData listMetaData = ObjectUtil.convertType(ListMetaData.class, valueMetaData);
+                processList(listMetaData, handler);
                 break;
             case SET:
-                processList(((SetMetaData) valueMetaData).getElementMetaData(), handler);
+                SetMetaData setMetaData = ObjectUtil.convertType(SetMetaData.class, valueMetaData);
+                processSet(setMetaData, handler);
                 break;
             case MAP:
-                processMap((MapMetaData) valueMetaData, handler);
+                MapMetaData mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                processMap(mapMetaData, handler);
                 break;
             case ENUM:
                 Class<? extends TEnum> tEnumClass = ((EnumMetaData) valueMetaData).getEnumClass();
@@ -108,13 +113,26 @@ public class MockTBaseProcessor extends com.rbkmoney.geck.serializer.kit.tbase.T
         }
     }
 
-    private void processList(FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
+    private void processList(ListMetaData listMetaData, StructHandler handler) throws IOException {
+        FieldValueMetaData valueMetaData = listMetaData.getElementMetaData();
         int size = RandomUtil.randomInt(maxContainerSize);
         handler.beginList(size);
+        processCollection(size, valueMetaData, handler);
+        handler.endList();
+    }
+
+    private void processSet(SetMetaData setMetaData, StructHandler handler) throws IOException {
+        FieldValueMetaData valueMetaData = setMetaData.getElementMetaData();
+        int size = RandomUtil.randomInt(maxContainerSize);
+        handler.beginSet(size);
+        processCollection(size, valueMetaData, handler);
+        handler.endSet();
+    }
+
+    private void processCollection(int size, FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
         for (int i = 0; i < size; i++) {
             processFieldValue(valueMetaData, handler);
         }
-        handler.endList();
     }
 
     private void processMap(MapMetaData mapMetaData, StructHandler handler) throws IOException {

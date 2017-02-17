@@ -2,17 +2,16 @@ package com.rbkmoney.geck.serializer.kit.tbase;
 
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
+import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
 import org.apache.thrift.TUnion;
-import org.apache.thrift.meta_data.CollectionMetaData;
-import org.apache.thrift.meta_data.FieldMetaData;
-import org.apache.thrift.meta_data.FieldValueMetaData;
-import org.apache.thrift.meta_data.MapMetaData;
+import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -107,9 +106,15 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                 case BINARY:
                     handler.value((byte[]) object);
                     break;
-                case SET:
                 case LIST:
-                    processList((Collection) object, (CollectionMetaData) fieldValueMetaData, handler);
+                    List list = ObjectUtil.convertType(List.class, object);
+                    ListMetaData listMetaData = ObjectUtil.convertType(ListMetaData.class, fieldValueMetaData);
+                    processList(list, listMetaData, handler);
+                    break;
+                case SET:
+                    Set set = ObjectUtil.convertType(Set.class, object);
+                    SetMetaData setMetaData = ObjectUtil.convertType(SetMetaData.class, fieldValueMetaData);
+                    processSet(set, setMetaData, handler);
                     break;
                 case MAP:
                     processMap((Map) object, (MapMetaData) fieldValueMetaData, handler);
@@ -123,12 +128,22 @@ public class TBaseProcessor implements StructProcessor<TBase> {
         }
     }
 
-    private void processList(Collection collection, CollectionMetaData metaData, StructHandler handler) throws IOException {
-        handler.beginList(collection.size());
-        for (Object object : collection) {
-            process(object, metaData.getElementMetaData(), handler);
-        }
+    private void processList(List list, ListMetaData listMetaData, StructHandler handler) throws IOException {
+        handler.beginList(list.size());
+        processCollection(list, listMetaData.getElementMetaData(), handler);
         handler.endList();
+    }
+
+    private void processSet(Set set, SetMetaData setMetaData, StructHandler handler) throws IOException {
+        handler.beginList(set.size());
+        processCollection(set, setMetaData.getElementMetaData(), handler);
+        handler.endList();
+    }
+
+    private void processCollection(Collection collection, FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
+        for (Object object : collection) {
+            process(object, valueMetaData, handler);
+        }
     }
 
     private void processMap(Map objectMap, MapMetaData metaData, StructHandler handler) throws IOException {

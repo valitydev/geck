@@ -29,6 +29,16 @@ public class HandlerStub implements StructHandler<byte[]> {
     }
 
     @Override
+    public void beginSet(int size) throws IOException {
+
+    }
+
+    @Override
+    public void endSet() throws IOException {
+
+    }
+
+    @Override
     public void beginMap(int size) throws IOException {
 
     }

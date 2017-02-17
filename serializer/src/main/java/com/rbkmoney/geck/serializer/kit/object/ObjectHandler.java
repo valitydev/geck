@@ -6,6 +6,7 @@ import com.rbkmoney.geck.serializer.ObjectStack;
 import com.rbkmoney.geck.serializer.StructHandler;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
@@ -40,6 +41,16 @@ public class ObjectHandler implements StructHandler<Object> {
     public void endList() throws IOException {
         checkState(startList, state.pop());
         context.pop();
+    }
+
+    @Override
+    public void beginSet(int size) throws IOException {
+
+    }
+
+    @Override
+    public void endSet() throws IOException {
+
     }
 
     @Override
@@ -118,7 +129,7 @@ public class ObjectHandler implements StructHandler<Object> {
 
     @Override
     public void value(byte[] value) throws IOException {
-        internValue(value, nop, false);
+        internValue(ByteBuffer.wrap(value), nop, false);
     }
 
     @Override

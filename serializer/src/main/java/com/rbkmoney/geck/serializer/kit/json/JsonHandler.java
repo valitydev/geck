@@ -43,11 +43,15 @@ public class JsonHandler implements StructHandler<Writer> {
 
     static final byte NONEMPTY_LIST = 4;
 
-    static final byte EMPTY_MAP = 5;
+    static final byte EMPTY_SET = 5;
 
-    static final byte NONEMPTY_MAP = 6;
+    static final byte NONEMPTY_SET = 6;
 
-    static final byte JSON_NAME = 7;
+    static final byte EMPTY_MAP = 7;
+
+    static final byte NONEMPTY_MAP = 8;
+
+    static final byte JSON_NAME = 9;
 
     private final Writer out;
 
@@ -88,15 +92,18 @@ public class JsonHandler implements StructHandler<Writer> {
                 stack.push(NONEMPTY_LIST);
                 newline();
                 break;
+            case EMPTY_SET:
+                stack.pop();
+                stack.push(NONEMPTY_SET);
+                newline();
+                break;
             case EMPTY_MAP:
                 stack.pop();
                 stack.push(NONEMPTY_MAP);
                 newline();
                 break;
             case NONEMPTY_LIST:
-                out.append(',');
-                newline();
-                break;
+            case NONEMPTY_SET:
             case NONEMPTY_MAP:
                 out.append(',');
                 newline();
@@ -174,6 +181,16 @@ public class JsonHandler implements StructHandler<Writer> {
     @Override
     public void endList() throws IOException {
         writeEnd(EMPTY_LIST, NONEMPTY_LIST, ']');
+    }
+
+    @Override
+    public void beginSet(int size) throws IOException {
+        writeBegin(EMPTY_SET, '[');
+    }
+
+    @Override
+    public void endSet() throws IOException {
+        writeEnd(EMPTY_SET, NONEMPTY_SET, ']');
     }
 
     @Override

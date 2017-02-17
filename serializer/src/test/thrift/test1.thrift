@@ -16,7 +16,7 @@ struct TestObject {
 
 struct SetTest {
     1: required set<Ids> idsSet
-    2: required set<Status> statusSet
+    2: optional set<Status> statusSet
 }
 
 struct MapTest {
@@ -33,6 +33,10 @@ struct HandlerTest {
 
 struct TUnionTest {
     1: required Status status
+}
+
+struct BinaryTest {
+    1: required binary data
 }
 
 union Status {

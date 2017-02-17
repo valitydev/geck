@@ -6,6 +6,7 @@ import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import com.rbkmoney.geck.serializer.StructProcessor;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -92,8 +93,8 @@ public class ObjectProcessor implements StructProcessor<Object> {
             }
         } else if (value instanceof Boolean) {
             handler.value(((Boolean)value).booleanValue());
-        } else if (value instanceof byte[]) {
-            handler.value((byte[]) value);
+        } else if (value instanceof ByteBuffer) {
+            handler.value(((ByteBuffer) value).array());
         } else if (value == null) {
             handler.nullValue();
         } else {

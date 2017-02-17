@@ -1,9 +1,9 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
-import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.ByteStack;
 import com.rbkmoney.geck.serializer.ObjectStack;
 import com.rbkmoney.geck.serializer.StructHandler;
+import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
@@ -98,33 +98,15 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         }
     }
 
-    @Override
-    public void beginList(int size) throws IOException {
-        FieldValueMetaData valueMetaData = getChildValueMetaData();
-        ThriftType type = ThriftType.findByMetaData(valueMetaData);
-
-        switch (type) {
-            case LIST:
-                List list = new ArrayList(size);
-                addElement(startList, list, valueMetaData);
-                break;
-            case SET:
-                Set set = new HashSet(size);
-                addElement(startList, set, valueMetaData);
-                break;
-            default:
-                throw new BadFormatException(String.format("value expected '%s', actual collection", type));
-        }
-    }
-
     private FieldValueMetaData getChildValueMetaData() throws IOException {
-        checkState(pointName, startList, startMapKey, startMapValue);
+        checkState(pointName, startList, startSet, startMapKey, startMapValue);
         FieldValueMetaData valueMetaData = valueMetaDataStack.peek();
         switch (stateStack.peek()) {
             case pointName:
                 TBase tBase = ObjectUtil.convertType(TBase.class, elementStack.peek());
                 return TBaseUtil.getValueMetaData(fieldStack.peek(), tBase);
             case startList:
+            case startSet:
                 CollectionMetaData collectionMetaData = ObjectUtil.convertType(CollectionMetaData.class, valueMetaData);
                 return collectionMetaData.getElementMetaData();
             case startMapKey:
@@ -139,8 +121,37 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     }
 
     @Override
+    public void beginList(int size) throws IOException {
+        startCollection(startList, ThriftType.LIST, new ArrayList(size));
+    }
+
+    @Override
     public void endList() throws IOException {
-        checkState(startList);
+        endCollection(startList);
+    }
+
+    @Override
+    public void beginSet(int size) throws IOException {
+        startCollection(startSet, ThriftType.SET, new HashSet(size));
+    }
+
+    @Override
+    public void endSet() throws IOException {
+        endCollection(startSet);
+    }
+
+    private void startCollection(byte state, ThriftType expectedType, Collection collection) throws IOException {
+        FieldValueMetaData valueMetaData = getChildValueMetaData();
+        ThriftType type = ThriftType.findByMetaData(valueMetaData);
+        if (type == expectedType) {
+            addElement(state, collection, valueMetaData);
+        } else {
+            throw new BadFormatException(String.format("value expected '%s', actual '%s'", type, expectedType));
+        }
+    }
+
+    private void endCollection(byte state) throws IOException {
+        checkState(state);
         stateStack.pop();
         valueMetaDataStack.pop();
         saveValue(elementStack.pop(), elementStack.peek());
@@ -237,14 +248,12 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         FieldValueMetaData valueMetaData = getChildValueMetaData();
         ThriftType type = ThriftType.findByMetaData(valueMetaData);
 
-        switch (type) {
-            case STRING:
-                value(value, ThriftType.STRING);
-                break;
-            case ENUM:
-                Class enumClass = ((EnumMetaData) valueMetaData).getEnumClass();
-                value(Enum.valueOf(enumClass, value), ThriftType.ENUM);
-                break;
+        if (type == ThriftType.ENUM) {
+            Class enumClass = ((EnumMetaData) valueMetaData).getEnumClass();
+            value(Enum.valueOf(enumClass, value), ThriftType.ENUM);
+        } else {
+            value(value, ThriftType.STRING);
+
         }
     }
 
@@ -301,6 +310,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
                 stateStack.pop();
                 break;
             case startList:
+            case startSet:
                 ObjectUtil.convertType(Collection.class, parent).add(value);
                 break;
             case startMapKey:
@@ -313,6 +323,8 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
                 stateStack.pop();
                 stateStack.push(endMapValue);
                 break;
+            default:
+                throw new BadFormatException(String.format("cannot save value, unexpected state %d", stateStack.peek()));
         }
     }
 
