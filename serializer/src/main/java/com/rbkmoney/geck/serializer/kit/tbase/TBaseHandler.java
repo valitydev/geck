@@ -158,7 +158,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         FieldValueMetaData valueMetaData = getChildValueMetaData();
         checkType(valueMetaData, ThriftType.MAP);
 
-        Map map = new HashMap(size);
+        Map map = new LinkedHashMap(size);
         addElement(startMap, map, valueMetaData);
     }
 

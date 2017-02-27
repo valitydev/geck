@@ -123,8 +123,17 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                 handler.value(unpacker.readPayload(unpacker.unpackBinaryHeader()));
                 break;
             case EXTENSION:
-                ExtensionTypeHeader typeHeader = getExtensionTypeHeader(startStruct, unpacker.unpackExtensionTypeHeader());
-                processStruct(unpacker, handler, typeHeader);
+                ExtensionTypeHeader typeHeader = unpacker.unpackExtensionTypeHeader();
+                switch (typeHeader.getType()) {
+                    case startStruct:
+                        processStruct(unpacker, handler, typeHeader);
+                        break;
+                    case startSet:
+                        processSet(unpacker, handler, typeHeader);
+                        break;
+                    default:
+                        getExtensionTypeHeader(startSet, typeHeader);//err
+                }
                 break;
             default:
                 throw new BadFormatException("Unexpected format type: " + format);
@@ -152,6 +161,15 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
             handler.endValue();
         }
         handler.endMap();
+    }
+
+    private void processSet(MessageUnpacker unpacker, StructHandler handler, ExtensionTypeHeader typeHeader) throws IOException {
+        int length = typeHeader.getLength();
+        handler.beginSet(length);
+        for (int i = 0; i < length; ++i) {
+            processValue(unpacker, handler, unpacker.getNextFormat());
+        }
+        handler.endSet();
     }
 
     private String putInDictionary(int key, byte[] data) throws BadFormatException {

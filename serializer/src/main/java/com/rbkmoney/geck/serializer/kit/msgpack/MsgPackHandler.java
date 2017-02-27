@@ -97,7 +97,7 @@ public abstract class MsgPackHandler<R> implements StructHandler<R> {
 
     @Override
     public void beginSet(int size) throws IOException {
-
+        msgPacker.packExtensionTypeHeader(EventFlags.startSet, size);
     }
 
     @Override

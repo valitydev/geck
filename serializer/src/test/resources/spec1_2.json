@@ -2,15 +2,16 @@
   {
     "operation": "shift",
     "spec": {
-      "rating*map": {
+      "rating1": {
         "primary": {
-          "values": "Rating\\@map"
+          "values": "Rating"
         },
         "*": {
           "values": "SecondaryRatings.&1.Value",
           "$": "SecondaryRatings.&.Id"
         }
-      }
+      },
+      "*": "&"
     }
   },
   {

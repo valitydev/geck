@@ -21,7 +21,7 @@ public final class StringUtil {
         for (int i = 0; i < str.length(); ++i) {
             char c = str.charAt(i);
             if ((c & LOW_ASCII_FLAG) != 0) {
-                throw new BadFormatException("Only ASCII symbols're expected");
+                throw new BadFormatException("Only ASCII symbols're expected: "+ c + " in: "+str);
             }
 
             if (c < 0x5F || c > 0x7D) {
@@ -67,7 +67,7 @@ public final class StringUtil {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if ((c & LOW_ASCII_FLAG ) != 0) {
-                throw new BadFormatException("Only ASCII symbols're expected");
+                throw new BadFormatException("Only ASCII symbols're expected: "+c + " in: "+str);
             }
             bytes[i] = (byte) c;
         }

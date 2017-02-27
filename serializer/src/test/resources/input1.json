@@ -1,10 +1,18 @@
 {
-  "rating": {
+  "rating@map": {
     "primary": {
-      "values": 3
+      "values": [3,4]
     },
     "quality": {
       "values": 3
+    }
+  },
+  "rating2": {
+    "primary": {
+      "values": 30
+    },
+    "quality": {
+      "values": 30
     }
   }
 }

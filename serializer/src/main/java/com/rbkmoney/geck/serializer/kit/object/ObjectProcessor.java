@@ -1,16 +1,17 @@
 package com.rbkmoney.geck.serializer.kit.object;
 
 import com.rbkmoney.geck.serializer.StructHandler;
+import com.rbkmoney.geck.serializer.StructProcessor;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.kit.ObjectUtil;
-import com.rbkmoney.geck.serializer.StructProcessor;
+import com.rbkmoney.geck.serializer.kit.StructType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.rbkmoney.geck.serializer.kit.ObjectUtil.convertType;
+import static com.rbkmoney.geck.serializer.kit.object.ObjectHandlerConstants.TYPE_DELIMITER;
 
 /**
  * Created by vpankrashkin on 10.02.17.
@@ -23,7 +24,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
     }
 
     private void processStart(Object value, StructHandler handler) throws IOException {
-        processStruct(ObjectUtil.convertType(Map.class, value), handler);
+        processStruct(convertType(Map.class, value), handler);
     }
 
     private void processStruct(Map map, StructHandler handler) throws IOException {
@@ -31,17 +32,14 @@ public class ObjectProcessor implements StructProcessor<Object> {
         Set<Map.Entry> entries = map.entrySet();
         for (Map.Entry entry: entries) {
             String name = String.valueOf(entry.getKey());
-            boolean isMap = isMap(name);
-            name = unescapeName(name, isMap);
+            StructType type = getType(name);
+            name = clearType(name);
             handler.name(name);
-            if (isMap) {
-                processMap(ObjectUtil.convertType(List.class, entry.getValue()), true, handler);
-            } else {
-                processValue(entry.getValue(), handler, false);
-            }
+            processValue(entry.getValue(), type, true, handler);
         }
         handler.endStruct();
     }
+
 
     private void processMap(List mapList, boolean named, StructHandler handler) throws IOException {
         handler.beginMap(mapList.size());
@@ -49,17 +47,16 @@ public class ObjectProcessor implements StructProcessor<Object> {
         if (!named) {
             assert it.hasNext();
             Object mapSign = it.next();
-            assert isMap(String.valueOf(mapSign));
+            assert getType(String.valueOf(mapSign)) == StructType.MAP;
         }
         for (Object entry; it.hasNext();) {
             entry = it.next();
-            Map mapEntry = ObjectUtil.convertType(Map.class, entry);
-
+            Map mapEntry = convertType(Map.class, entry);
             handler.beginKey();
-            processValue(mapEntry.get(ObjectHandlerConstants.MAP_KEY), handler, true);
+            processValue(mapEntry.get(ObjectHandlerConstants.MAP_KEY), StructType.OTHER, false, handler);
             handler.endKey();
             handler.beginValue();
-            processValue(mapEntry.get(ObjectHandlerConstants.MAP_VALUE), handler, true);
+            processValue(mapEntry.get(ObjectHandlerConstants.MAP_VALUE), StructType.OTHER, false, handler);
             handler.endValue();
         }
         handler.endMap();
@@ -68,79 +65,110 @@ public class ObjectProcessor implements StructProcessor<Object> {
     private void processList(List list, StructHandler handler) throws IOException {
         handler.beginList(list.size());
         for (Object val: list) {
-            processValue(val, handler, true);
+            processValue(val, StructType.OTHER, false, handler);
         }
         handler.endList();
     }
 
-    private void processValue(Object value, StructHandler handler, boolean checkMap) throws IOException {
-        if (value instanceof Map) {
-            processStruct((Map) value, handler);
-        } else if (value instanceof List) {
-            List list = (List) value;
-            if (checkMap && list.size() > 0 && isMap(String.valueOf(list.get(0)))) {
-                processMap(list, false, handler);
-            } else {
-                processList(list, handler);
-            }
-        } else if (value instanceof String) {
-            handler.value((String) value);
-        } else if (value instanceof Number) {
-            if (value instanceof Double || value instanceof Float) {
-                handler.value(((Number)value).doubleValue());
-            } else {
-                handler.value(((Number)value).longValue());
-            }
-        } else if (value instanceof Boolean) {
-            handler.value(((Boolean)value).booleanValue());
-        } else if (value instanceof ByteBuffer) {
-            handler.value(((ByteBuffer) value).array());
-        } else if (value == null) {
-            handler.nullValue();
-        } else {
-            throw new BadFormatException("Unrecognised value:"+value);
+    private void processSet(Collection set, boolean named, StructHandler handler) throws IOException {
+        handler.beginSet(set.size());
+        for (Object val: set) {
+            processValue(val, StructType.OTHER, false, handler);
         }
+        handler.endSet();
     }
 
-
-    private boolean isMap(String name) {
-        if (name != null && name.endsWith(ObjectHandlerConstants.MAP_MARK)) {
-            if (name.length() == ObjectHandlerConstants.MAP_MARK.length()) {
-                return true;
-            } else {
-                boolean escaped = false;
-                for (int i = name.length() - ObjectHandlerConstants.MAP_MARK.length() - 1; i >= 0; --i) {
-                   if (name.charAt(i) == ObjectHandlerConstants.ESCAPE_CHAR) {
-                       escaped ^= true;
-                   } else {
-                       break;
-                   }
+    private void processValue(Object value, StructType type, boolean named, StructHandler handler) throws IOException {
+        switch (type) {
+            case MAP:
+                processMap(convertType(List.class, value), named, handler);
+                break;
+            case SET:
+                processSet(convertType(Collection.class, value), named, handler);
+            case OTHER:
+                if (value instanceof Map) {
+                    processStruct((Map) value, handler);
+                } else if (value instanceof Set) {
+                    processSet((Collection) value, named, handler);
+                } else if (value instanceof List) {
+                    List list = (List) value;
+                    if (named) {
+                        processList(list, handler);
+                    } else {
+                        if (list.size() > 0) {
+                            StructType lType =  getType(String.valueOf(list.get(0)));
+                            switch (lType) {
+                                case OTHER:
+                                    processList(list, handler);
+                                    break;
+                                default:
+                                    processValue(list, lType, named, handler);
+                            }
+                        } else {
+                            processList(list, handler);
+                        }
+                    }
+                } else if (value instanceof String) {
+                    handler.value(unescapeString((String) value));
+                } else if (value instanceof Number) {
+                    if (value instanceof Double || value instanceof Float) {
+                        handler.value(((Number)value).doubleValue());
+                    } else {
+                        handler.value(((Number)value).longValue());
+                    }
+                } else if (value instanceof Boolean) {
+                    handler.value(((Boolean)value).booleanValue());
+                } else if (value instanceof ByteBuffer) {
+                    handler.value(((ByteBuffer) value).array());
+                } else if (value == null) {
+                    handler.nullValue();
+                } else {
+                    throw new BadFormatException("Unrecognised value:"+value);
                 }
-                return !escaped;
-            }
+                break;
+                default:
+                    throw new BadFormatException("Unrecognised type:"+type);
         }
-        return false;
     }
 
-    private String unescapeName(String name, boolean isMap) {
+
+    private StructType getType(String name) {
+        int idx = name.indexOf(TYPE_DELIMITER);
+        if (idx < 0) {
+            return StructType.OTHER;
+        } else {
+            return StructType.valueOfKey(name.substring(idx+1, name.length()));
+        }
+    }
+
+    private String clearType(String name) {
+        int idx = name.indexOf(TYPE_DELIMITER);
+        if (idx < 0) {
+            return name;
+        } else {
+            return name.substring(0, idx);
+        }
+    }
+
+    private String unescapeString(String name) {
         int i = 0;
-        int usedLength = name.length() - (isMap ? ObjectHandlerConstants.MAP_MARK.length() : 0);
-        for (; i < usedLength; ++i) {
+        for (; i < name.length(); ++i) {
             if (name.charAt(i) == ObjectHandlerConstants.ESCAPE_CHAR) {
                 break;
             }
         }
 
-        if (i < usedLength) {
-            StringBuilder sb = new StringBuilder(usedLength);
+        if (i < name.length()) {
+            StringBuilder sb = new StringBuilder(name.length());
             sb.append(name, 0, i);
             boolean escaped = false;
-            for (;i < usedLength; ++i) {
+            for (;i < name.length(); ++i) {
                 char c = name.charAt(i);
-                if (c == ObjectHandlerConstants.ESCAPE_CHAR) {
-                    if ((escaped ^= true)) {
-                        sb.append(ObjectHandlerConstants.ESCAPE_CHAR);
-                    }
+                if (escaped) {
+                    sb.append(c);
+                    escaped = false;
+                } else if (c == ObjectHandlerConstants.ESCAPE_CHAR) {
+                    escaped = true;
                 } else {
                     escaped = false;
                     sb.append(c);
@@ -148,7 +176,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
             }
             return sb.toString();
         } else {
-            return isMap ? name.substring(0, usedLength) : name;
+            return name;
         }
     }
 }
