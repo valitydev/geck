@@ -69,7 +69,7 @@ public class TBaseHandlerTest {
         assertThatThrownBy(() -> handler.beginStruct(2))
                 .hasMessage("incorrect type of value: expected 'STRING', actual 'STRUCT'");
         assertThatThrownBy(() -> handler.beginList(3))
-                .hasMessage("value expected 'STRING', actual 'LIST'");
+                .hasMessage("incorrect type of value: expected 'STRING', actual 'LIST'");
         assertThatThrownBy(() -> handler.beginMap(4))
                 .hasMessage("incorrect type of value: expected 'STRING', actual 'MAP'");
 
@@ -91,7 +91,7 @@ public class TBaseHandlerTest {
         handler.name("idsSet");
 
         assertThatThrownBy(() -> handler.beginList(2))
-                .hasMessage("value expected 'SET', actual 'LIST'");
+                .hasMessage("incorrect type of value: expected 'SET', actual 'LIST'");
 
         handler.beginSet(2);
 

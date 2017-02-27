@@ -140,14 +140,10 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         endCollection(startSet);
     }
 
-    private void startCollection(byte state, ThriftType expectedType, Collection collection) throws IOException {
+    private void startCollection(byte state, ThriftType actualType, Collection collection) throws IOException {
         FieldValueMetaData valueMetaData = getChildValueMetaData();
-        ThriftType type = ThriftType.findByMetaData(valueMetaData);
-        if (type == expectedType) {
-            addElement(state, collection, valueMetaData);
-        } else {
-            throw new BadFormatException(String.format("value expected '%s', actual '%s'", type, expectedType));
-        }
+        checkType(valueMetaData, actualType);
+        addElement(state, collection, valueMetaData);
     }
 
     private void endCollection(byte state) throws IOException {

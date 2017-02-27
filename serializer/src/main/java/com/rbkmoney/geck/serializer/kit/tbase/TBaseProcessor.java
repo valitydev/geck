@@ -135,9 +135,9 @@ public class TBaseProcessor implements StructProcessor<TBase> {
     }
 
     private void processSet(Set set, SetMetaData setMetaData, StructHandler handler) throws IOException {
-        handler.beginList(set.size());
+        handler.beginSet(set.size());
         processCollection(set, setMetaData.getElementMetaData(), handler);
-        handler.endList();
+        handler.endSet();
     }
 
     private void processCollection(Collection collection, FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
