@@ -5,11 +5,13 @@ import org.apache.thrift.TEnum;
 import org.apache.thrift.TFieldIdEnum;
 
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * Created by tolkonepiu on 12/02/2017.
  */
 public class RandomUtil {
+    private static final Pattern pattern = Pattern.compile("[\\w\\s\"\']");
 
     public static byte randomByte() {
         return (byte) randomNumber(Byte.SIZE);
@@ -70,7 +72,13 @@ public class RandomUtil {
         int size = random.nextInt(maxLength);
         char[] value = new char[size];
         for (int i = 0; i < size; i++) {
-            value[i] = (char) randomUnsignedNumber(Character.SIZE, Character.MAX_VALUE, random);
+            while (true) {
+                value[i] = (char) randomUnsignedNumber(Character.SIZE, Character.MAX_VALUE, random);
+                if (pattern.matcher(value[i]+"").matches()) {
+                    break;
+                }
+            }
+
         }
         return new String(value);
     }

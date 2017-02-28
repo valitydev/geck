@@ -35,7 +35,6 @@ public class GeckTest {
     Geck geck = new Geck();
 
     @Test
-    @Ignore
     public void testKebab() throws IOException {
         TestObject testObject1 = getTestObject(100, i -> Status.unknown(new Unknown("unknown")));//new MockTBaseProcessor().process(new TestObject(), new TBaseHandler<>(TestObject.class));
         TestObject testObject2 = new ObjectProcessor().process(
@@ -103,6 +102,7 @@ public class GeckTest {
     }
 
     @Test
+    @Ignore
     public void testPerformance() throws IOException {
         boolean useDict = true;
         TestObject testObject = getTestObject(100, i -> Status.unknown(new Unknown("SomeData")));
