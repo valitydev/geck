@@ -17,6 +17,7 @@
 
     <modules>
         <module>serializer</module>
+        <module>migrator</module>
     </modules>
 
     <dependencyManagement>
