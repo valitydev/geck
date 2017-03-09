@@ -21,6 +21,8 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private final int maxContainerSize;
 
+    private ValueGenerator valueGenerator;
+
     public MockTBaseProcessor() {
         this(MockMode.ALL);
     }
@@ -29,10 +31,19 @@ public class MockTBaseProcessor extends TBaseProcessor {
         this(mode, 15, 10);
     }
 
+    public MockTBaseProcessor(MockMode mode, ValueGenerator valueGenerator) {
+        this(mode, 15, 10, valueGenerator);
+    }
+
     public MockTBaseProcessor(MockMode mode, int maxStringLength, int maxContainerSize) {
+        this(mode, maxStringLength, maxContainerSize, new RandomValueGenerator());
+    }
+
+    public MockTBaseProcessor(MockMode mode, int maxStringLength, int maxContainerSize, ValueGenerator valueGenerator) {
         this.mode = mode;
         this.maxStringLength = maxStringLength;
         this.maxContainerSize = maxContainerSize;
+        this.valueGenerator = valueGenerator;
     }
 
     @Override
@@ -46,42 +57,42 @@ public class MockTBaseProcessor extends TBaseProcessor {
     @Override
     protected void processUnsetUnion(TUnion tUnion, StructHandler handler) throws IOException {
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = tUnion.getFieldMetaData();
-        TFieldIdEnum tFieldIdEnum = RandomUtil.randomField(tUnion);
+        TFieldIdEnum tFieldIdEnum = valueGenerator.getField(tUnion);
         FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
         handler.name(tFieldIdEnum.getFieldName());
         processFieldValue(fieldMetaData.valueMetaData, handler);
     }
 
-    private void processFieldValue(FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
+    protected void processFieldValue(FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
         ThriftType type = ThriftType.findByMetaData(valueMetaData);
 
         switch (type) {
             case BYTE:
-                handler.value(RandomUtil.randomByte());
+                handler.value(valueGenerator.getByte());
                 break;
             case SHORT:
-                handler.value(RandomUtil.randomShort());
+                handler.value(valueGenerator.getShort());
                 break;
             case INTEGER:
-                handler.value(RandomUtil.randomInt());
+                handler.value(valueGenerator.getInt());
                 break;
             case LONG:
-                handler.value(RandomUtil.randomLong());
+                handler.value(valueGenerator.getLong());
                 break;
             case DOUBLE:
-                handler.value(RandomUtil.randomDouble());
+                handler.value(valueGenerator.getDouble());
                 break;
             case BOOLEAN:
-                handler.value(RandomUtil.randomBoolean());
+                handler.value(valueGenerator.getBoolean());
                 break;
             case STRING:
-                handler.value(RandomUtil.randomString(maxStringLength));
+                handler.value(valueGenerator.getString(maxStringLength));
                 break;
             case STRUCT:
                 processStruct((StructMetaData) valueMetaData, handler);
                 break;
             case BINARY:
-                handler.value(RandomUtil.randomByteArray(maxContainerSize));
+                handler.value(valueGenerator.getByteArray(maxContainerSize));
                 break;
             case LIST:
                 ListMetaData listMetaData = ObjectUtil.convertType(ListMetaData.class, valueMetaData);
@@ -97,7 +108,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
                 break;
             case ENUM:
                 Class<? extends TEnum> tEnumClass = ((EnumMetaData) valueMetaData).getEnumClass();
-                handler.value(RandomUtil.randomTEnum(tEnumClass).toString());
+                handler.value(valueGenerator.getTEnum(tEnumClass).toString());
                 break;
             default:
                 throw new IllegalStateException(String.format("Type '%s' not found", type));
@@ -115,7 +126,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private void processList(ListMetaData listMetaData, StructHandler handler) throws IOException {
         FieldValueMetaData valueMetaData = listMetaData.getElementMetaData();
-        int size = RandomUtil.randomInt(maxContainerSize);
+        int size = valueGenerator.getInt(maxContainerSize);
         handler.beginList(size);
         processCollection(size, valueMetaData, handler);
         handler.endList();
@@ -123,7 +134,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private void processSet(SetMetaData setMetaData, StructHandler handler) throws IOException {
         FieldValueMetaData valueMetaData = setMetaData.getElementMetaData();
-        int size = RandomUtil.randomInt(maxContainerSize);
+        int size = valueGenerator.getInt(maxContainerSize);
         handler.beginSet(size);
         processCollection(size, valueMetaData, handler);
         handler.endSet();
@@ -136,7 +147,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
     }
 
     private void processMap(MapMetaData mapMetaData, StructHandler handler) throws IOException {
-        int size = RandomUtil.randomInt(maxContainerSize);
+        int size = valueGenerator.getInt(maxContainerSize);
         handler.beginMap(size);
         for (int i = 0; i < size; i++) {
             handler.beginKey();
@@ -151,7 +162,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private boolean needProcess(FieldMetaData fieldMetaData) {
         return fieldMetaData.requirementType == TFieldRequirementType.REQUIRED
-                || (mode == MockMode.RANDOM && RandomUtil.randomBoolean())
+                || (mode == MockMode.RANDOM && valueGenerator.getBoolean())
                 || mode == MockMode.ALL;
     }
 

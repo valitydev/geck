@@ -8,58 +8,66 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
- * Created by tolkonepiu on 12/02/2017.
+ * Created by inalarsanukaev on 03.03.17.
  */
-public class RandomUtil {
+public class RandomValueGenerator implements ValueGenerator {
     private static final Pattern pattern = Pattern.compile("[\\w\\s\"\']");
-
-    public static byte randomByte() {
-        return (byte) randomNumber(Byte.SIZE);
-    }
-
-    public static short randomShort() {
-        return (short) randomNumber(Short.SIZE);
-    }
-
-    public static int randomUnsignedNumber(int bitsSize, int maxValue) {
-        return randomUnsignedNumber(bitsSize, maxValue, new Random());
-    }
-
-    public static int randomUnsignedNumber(int bitsSize, int maxValue, Random random) {
-        return randomNumber(bitsSize, random) & maxValue;
-    }
-
-    public static int randomNumber(int bitSize) {
+    public int randomNumber(int bitSize) {
         return randomNumber(bitSize, new Random());
     }
-
     public static int randomNumber(int bitSize, Random random) {
         int value = random.nextInt();
         for (int n = Integer.SIZE / bitSize; --n > 0; value >>= bitSize) ;
         return value;
     }
+    public int randomUnsignedNumber(int bitsSize, int maxValue) {
+        return randomUnsignedNumber(bitsSize, maxValue, new Random());
+    }
 
-    public static int randomInt() {
+    private int randomUnsignedNumber(int bitsSize, int maxValue, Random random) {
+        return randomNumber(bitsSize, random) & maxValue;
+    }
+    @Override
+    public byte getByte() {
+        return (byte) randomNumber(Byte.SIZE);
+    }
+
+    @Override
+    public short getShort() {
+        return (short) randomNumber(Short.SIZE);
+    }
+
+    public int getNumber(int bitSize) {
+        return randomNumber(bitSize, new Random());
+    }
+
+    @Override
+    public int getInt() {
         return new Random().nextInt();
     }
 
-    public static int randomInt(int bound) {
+    @Override
+    public int getInt(int bound) {
         return new Random().nextInt(bound);
     }
 
-    public static long randomLong() {
+    @Override
+    public long getLong() {
         return new Random().nextLong();
     }
 
-    public static double randomDouble() {
+    @Override
+    public double getDouble() {
         return new Random().nextDouble();
     }
 
-    public static boolean randomBoolean() {
+    @Override
+    public boolean getBoolean() {
         return new Random().nextBoolean();
     }
 
-    public static byte[] randomByteArray(int maxSize) {
+    @Override
+    public byte[] getByteArray(int maxSize) {
         Random random = new Random();
         int size = random.nextInt(maxSize);
         byte[] byteArray = new byte[size];
@@ -67,7 +75,8 @@ public class RandomUtil {
         return byteArray;
     }
 
-    public static String randomString(int maxLength) {
+    @Override
+    public String getString(int maxLength) {
         Random random = new Random();
         int size = random.nextInt(maxLength);
         char[] value = new char[size];
@@ -83,7 +92,8 @@ public class RandomUtil {
         return new String(value);
     }
 
-    public static TEnum randomTEnum(Class<? extends TEnum> enumClass) {
+    @Override
+    public TEnum getTEnum(Class<? extends TEnum> enumClass) {
         if (enumClass.isEnum()) {
             TEnum[] enums = enumClass.getEnumConstants();
             int element = new Random().nextInt(enums.length);
@@ -92,10 +102,10 @@ public class RandomUtil {
         return null;
     }
 
-    public static TFieldIdEnum randomField(TBase tBase) {
+    @Override
+    public TFieldIdEnum getField(TBase tBase) {
         TFieldIdEnum[] fields = tBase.getFields();
         int element = new Random().nextInt(fields.length);
         return fields[element];
     }
-
 }

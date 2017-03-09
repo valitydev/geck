@@ -49,12 +49,6 @@
             <artifactId>json</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.rbkmoney</groupId>
-            <artifactId>damsel</artifactId>
-            <version>1.133-d98b7f8</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

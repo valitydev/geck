@@ -15,7 +15,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by tolkonepiu on 12/02/2017.
  */
-public class RandomUtilTest {
+public class RandomValueGeneratorTest {
+
+    RandomValueGenerator randomValueGenerator = new RandomValueGenerator();
 
     @Test
     public void generateByteValueTest() {
@@ -37,14 +39,14 @@ public class RandomUtilTest {
 
     @Test
     public void generateTEnumTest() {
-        TEnum tEnum = RandomUtil.randomTEnum(Kek.class);
+        TEnum tEnum = randomValueGenerator.getTEnum(Kek.class);
         Enum.valueOf(Kek.class, tEnum.toString());
     }
 
     @Test
     public void generateFieldTest() {
         Status status = new Status();
-        TFieldIdEnum field = RandomUtil.randomField(status);
+        TFieldIdEnum field = randomValueGenerator.getField(status);
         assertNotEquals(-1, Arrays.binarySearch(status.getFields(), field));
     }
 
@@ -58,9 +60,9 @@ public class RandomUtilTest {
         for (int i = 0; i < count; i++) {
             int value;
             if (unsigned) {
-                value = RandomUtil.randomUnsignedNumber(bitsSize, maxValue);
+                value = randomValueGenerator.randomUnsignedNumber(bitsSize, maxValue);
             } else {
-                value = RandomUtil.randomNumber(bitsSize);
+                value = randomValueGenerator.getNumber(bitsSize);
             }
 
             min = Math.min(min, value);

@@ -1,13 +1,10 @@
 package com.rbkmoney.geck.serializer;
 
-import com.rbkmoney.damsel.domain.Invoice;
-import com.rbkmoney.damsel.payment_processing.Event;
+import com.rbkmoney.damsel_v136.payment_processing.InvoicePaymentStarted;
 import com.rbkmoney.geck.serializer.test.Status;
 import com.rbkmoney.geck.serializer.test.TestObject;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
-import com.rbkmoney.geck.serializer.test.Unknown;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.function.IntFunction;
@@ -29,15 +26,7 @@ public class GeckUtil {
         return new MockTBaseProcessor().process(new TestObject(), new TBaseHandler<>(TestObject.class));
     }
 
-    public static Unknown getUnknown() throws IOException {
-        return new MockTBaseProcessor().process(new Unknown(), new TBaseHandler<>(Unknown.class));
-    }
-
-    public static Invoice getInvoice() throws IOException {
-        return new MockTBaseProcessor().process(new Invoice(), new TBaseHandler<>(Invoice.class));
-    }
-
-    public static Event getEvent() throws IOException {
-        return new MockTBaseProcessor().process(new Event(), new TBaseHandler<>(Event.class));
+    public static InvoicePaymentStarted getInvoicePaymentStarted() throws IOException {
+        return new MockTBaseProcessor().process(new InvoicePaymentStarted(), new TBaseHandler<>(InvoicePaymentStarted.class));
     }
 }
