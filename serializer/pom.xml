@@ -49,6 +49,20 @@
             <artifactId>json</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>damsel</artifactId>
+            <version>1.113-bfed187</version>
+            <classifier>v113</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>damsel</artifactId>
+            <version>1.130-4e4e214</version>
+            <classifier>v130</classifier>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

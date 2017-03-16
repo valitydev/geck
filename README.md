@@ -7,3 +7,11 @@
 - mock
 -  ~~migrator~~
 - ~~filter~~
+
+
+
+### HOW-TO
+
+Собрать и инсталировать jar(s) в локальный мавен репозиторий(без локально установленного трифта):
+
+* make wc_java_install LOCAL_BUILD=true SETTINGS_XML=path_to_rbk_maven_settings	

@@ -1,6 +1,6 @@
 package com.rbkmoney.geck.serializer;
 
-import com.rbkmoney.damsel_v136.payment_processing.InvoicePaymentStarted;
+import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import com.rbkmoney.geck.serializer.test.Status;
 import com.rbkmoney.geck.serializer.test.TestObject;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
