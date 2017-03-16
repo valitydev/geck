@@ -187,7 +187,8 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     private void checkType(FieldValueMetaData valueMetaData, ThriftType actualType) throws BadFormatException {
         ThriftType expectedType = ThriftType.findByMetaData(valueMetaData);
         if (expectedType != actualType) {
-            throw new BadFormatException(String.format("incorrect type of value: expected '%s', actual '%s'", expectedType, actualType));
+            throw new BadFormatException(String.format("incorrect type of value: expected '%s', actual '%s' (last field: '%s', last state: %s)",
+                    expectedType, actualType, fieldStack.peek(), stateStack.peek()));
         }
     }
 
@@ -294,7 +295,6 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     private void value(Object value, FieldValueMetaData valueMetaData, ThriftType actualType) throws IOException {
         checkType(valueMetaData, actualType);
-
         saveValue(value, elementStack.peek());
     }
 

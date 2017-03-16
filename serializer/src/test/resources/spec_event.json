@@ -1,0 +1,103 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "payload": {
+        "invoice_event": {
+          "invoice_created": {
+            "invoice": {
+              "product": "payload.invoice_event.invoice_created.invoice.details.product",
+              "description": "payload.invoice_event.invoice_created.invoice.details.description",
+              "*": "payload.invoice_event.invoice_created.invoice.&"
+            }
+          },
+          "invoice_payment_event": {
+            "invoice_payment_started": {
+              "payment": {
+                "status": {
+                  "failed": {
+                    "err": "payload.invoice_event.invoice_payment_event.invoice_payment_started.payment.status.failed.failure"
+                  },
+                  "*": "payload.invoice_event.invoice_payment_event.invoice_payment_started.payment.status.&"
+                },
+                "*": "payload.invoice_event.invoice_payment_event.invoice_payment_started.payment.&"
+              },
+              "*": "payload.invoice_event.invoice_payment_event.invoice_payment_started.&"
+            },
+            "invoice_payment_status_changed": {
+              "status": {
+                "failed": {
+                  "err": "payload.invoice_event.invoice_payment_event.invoice_payment_status_changed.status.failed.failure"
+                },
+                "*": "payload.invoice_event.invoice_payment_event.invoice_payment_status_changed.status.&"
+              },
+              "*": "payload.invoice_event.invoice_payment_event.invoice_payment_status_changed.&"
+            },
+            "*": "payload.invoice_event.invoice_payment_event.&"
+          },
+          "*": "payload.invoice_event.&"
+        }
+      },
+      "*": "&"
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+      "payload": {
+        "invoice_event": {
+          "invoice_created": {
+            "invoice": {
+              "cost": {
+                "currency": {
+                  "name": "",
+                  "numeric_code": "",
+                  "exponent": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+      "payload": {
+        "invoice_event": {
+          "invoice_payment_event": {
+            "invoice_payment_started": {
+              "payment": {
+                "cost": {
+                  "currency": {
+                    "name": "",
+                    "numeric_code": "",
+                    "exponent": ""
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "operation": "modify-default-beta",
+    "spec": {
+      "payload": {
+        "invoice_event": {
+          "invoice_payment_event?": {
+            "invoice_payment_started?": {
+              "payment": {
+                "domain_revision": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]
+

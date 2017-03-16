@@ -24,7 +24,7 @@ import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import java.util.zip.GZIPOutputStream;
 
-import static com.rbkmoney.geck.serializer.GeckUtil.getTestObject;
+import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

@@ -199,17 +199,12 @@ public class ObjectHandler implements StructHandler<Object> {
         if (i < string.length()) {
             StringBuilder sb = new StringBuilder(string.length() + 1);
             sb.append(string, 0, i);
-            boolean escape = false;
             for (; i < string.length(); ++i) {
                 char c = string.charAt(i);
-                if (escape) {
-                    sb.append(c);
-                    escape = false;
-                } else if (c == ESCAPE_CHAR) {
-                    escape = true;
-                } else {
-                    sb.append(c);
+                if (c == ESCAPE_CHAR || c == TYPE_DELIMITER) {
+                    sb.append(ESCAPE_CHAR);
                 }
+                    sb.append(c);
             }
             return sb.toString();
         } else {

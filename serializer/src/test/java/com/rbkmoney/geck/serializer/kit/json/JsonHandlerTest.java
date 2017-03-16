@@ -2,13 +2,12 @@ package com.rbkmoney.geck.serializer.kit.json;
 
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.test.TestObject;
+import com.rbkmoney.geck.serializer.GeckTestUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static com.rbkmoney.geck.serializer.GeckUtil.getTestObject;
 
 /**
  * Created by tolkonepiu on 15/02/2017.
@@ -17,7 +16,7 @@ public class JsonHandlerTest {
 
     @Test
     public void jsonTest() throws JSONException, IOException {
-        TestObject testObject = getTestObject();
+        TestObject testObject = GeckTestUtil.getTestObject();
         String json = new TBaseProcessor().process(testObject, new JsonHandler()).toString();
         System.out.println(json);
         new JSONObject(json);

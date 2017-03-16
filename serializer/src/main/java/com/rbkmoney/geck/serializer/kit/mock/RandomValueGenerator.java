@@ -5,21 +5,22 @@ import org.apache.thrift.TEnum;
 import org.apache.thrift.TFieldIdEnum;
 
 import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * Created by inalarsanukaev on 03.03.17.
  */
 public class RandomValueGenerator implements ValueGenerator {
-    private static final Pattern pattern = Pattern.compile("[\\w\\s\"\']");
+
     public int randomNumber(int bitSize) {
         return randomNumber(bitSize, new Random());
     }
-    public static int randomNumber(int bitSize, Random random) {
+
+    public int randomNumber(int bitSize, Random random) {
         int value = random.nextInt();
         for (int n = Integer.SIZE / bitSize; --n > 0; value >>= bitSize) ;
         return value;
     }
+
     public int randomUnsignedNumber(int bitsSize, int maxValue) {
         return randomUnsignedNumber(bitsSize, maxValue, new Random());
     }
@@ -27,6 +28,7 @@ public class RandomValueGenerator implements ValueGenerator {
     private int randomUnsignedNumber(int bitsSize, int maxValue, Random random) {
         return randomNumber(bitsSize, random) & maxValue;
     }
+
     @Override
     public byte getByte() {
         return (byte) randomNumber(Byte.SIZE);
@@ -77,17 +79,15 @@ public class RandomValueGenerator implements ValueGenerator {
 
     @Override
     public String getString(int maxLength) {
+        int start = ' ';
+        int end = 'z' + 1;
+        int gap = end - start;
+
         Random random = new Random();
         int size = random.nextInt(maxLength);
         char[] value = new char[size];
         for (int i = 0; i < size; i++) {
-            while (true) {
-                value[i] = (char) randomUnsignedNumber(Character.SIZE, Character.MAX_VALUE, random);
-                if (pattern.matcher(value[i]+"").matches()) {
-                    break;
-                }
-            }
-
+            value[i] = (char) (random.nextInt(gap) + start);
         }
         return new String(value);
     }

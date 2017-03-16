@@ -39,6 +39,10 @@ struct BinaryTest {
     1: required binary data
 }
 
+struct MapListTest {
+    list<string> listMapString
+}
+
 union Status {
     1: Ok ok
     2: Fail fail

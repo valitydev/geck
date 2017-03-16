@@ -8,9 +8,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by tolkonepiu on 12/02/2017.
@@ -48,6 +46,20 @@ public class RandomValueGeneratorTest {
         Status status = new Status();
         TFieldIdEnum field = randomValueGenerator.getField(status);
         assertNotEquals(-1, Arrays.binarySearch(status.getFields(), field));
+    }
+
+    @Test
+    public void generateStringTest() {
+        String value = randomValueGenerator.getString(10000);
+        for (char charValue : value.toCharArray()) {
+            int type = Character.getType(charValue);
+            assertTrue(String.format("unrecognized symbol '%s', type: %d", charValue, type),
+                    Character.isLetterOrDigit(charValue)
+                            || type != Character.SURROGATE
+                            || type != Character.CONTROL
+            );
+        }
+
     }
 
     public void generateNumberTest(int count, int bitsSize, int minValue, int maxValue, boolean unsigned) {

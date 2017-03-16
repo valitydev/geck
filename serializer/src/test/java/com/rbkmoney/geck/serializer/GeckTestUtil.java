@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 /**
  * Created by vpankrashkin on 08.02.17.
  */
-public class GeckUtil {
+public class GeckTestUtil {
     public static TestObject getTestObject(int statusCount, IntFunction<Status> statusGen) throws IOException {
         TestObject testObject = getTestObject();
         List<Status> lists = IntStream.range(0, statusCount).mapToObj(statusGen::apply).collect(Collectors.toList());
