@@ -144,7 +144,10 @@ public class ObjectHandler implements StructHandler<Object> {
     @Override
     public Object getResult() throws IOException {
         checkState(nop, state.peek());
-        return result;
+        checkState(nop, context.size() == 0 ? nop : pointValue);
+        Object readyResult = result;
+        result = null;
+        return readyResult;
     }
 
     private void addValue(Object value) throws BadFormatException {

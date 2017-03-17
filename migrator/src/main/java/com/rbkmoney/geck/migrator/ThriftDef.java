@@ -10,10 +10,10 @@ public class ThriftDef {
     private final int version;
 
     public ThriftDef(int version) {
-        this(null, version);
+        this(version, null);
     }
 
-    public ThriftDef(String type, int version) {
+    public ThriftDef(int version, String type) {
         this.type = type;
         this.version = version;
     }
@@ -31,20 +31,20 @@ public class ThriftDef {
         if (this == o) return true;
         if (!(o instanceof ThriftDef)) return false;
         ThriftDef thriftDef = (ThriftDef) o;
-        return version == thriftDef.version &&
-                Objects.equals(type, thriftDef.type);
+        return getVersion() == thriftDef.getVersion() &&
+                Objects.equals(getType(), thriftDef.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, version);
+        return Objects.hash(getType(), getVersion());
     }
 
     @Override
     public String toString() {
         return "ThriftDef{" +
-                "type='" + type + '\'' +
-                ", version=" + version +
+                "type='" + getType() + '\'' +
+                ", version=" + getVersion() +
                 '}';
     }
 }

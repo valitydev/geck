@@ -4,19 +4,19 @@ package com.rbkmoney.geck.migrator;
  * Created by vpankrashkin on 01.03.17.
  */
 public class MigrationPoint {
-    private final int id;
+    private final long id;
     private final ThriftSpec thriftSpec;
-    private final MigrationType migrationType;
+    private final SerializerDef serializerDef;
     private final MigrationSpec migrationSpec;
 
-    public MigrationPoint(int id, ThriftSpec thriftSpec, MigrationType migrationType, MigrationSpec migrationSpec) {
+    public MigrationPoint(int id, ThriftSpec thriftSpec, SerializerDef serializerDef, MigrationSpec migrationSpec) {
         this.id = id;
         this.thriftSpec = thriftSpec;
-        this.migrationType = migrationType;
+        this.serializerDef = serializerDef;
         this.migrationSpec = migrationSpec;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -24,13 +24,15 @@ public class MigrationPoint {
         return thriftSpec;
     }
 
-    public MigrationType getMigrationType() {
-        return migrationType;
+    public SerializerDef getSerializerDef() {
+        return serializerDef;
+    }
+
+    public String getMigrationType() {
+        return migrationSpec.getType();
     }
 
     public MigrationSpec getMigrationSpec() {
         return migrationSpec;
     }
-
-
 }

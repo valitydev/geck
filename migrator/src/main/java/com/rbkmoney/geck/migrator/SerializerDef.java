@@ -7,40 +7,32 @@ import java.util.Objects;
  */
 public class SerializerDef<T> {
     private final String type;
-    private final int version;
 
-    public SerializerDef(String type, int version) {
+    public SerializerDef(String type) {
         this.type = type;
-        this.version = version;
     }
 
     public String getType() {
         return type;
     }
 
-    public int getVersion() {
-        return version;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SerializerDef)) return false;
-        SerializerDef that = (SerializerDef) o;
-        return version == that.version &&
-                Objects.equals(type, that.type);
+        SerializerDef<?> that = (SerializerDef<?>) o;
+        return Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, version);
+        return Objects.hash(type);
     }
 
     @Override
     public String toString() {
         return "SerializerDef{" +
                 "type='" + type + '\'' +
-                ", version=" + version +
                 '}';
     }
 }
