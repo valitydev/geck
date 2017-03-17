@@ -1,16 +1,15 @@
 package com.rbkmoney.geck.serializer.kit.object;
 
+import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
-import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import com.rbkmoney.geck.serializer.kit.StructType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-import static com.rbkmoney.geck.serializer.kit.ObjectUtil.convertType;
 import static com.rbkmoney.geck.serializer.kit.object.ObjectHandlerConstants.TYPE_DELIMITER;
 
 /**
@@ -24,13 +23,13 @@ public class ObjectProcessor implements StructProcessor<Object> {
     }
 
     private void processStart(Object value, StructHandler handler) throws IOException {
-        processStruct(convertType(Map.class, value), handler);
+        processStruct(TypeUtil.convertType(Map.class, value), handler);
     }
 
     private void processStruct(Map map, StructHandler handler) throws IOException {
         handler.beginStruct(map.size());
         Set<Map.Entry> entries = map.entrySet();
-        for (Map.Entry entry: entries) {
+        for (Map.Entry entry : entries) {
             String name = String.valueOf(entry.getKey());
             StructType type = getType(name);
             name = clearType(name);
@@ -49,9 +48,9 @@ public class ObjectProcessor implements StructProcessor<Object> {
             Object mapSign = it.next();
             assert getType(String.valueOf(mapSign)) == StructType.MAP;
         }
-        for (Object entry; it.hasNext();) {
+        for (Object entry; it.hasNext(); ) {
             entry = it.next();
-            Map mapEntry = convertType(Map.class, entry);
+            Map mapEntry = TypeUtil.convertType(Map.class, entry);
             handler.beginKey();
             processValue(mapEntry.get(ObjectHandlerConstants.MAP_KEY), StructType.OTHER, false, handler);
             handler.endKey();
@@ -64,7 +63,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
 
     private void processList(List list, StructHandler handler) throws IOException {
         handler.beginList(list.size());
-        for (Object val: list) {
+        for (Object val : list) {
             processValue(val, StructType.OTHER, false, handler);
         }
         handler.endList();
@@ -72,7 +71,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
 
     private void processSet(Collection set, boolean named, StructHandler handler) throws IOException {
         handler.beginSet(set.size());
-        for (Object val: set) {
+        for (Object val : set) {
             processValue(val, StructType.OTHER, false, handler);
         }
         handler.endSet();
@@ -81,10 +80,10 @@ public class ObjectProcessor implements StructProcessor<Object> {
     private void processValue(Object value, StructType type, boolean named, StructHandler handler) throws IOException {
         switch (type) {
             case MAP:
-                processMap(convertType(List.class, value), named, handler);
+                processMap(TypeUtil.convertType(List.class, value), named, handler);
                 break;
             case SET:
-                processSet(convertType(Collection.class, value), named, handler);
+                processSet(TypeUtil.convertType(Collection.class, value), named, handler);
             case OTHER:
                 if (value instanceof Map) {
                     processStruct((Map) value, handler);
@@ -96,7 +95,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
                         processList(list, handler);
                     } else {
                         if (list.size() > 0) {
-                            StructType lType =  getType(String.valueOf(list.get(0)));
+                            StructType lType = getType(String.valueOf(list.get(0)));
                             switch (lType) {
                                 case OTHER:
                                     processList(list, handler);
@@ -112,22 +111,22 @@ public class ObjectProcessor implements StructProcessor<Object> {
                     handler.value(unescapeString((String) value));
                 } else if (value instanceof Number) {
                     if (value instanceof Double || value instanceof Float) {
-                        handler.value(((Number)value).doubleValue());
+                        handler.value(((Number) value).doubleValue());
                     } else {
-                        handler.value(((Number)value).longValue());
+                        handler.value(((Number) value).longValue());
                     }
                 } else if (value instanceof Boolean) {
-                    handler.value(((Boolean)value).booleanValue());
+                    handler.value(((Boolean) value).booleanValue());
                 } else if (value instanceof ByteBuffer) {
                     handler.value(((ByteBuffer) value).array());
                 } else if (value == null) {
                     handler.nullValue();
                 } else {
-                    throw new BadFormatException("Unrecognised value:"+value);
+                    throw new BadFormatException("Unrecognised value:" + value);
                 }
                 break;
-                default:
-                    throw new BadFormatException("Unrecognised type:"+type);
+            default:
+                throw new BadFormatException("Unrecognised type:" + type);
         }
     }
 
@@ -137,7 +136,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
         if (idx < 0) {
             return StructType.OTHER;
         } else {
-            return StructType.valueOfKey(name.substring(idx+1, name.length()));
+            return StructType.valueOfKey(name.substring(idx + 1, name.length()));
         }
     }
 
@@ -162,7 +161,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
             StringBuilder sb = new StringBuilder(name.length());
             sb.append(name, 0, i);
             boolean escaped = false;
-            for (;i < name.length(); ++i) {
+            for (; i < name.length(); ++i) {
                 char c = name.charAt(i);
                 if (escaped) {
                     sb.append(c);

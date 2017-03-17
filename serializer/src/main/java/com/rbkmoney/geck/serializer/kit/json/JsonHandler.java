@@ -1,6 +1,6 @@
 package com.rbkmoney.geck.serializer.kit.json;
 
-import com.rbkmoney.geck.serializer.ByteStack;
+import com.rbkmoney.geck.common.stack.ByteStack;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import gnu.trove.map.hash.THashMap;

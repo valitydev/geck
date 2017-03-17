@@ -1,7 +1,7 @@
 package com.rbkmoney.geck.serializer.kit.mock;
 
+import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.geck.serializer.StructHandler;
-import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.ThriftType;
 import org.apache.thrift.*;
@@ -95,15 +95,15 @@ public class MockTBaseProcessor extends TBaseProcessor {
                 handler.value(valueGenerator.getByteArray(maxContainerSize));
                 break;
             case LIST:
-                ListMetaData listMetaData = ObjectUtil.convertType(ListMetaData.class, valueMetaData);
+                ListMetaData listMetaData = TypeUtil.convertType(ListMetaData.class, valueMetaData);
                 processList(listMetaData, handler);
                 break;
             case SET:
-                SetMetaData setMetaData = ObjectUtil.convertType(SetMetaData.class, valueMetaData);
+                SetMetaData setMetaData = TypeUtil.convertType(SetMetaData.class, valueMetaData);
                 processSet(setMetaData, handler);
                 break;
             case MAP:
-                MapMetaData mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                MapMetaData mapMetaData = TypeUtil.convertType(MapMetaData.class, valueMetaData);
                 processMap(mapMetaData, handler);
                 break;
             case ENUM:

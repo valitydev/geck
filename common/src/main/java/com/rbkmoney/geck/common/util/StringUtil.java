@@ -1,6 +1,4 @@
-package com.rbkmoney.geck.serializer.kit.msgpack;
-
-import com.rbkmoney.geck.serializer.exception.BadFormatException;
+package com.rbkmoney.geck.common.util;
 
 import java.nio.charset.Charset;
 
@@ -11,17 +9,17 @@ public final class StringUtil {
     public static final Charset CHARSET = Charset.forName("UTF-8");
     private static final int LOW_ASCII_FLAG = 0x80;
 
-    static byte[] compactAsciiString(String str) throws BadFormatException {
+    public static byte[] compactAsciiString(String str) {
         if (str.length() == 0) {
             return new byte[0];
         }
-        byte[] bytes = new byte[(int)Math.ceil((str.length()*5+1) / 8.)];
+        byte[] bytes = new byte[(int) Math.ceil((str.length() * 5 + 1) / 8.)];
         bytes[0] = (byte) LOW_ASCII_FLAG;
         int bitIndex = 1;
         for (int i = 0; i < str.length(); ++i) {
             char c = str.charAt(i);
             if ((c & LOW_ASCII_FLAG) != 0) {
-                throw new BadFormatException("Only ASCII symbols're expected: "+ c + " in: "+str);
+                throw new IllegalArgumentException("Only ASCII symbols're expected: " + c + " in: " + str);
             }
 
             if (c < 0x5F || c > 0x7D) {
@@ -37,7 +35,7 @@ public final class StringUtil {
         return bytes;
     }
 
-    static String expandAsciiString(byte[] bytes) throws BadFormatException {
+    public static String expandAsciiString(byte[] bytes) {
         if (bytes.length == 0 || (bytes[0] & LOW_ASCII_FLAG) == 0) {
             return fromAsciiBytes(bytes);
         }
@@ -55,30 +53,30 @@ public final class StringUtil {
             c |= (bytes[bitIndex >> 3] >> (7 - (bitIndex++ % 8)) & 1) << 1;
             c |= (bytes[bitIndex >> 3] >> (7 - (bitIndex++ % 8)) & 1) << 0;
             if (c != 0) {
-                chars[(bitIndex-1) / 5 - 1] = (char) ((c + 0x5F) - 1);
+                chars[(bitIndex - 1) / 5 - 1] = (char) ((c + 0x5F) - 1);
             }
         }
-        int cLength = c != 0 ? (bitIndex-1) / 5 : (bitIndex-1) / 5 - 1;
+        int cLength = c != 0 ? (bitIndex - 1) / 5 : (bitIndex - 1) / 5 - 1;
         return new String(chars, 0, cLength);
     }
 
-    static byte[] toAsciiBytes(final String str) throws BadFormatException {
+    public static byte[] toAsciiBytes(final String str) {
         final byte[] bytes = new byte[str.length()];
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if ((c & LOW_ASCII_FLAG ) != 0) {
-                throw new BadFormatException("Only ASCII symbols're expected: "+c + " in: "+str);
+            if ((c & LOW_ASCII_FLAG) != 0) {
+                throw new IllegalArgumentException("Only ASCII symbols're expected: " + c + " in: " + str);
             }
             bytes[i] = (byte) c;
         }
         return bytes;
     }
 
-    static String fromAsciiBytes(byte[] bytes) {
+    public static String fromAsciiBytes(byte[] bytes) {
         return new String(bytes, CHARSET);
     }
 
-    static boolean isAsciiString(String str) {
+    public static boolean isAsciiString(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if ((str.charAt(i) & LOW_ASCII_FLAG) != 0) {
                 return false;
@@ -91,7 +89,7 @@ public final class StringUtil {
     public static String intToString(int number, int groupSize, int maxBits) {
         StringBuilder result = new StringBuilder();
 
-        for(int i = maxBits - 1; i >= 0 ; i--) {
+        for (int i = maxBits - 1; i >= 0; i--) {
             int mask = 1 << i;
             result.append((number & mask) != 0 ? "1" : "0");
 

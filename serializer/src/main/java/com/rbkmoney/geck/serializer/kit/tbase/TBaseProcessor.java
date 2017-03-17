@@ -1,8 +1,9 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
+import com.rbkmoney.geck.common.util.TBaseUtil;
+import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
-import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
@@ -107,13 +108,13 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                     handler.value((byte[]) object);
                     break;
                 case LIST:
-                    List list = ObjectUtil.convertType(List.class, object);
-                    ListMetaData listMetaData = ObjectUtil.convertType(ListMetaData.class, fieldValueMetaData);
+                    List list = TypeUtil.convertType(List.class, object);
+                    ListMetaData listMetaData = TypeUtil.convertType(ListMetaData.class, fieldValueMetaData);
                     processList(list, listMetaData, handler);
                     break;
                 case SET:
-                    Set set = ObjectUtil.convertType(Set.class, object);
-                    SetMetaData setMetaData = ObjectUtil.convertType(SetMetaData.class, fieldValueMetaData);
+                    Set set = TypeUtil.convertType(Set.class, object);
+                    SetMetaData setMetaData = TypeUtil.convertType(SetMetaData.class, fieldValueMetaData);
                     processSet(set, setMetaData, handler);
                     break;
                 case MAP:

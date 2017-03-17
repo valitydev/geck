@@ -1,10 +1,11 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
-import com.rbkmoney.geck.serializer.ByteStack;
-import com.rbkmoney.geck.serializer.ObjectStack;
+import com.rbkmoney.geck.common.stack.ByteStack;
+import com.rbkmoney.geck.common.stack.ObjectStack;
+import com.rbkmoney.geck.common.util.TBaseUtil;
+import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
-import com.rbkmoney.geck.serializer.kit.ObjectUtil;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
@@ -44,7 +45,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
             } else {
                 FieldValueMetaData valueMetaData = getChildValueMetaData();
                 checkType(valueMetaData, ThriftType.STRUCT);
-                TBase child = ObjectUtil.convertType(StructMetaData.class, valueMetaData)
+                TBase child = TypeUtil.convertType(StructMetaData.class, valueMetaData)
                         .getStructClass().newInstance();
                 addElement(startStruct, child, valueMetaData);
             }
@@ -67,7 +68,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     public void endStruct() throws IOException {
         checkState(startStruct);
 
-        TBase tBase = ObjectUtil.convertType(TBase.class, elementStack.peek());
+        TBase tBase = TypeUtil.convertType(TBase.class, elementStack.peek());
         checkRequiredFields(tBase);
 
         stateStack.pop();
@@ -103,17 +104,17 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         FieldValueMetaData valueMetaData = valueMetaDataStack.peek();
         switch (stateStack.peek()) {
             case pointName:
-                TBase tBase = ObjectUtil.convertType(TBase.class, elementStack.peek());
+                TBase tBase = TypeUtil.convertType(TBase.class, elementStack.peek());
                 return TBaseUtil.getValueMetaData(fieldStack.peek(), tBase);
             case startList:
             case startSet:
-                CollectionMetaData collectionMetaData = ObjectUtil.convertType(CollectionMetaData.class, valueMetaData);
+                CollectionMetaData collectionMetaData = TypeUtil.convertType(CollectionMetaData.class, valueMetaData);
                 return collectionMetaData.getElementMetaData();
             case startMapKey:
-                MapMetaData mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                MapMetaData mapMetaData = TypeUtil.convertType(MapMetaData.class, valueMetaData);
                 return mapMetaData.getKeyMetaData();
             case startMapValue:
-                mapMetaData = ObjectUtil.convertType(MapMetaData.class, valueMetaData);
+                mapMetaData = TypeUtil.convertType(MapMetaData.class, valueMetaData);
                 return mapMetaData.getValueMetaData();
             default:
                 throw new BadFormatException(String.format("unknown state %d", stateStack.peek()));
@@ -220,7 +221,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         stateStack.pop();
 
         checkState(startMap);
-        Map map = ObjectUtil.convertType(Map.class, elementStack.peek());
+        Map map = TypeUtil.convertType(Map.class, elementStack.peek());
         map.put(key, value);
     }
 
@@ -271,15 +272,15 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
         switch (type) {
             case BYTE:
-                byte byteValue = ObjectUtil.toByteExact(value);
+                byte byteValue = TypeUtil.toByteExact(value);
                 value(byteValue, valueMetaData, ThriftType.BYTE);
                 break;
             case SHORT:
-                short shortValue = ObjectUtil.toShortExact(value);
+                short shortValue = TypeUtil.toShortExact(value);
                 value(shortValue, valueMetaData, ThriftType.SHORT);
                 break;
             case INTEGER:
-                int intValue = ObjectUtil.toIntExact(value);
+                int intValue = TypeUtil.toIntExact(value);
                 value(intValue, valueMetaData, ThriftType.INTEGER);
                 break;
             default:
@@ -301,13 +302,13 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     private void saveValue(Object value, Object parent) throws IOException {
         switch (stateStack.peek()) {
             case pointName:
-                TBase tBase = ObjectUtil.convertType(TBase.class, parent);
+                TBase tBase = TypeUtil.convertType(TBase.class, parent);
                 tBase.setFieldValue(fieldStack.pop(), value);
                 stateStack.pop();
                 break;
             case startList:
             case startSet:
-                ObjectUtil.convertType(Collection.class, parent).add(value);
+                TypeUtil.convertType(Collection.class, parent).add(value);
                 break;
             case startMapKey:
                 elementStack.push(value);

@@ -1,8 +1,8 @@
 package com.rbkmoney.geck.serializer.kit.object;
 
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
-import com.rbkmoney.geck.serializer.ByteStack;
-import com.rbkmoney.geck.serializer.ObjectStack;
+import com.rbkmoney.geck.common.stack.ByteStack;
+import com.rbkmoney.geck.common.stack.ObjectStack;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.kit.StructType;
 

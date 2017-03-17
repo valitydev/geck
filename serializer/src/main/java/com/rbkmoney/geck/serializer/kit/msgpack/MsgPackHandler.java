@@ -1,5 +1,6 @@
 package com.rbkmoney.geck.serializer.kit.msgpack;
 
+import com.rbkmoney.geck.common.util.StringUtil;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.kit.EventFlags;
