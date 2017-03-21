@@ -12,13 +12,13 @@ import java.util.Map;
  */
 public class TBaseUtil {
 
-    public static TFieldIdEnum getField(String name, TBase tBase) throws IllegalArgumentException {
+    public static TFieldIdEnum getField(String name, TBase tBase) {
         for (TFieldIdEnum tFieldIdEnum : tBase.getFields()) {
             if (tFieldIdEnum.getFieldName().equals(name)) {
                 return tFieldIdEnum;
             }
         }
-        throw new IllegalArgumentException(String.format("Field '%s' not found", name));
+        return null;
     }
 
     public static FieldMetaData getMetaData(TFieldIdEnum tFieldIdEnum, TBase tBase) {

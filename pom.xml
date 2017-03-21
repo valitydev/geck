@@ -18,6 +18,7 @@
     <modules>
         <module>serializer</module>
         <module>migrator</module>
+        <module>filter</module>
         <module>common</module>
     </modules>
 
@@ -31,6 +32,16 @@
             <dependency>
                 <groupId>com.rbkmoney.geck</groupId>
                 <artifactId>serializer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.rbkmoney.geck</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.rbkmoney.geck</groupId>
+                <artifactId>filter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
