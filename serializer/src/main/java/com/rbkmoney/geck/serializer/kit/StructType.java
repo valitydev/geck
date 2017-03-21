@@ -11,7 +11,13 @@ public enum StructType {
     SET("set"),
     LIST("list"),
     STRUCT("struct"),
+    BOOL("bool"),
     STRING("string"),
+    DOUBLE("double"),
+    LONG("long"),
+    NULL("null"),
+    BYTEARRAY("bytearray"),
+    MAP_ENTRY("map_entry"),
     OTHER("");
     private static class Holder {
         static Map<String, StructType> MAP = new HashMap<>();

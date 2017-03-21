@@ -10,9 +10,10 @@
         },
         "*" : "payment.&"
       },
-      "*": {
-        "@" : "&"
-      }
+      "cash_flow": {
+        "@" : "cash_flow.final_cash_flow"
+      },
+      "*": "&"
     }
   },
   {

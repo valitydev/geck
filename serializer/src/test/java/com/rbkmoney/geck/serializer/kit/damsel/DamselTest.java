@@ -16,15 +16,14 @@ import com.rbkmoney.geck.serializer.kit.object.ObjectHandler;
 import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
+import com.rbkmoney.geck.serializer.kit.xml.XMLHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by inalarsanukaev on 22.02.17.
@@ -38,7 +37,12 @@ public class DamselTest {
         System.out.println(json);
         new JSONObject(json);
     }
-
+    @Test
+    public void xmlInvoiceTest() throws Exception {
+        com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted invoice = new MockTBaseProcessor(MockMode.ALL, new FixedValueGenerator()).process(new com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted(), new TBaseHandler<>(com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted.class));
+        String xml = new TBaseProcessor().process(invoice, new XMLHandler()).toString();
+        System.out.println(xml);
+    }
     @Test
     public void testInvoiceMsgPack() throws IOException {
         InvoicePaymentStarted invoice = GeckTestUtil.getInvoicePaymentStarted();
@@ -60,7 +64,6 @@ public class DamselTest {
                         new TBaseHandler<>(InvoicePaymentStarted.class));
         Assert.assertEquals(invoice1, invoice2);
     }
-
     @Test
     public void testInvoiceBackTransform2() throws IOException {
         InvoicePaymentStarted invoice1 = GeckTestUtil.getInvoicePaymentStarted();
