@@ -334,7 +334,19 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     @Override
     public R getResult() throws IOException {
-        return result;
+        if (result == null) {
+            throw new BadFormatException("result is null");
+        }
+
+        if (!(stateStack.isEmpty()
+                && fieldStack.isEmpty()
+                && elementStack.isEmpty()
+                && valueMetaDataStack.isEmpty())) {
+            throw new BadFormatException("stack is not empty");
+        }
+        R tBase = result;
+        result = null;
+        return tBase;
     }
 
 }

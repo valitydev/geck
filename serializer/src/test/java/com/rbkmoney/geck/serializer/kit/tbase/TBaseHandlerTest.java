@@ -217,6 +217,8 @@ public class TBaseHandlerTest {
 
         handler.endStruct();
 
+        handler.endStruct();
+
         handler.getResult();
 
     }
