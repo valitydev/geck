@@ -39,6 +39,7 @@ public class XMLProcessor implements StructProcessor<DOMResult> {
             if (type == null) {
                 throw new BadFormatException("Attribute 'type' must not be null. Node name: "+nodeName);
             }
+            NodeList childNodes;
             switch (type) {
                 case STRING:
                     handler.value(node.getTextContent());
@@ -59,23 +60,27 @@ public class XMLProcessor implements StructProcessor<DOMResult> {
                     handler.nullValue();
                     break;
                 case STRUCT:
-                    handler.beginStruct(Integer.parseInt(node.getAttribute(XMLConstants.ATTRIBUTE_SIZE)));
-                    processChildNodes(node, handler, true);
+                    childNodes = node.getChildNodes();
+                    handler.beginStruct(childNodes == null ? 0 : childNodes.getLength());
+                    processChildNodes(childNodes, handler, true);
                     handler.endStruct();
                     break;
                 case LIST:
-                    handler.beginList(Integer.parseInt(node.getAttribute(XMLConstants.ATTRIBUTE_SIZE)));
-                    processChildNodes(node, handler, false);
+                    childNodes = node.getChildNodes();
+                    handler.beginList(childNodes == null ? 0 : childNodes.getLength());
+                    processChildNodes(childNodes, handler, false);
                     handler.endList();
                     break;
                 case SET:
-                    handler.beginSet(Integer.parseInt(node.getAttribute(XMLConstants.ATTRIBUTE_SIZE)));
-                    processChildNodes(node, handler, false);
+                    childNodes = node.getChildNodes();
+                    handler.beginSet(childNodes == null ? 0 : childNodes.getLength());
+                    processChildNodes(childNodes, handler, false);
                     handler.endSet();
                     break;
                 case MAP:
-                    handler.beginMap(Integer.parseInt(node.getAttribute(XMLConstants.ATTRIBUTE_SIZE)));
-                    processChildNodes(node, handler, false);
+                    childNodes = node.getChildNodes();
+                    handler.beginMap(childNodes== null ? 0 : childNodes.getLength());
+                    processChildNodes(childNodes, handler, false);
                     handler.endMap();
                     break;
                 case MAP_ENTRY :
@@ -91,8 +96,7 @@ public class XMLProcessor implements StructProcessor<DOMResult> {
             }
         }
     }
-    private void processChildNodes(Element node, StructHandler handler, boolean printName) throws IOException {
-        NodeList nodeList = node.getChildNodes();
+    private void processChildNodes(NodeList nodeList, StructHandler handler, boolean printName) throws IOException {
         for (int i = 0; i < nodeList.getLength(); ++i) {
             Node item = nodeList.item(i);
             if (item.getNodeType() == Node.ELEMENT_NODE) {

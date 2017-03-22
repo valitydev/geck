@@ -9,5 +9,4 @@ public interface XMLConstants {
     String ROOT = "root";
     String ELEMENT = "elem";
     String ATTRIBUTE_TYPE = "type";
-    String ATTRIBUTE_SIZE = "size";
 }

@@ -17,12 +17,20 @@ import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.xml.XMLHandler;
+import com.rbkmoney.geck.serializer.kit.xml.XMLProcessor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -147,5 +155,29 @@ public class DamselTest {
         System.out.println(json_v113);
 
         Assert.assertEquals(inputJSON_v113,transformedOutput);
+    }
+    @Test
+    public void testXslt() throws IOException, TransformerException {
+        com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted invoice_v130 =
+                new MockTBaseProcessor(MockMode.ALL, new FixedValueGenerator()).process(new com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted(), new TBaseHandler<>(com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted.class));
+        invoice_v130.cash_flow = null;
+        invoice_v130.payment.trx.extra = new HashMap<>();
+        DOMResult domResult_v130 = new TBaseProcessor().process(invoice_v130, new XMLHandler());
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Source xslt = new StreamSource(this.getClass().getResourceAsStream("/transform.xslt"));
+        Transformer transformer = factory.newTransformer(xslt);
+       // StringWriter string_v130 = new StringWriter();
+        DOMResult domResult_t_v113 = new DOMResult();
+        transformer.transform(new DOMSource(domResult_v130.getNode()), domResult_t_v113);
+        com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted invoice_t_v113 =
+                new XMLProcessor().process(domResult_t_v113, new TBaseHandler<>(com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted.class));
+        //System.out.println(string_v130.toString());
+
+        com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted invoice_v113 =
+                new MockTBaseProcessor(MockMode.ALL, new FixedValueGenerator()).process(new com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted(),
+                        new TBaseHandler<>(com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted.class));
+        invoice_v113.cash_flow = null;
+
+        Assert.assertEquals(invoice_t_v113, invoice_v113);
     }
 }

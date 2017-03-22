@@ -14,8 +14,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Base64;
 
 /**
@@ -67,7 +65,7 @@ public class XMLHandler implements StructHandler<DOMResult> {
         return documentBuilder;
     }
 
-    private void writeStartElement(String type, int size) throws BadFormatException {
+    private void writeStartElement(String type) throws BadFormatException {
         try {
             if (!stack.isEmpty()) {
                 byte x = stack.peek();
@@ -78,17 +76,11 @@ public class XMLHandler implements StructHandler<DOMResult> {
             if (type != null) {
                 out.writeAttribute(ATTRIBUTE_TYPE, type);
             }
-            if (size >= 0) {
-                out.writeAttribute(ATTRIBUTE_SIZE, String.valueOf(size));
-            }
         } catch (XMLStreamException e) {
             throw new BadFormatException("Unknown error when writeStartElement", e);
         }
     }
 
-    private void writeStartElement(String type) throws BadFormatException {
-        writeStartElement(type, -1);
-    }
     private void writeValue(String value, String type) throws BadFormatException {
         try {
             writeStartElement(type);
@@ -110,7 +102,7 @@ public class XMLHandler implements StructHandler<DOMResult> {
 
     @Override
     public void beginStruct(int size) throws IOException {
-        writeStartElement(StructType.STRUCT.getKey(), size);
+        writeStartElement(StructType.STRUCT.getKey());
         stack.push(EventFlags.startStruct);
     }
 
@@ -122,7 +114,7 @@ public class XMLHandler implements StructHandler<DOMResult> {
 
     @Override
     public void beginList(int size) throws IOException {
-        writeStartElement(StructType.LIST.getKey(), size);
+        writeStartElement(StructType.LIST.getKey());
         stack.push(EventFlags.startList);
     }
 
@@ -134,7 +126,7 @@ public class XMLHandler implements StructHandler<DOMResult> {
 
     @Override
     public void beginSet(int size) throws IOException {
-        writeStartElement(StructType.SET.getKey(), size);
+        writeStartElement(StructType.SET.getKey());
         stack.push(EventFlags.startSet);
     }
 
@@ -149,7 +141,6 @@ public class XMLHandler implements StructHandler<DOMResult> {
         stack.push(EventFlags.startMap);
         try {
             out.writeAttribute(ATTRIBUTE_TYPE, StructType.MAP.getKey());
-            out.writeAttribute(ATTRIBUTE_SIZE, String.valueOf(size));
         } catch (XMLStreamException e) {
             throw new BadFormatException("Unknown error when beginMap", e);
         }
