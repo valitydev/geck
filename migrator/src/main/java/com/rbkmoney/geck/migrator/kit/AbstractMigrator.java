@@ -1,9 +1,6 @@
 package com.rbkmoney.geck.migrator.kit;
 
-import com.rbkmoney.geck.migrator.MigrationException;
-import com.rbkmoney.geck.migrator.Migrator;
-import com.rbkmoney.geck.migrator.SerializerSpec;
-import com.rbkmoney.geck.migrator.ThriftSpec;
+import com.rbkmoney.geck.migrator.*;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
 
@@ -24,11 +21,15 @@ public abstract class AbstractMigrator implements Migrator {
     }
 
     protected <I, O> O serialize(I src, SerializerSpec<I, O> serializerSpec, ThriftSpec thriftSpec) throws MigrationException {
-        if (serializerSpec.getInDef().equals(serializerSpec.getOutDef())) {
+        return serialize(src, serializerSpec.getInDef(), serializerSpec.getOutDef(), thriftSpec);
+    }
+
+    protected <I, O> O serialize(I src, SerializerDef<I> inDef, SerializerDef<O> outDef, ThriftSpec thriftSpec) throws MigrationException {
+        if (inDef.equals(outDef)) {
             return (O) src;
         }
-        StructProcessor<I> processor = serializerProvider.getStructProcessor(serializerSpec.getInDef(), thriftSpec.getInDef());
-        StructHandler<O> handler = serializerProvider.getStructHandler(serializerSpec.getOutDef(), thriftSpec.getOutDef());
+        StructProcessor<I> processor = serializerProvider.getStructProcessor(inDef, thriftSpec.getInDef());
+        StructHandler<O> handler = serializerProvider.getStructHandler(outDef, thriftSpec.getOutDef());
         try {
             return processor.process(src, handler);
         } catch (IOException e) {

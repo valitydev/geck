@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public enum MigrationType {
     JOLT("JOLT"),
-    JAVA("JAVA"),
+    JOBJECT("JOBJECT"),
     TS_JAVA("TS_JAVA"),
     NOP("NOP");
 

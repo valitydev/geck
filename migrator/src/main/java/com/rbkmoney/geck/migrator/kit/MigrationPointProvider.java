@@ -5,6 +5,7 @@ import com.rbkmoney.geck.migrator.MigrationPoint;
 import com.rbkmoney.geck.migrator.MigrationSpec;
 import com.rbkmoney.geck.migrator.ThriftSpec;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public interface MigrationPointProvider {
      * Get all thrift version transitions known to this provider. If provider knows about specific thrift version but doesn't have migration spec,
      * this version must be included too.
      * */
-    List<ThriftSpec> getSpecs() throws MigrationException;
+    Collection<ThriftSpec> getSpecs() throws MigrationException;
 
     /**
      * Get all Migration Specs known to this provider. If some thrift version doesn't need migration, it is acceptable to return stub migration for this version transition.

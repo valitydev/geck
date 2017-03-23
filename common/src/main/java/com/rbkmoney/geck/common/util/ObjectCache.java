@@ -1,4 +1,4 @@
-package com.rbkmoney.geck.migrator.kit;
+package com.rbkmoney.geck.common.util;
 
 /**
  * Created by vpankrashkin on 17.03.17.

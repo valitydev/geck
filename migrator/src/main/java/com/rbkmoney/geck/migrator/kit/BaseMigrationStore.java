@@ -1,5 +1,6 @@
 package com.rbkmoney.geck.migrator.kit;
 
+import com.rbkmoney.geck.common.util.ObjectCache;
 import com.rbkmoney.geck.migrator.*;
 
 import java.util.*;
@@ -8,7 +9,6 @@ import java.util.*;
  * Created by vpankrashkin on 06.03.17.
  */
 public class BaseMigrationStore implements MigrationStore {
-    private static final int NO_VERSION = -1;
 
     private final List<MigrationPointProvider> providers;
     private ObjectCache<InitResult> resultCache;
@@ -34,19 +34,19 @@ public class BaseMigrationStore implements MigrationStore {
         try {
             List<Map.Entry<ThriftSpec, MigrationPointProvider>> specList = new ArrayList<>();
             for (MigrationPointProvider provider: providers) {
-                List<ThriftSpec> specs = provider.getSpecs();
+                Collection<ThriftSpec> specs = provider.getSpecs();
                 specs.stream().forEach(s -> specList.add(new AbstractMap.SimpleImmutableEntry<>(s, provider)));
             }
             Collections.sort(specList, specInDefComparator);
-            int min = NO_VERSION;
-            int max = NO_VERSION;
+            int min = ThriftDef.NO_VERSION;
+            int max = ThriftDef.NO_VERSION;
 
             for (Map.Entry<ThriftSpec, MigrationPointProvider> specEntry : specList) {
                 ThriftSpec spec = specEntry.getKey();
-                if (min == NO_VERSION || spec.getInDef().getVersion() < min) {
+                if (min == ThriftDef.NO_VERSION || spec.getInDef().getVersion() < min) {
                     min = spec.getInDef().getVersion();
                 }
-                if (max == NO_VERSION || spec.getOutDef().getVersion() > max) {
+                if (max == ThriftDef.NO_VERSION || spec.getOutDef().getVersion() > max) {
                     max = spec.getOutDef().getVersion();
                 }
             }
@@ -68,12 +68,12 @@ public class BaseMigrationStore implements MigrationStore {
         InitResult initResult = getInitResult();
         int idx = 0;
         while (outTDef.getVersion() < thriftSpec.getOutDef().getVersion()) {
-            int newOutVersion = NO_VERSION;
+            int newOutVersion = ThriftDef.NO_VERSION;
             String newOutType = null;
             for (int i = idx; i < initResult.specList.size(); ++i) {
                 Map.Entry<ThriftSpec, MigrationPointProvider> specEntry = initResult.specList.get(idx);
                 if (isOverlaps(outTDef, specEntry.getKey().getInDef())) {
-                    if (newOutVersion != NO_VERSION && specEntry.getKey().getOutDef().getVersion() != newOutVersion) {
+                    if (newOutVersion != ThriftDef.NO_VERSION && specEntry.getKey().getOutDef().getVersion() != newOutVersion) {
                         throw new MigrationException(String.format("Selected out version %d for in version %d doesn't match out version for examined migration point: %s", newOutVersion, outTDef.getVersion(), specEntry.getValue().toString()));
                     }
                     newOutVersion = specEntry.getKey().getOutDef().getVersion();
@@ -82,7 +82,7 @@ public class BaseMigrationStore implements MigrationStore {
                     ++idx;
                 }
             }
-            if (newOutVersion != NO_VERSION) {
+            if (newOutVersion != ThriftDef.NO_VERSION) {
                 outTDef.setType(newOutType);
                 outTDef.setVersion(newOutVersion);
             } else {
