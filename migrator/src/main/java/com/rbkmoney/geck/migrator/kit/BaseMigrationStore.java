@@ -86,10 +86,13 @@ public class BaseMigrationStore implements MigrationStore {
                 outTDef.setType(newOutType);
                 outTDef.setVersion(newOutVersion);
             } else {
-                throw new MigrationException("Not found migration for type: "+outTDef);
+                outTDef.setVersion(outTDef.getVersion() + 1);
             }
         }
-        if (outTDef.getVersion() > thriftSpec.getOutDef().getVersion() || (outTDef.getType() != null && thriftSpec.getOutDef().getType() != null && !outTDef.getType().equals(thriftSpec.getOutDef().getType()))) {
+        if (outTDef.getVersion() != thriftSpec.getOutDef().getVersion()) {
+            throw new MigrationException("Not found migration for spec: "+thriftSpec);
+        }
+        if ((outTDef.getType() != null && thriftSpec.getOutDef().getType() != null && !outTDef.getType().equals(thriftSpec.getOutDef().getType()))) {
             throw new MigrationException(String.format("Out migration %s doesn't match required type: %d", outTDef, thriftSpec.getOutDef()));
         }
         return migrationsList;

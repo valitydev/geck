@@ -1,9 +1,16 @@
 package com.rbkmoney.geck.common.reflection;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.ClassPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Created by vpankrashkin on 22.03.17.
@@ -11,7 +18,8 @@ import java.util.List;
  */
 
 
- public class ClassFinder {
+public class ClassFinder {
+    private static final Logger log = LoggerFactory.getLogger(ClassFinder.class);
 
     private static final char PKG_SEPARATOR = '.';
 
@@ -21,17 +29,36 @@ import java.util.List;
 
     private static final String BAD_PACKAGE_ERROR = "Unable to get resources from path '%s'. Are you sure the package '%s' exists?";
 
-    public static <T> List<Class<T>> find(String scannedPackage, String classNameSuffix, Class<T> classType) {
-        String scannedPath = scannedPackage.replace(PKG_SEPARATOR, DIR_SEPARATOR);
-        final String fullClassNameSuffix = classNameSuffix + CLASS_FILE_SUFFIX;
-        URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
-        if (scannedUrl == null) {
-            throw new IllegalArgumentException(String.format(BAD_PACKAGE_ERROR, scannedPath, scannedPackage));
-        }
-        File scannedDir = new File(scannedUrl.getFile());
+    public static <T> List<Class<T>> find(Collection<String> scannedPackages, String classNameSuffix, Class<T> classType) {
         List<Class<T>> classes = new ArrayList<>();
-        for (File file : scannedDir.listFiles()) {
-            classes.addAll(find(file, scannedPackage, fullClassNameSuffix, classType));
+        for (String scannedPackage : scannedPackages) {
+            String scannedPath = scannedPackage.replace(PKG_SEPARATOR, DIR_SEPARATOR);
+            final String fullClassNameSuffix = classNameSuffix + CLASS_FILE_SUFFIX;
+            URL scannedUrl = Thread.currentThread().getContextClassLoader().getResource(scannedPath);
+            if (scannedUrl == null) {
+                log.warn(String.format(BAD_PACKAGE_ERROR, scannedPath, scannedPackage));
+                continue;
+            }
+
+            try {
+                System.out.println("ClassFinder:Scanned URL "+scannedUrl);
+                File scannedDir = Paths.get(scannedUrl.toURI()).toFile();
+                //File scannedDir = new File(scannedUrl.getFile());
+                System.out.println("Absolute Path:"+scannedDir.getAbsolutePath());
+                System.out.println("Exists:"+scannedDir.exists());
+                System.out.println("Is directory:"+scannedDir.isDirectory());
+                System.out.println("Can read:"+scannedDir.canRead());
+                System.out.println("Can write:"+scannedDir.canWrite());
+                System.out.println("Can execute:"+scannedDir.canExecute());
+                File[] filesList = scannedDir.listFiles();
+                if (filesList != null) {
+                    for (File file : filesList) {
+                        classes.addAll(find(file, scannedPackage, fullClassNameSuffix, classType));
+                    }
+                }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
         return classes;
     }
@@ -54,6 +81,38 @@ import java.util.List;
                 }
             } catch (ClassNotFoundException ignore) {
             }
+        }
+        return classes;
+    }
+
+    public static <T> Collection<Class<T>> gFind(Collection<String> scannedPackages, String classNameSuffix, Class<T> classType) {
+        List<Class<T>> classes = new ArrayList<>();
+        for (String scannedPackage: scannedPackages) {
+            classes.addAll(gFind(scannedPackage, classNameSuffix, classType));
+        }
+        return classes;
+    }
+
+        public static <T> Collection<Class<T>> gFind(String scannedPackage, String classSuffix, Class<T> classType) {
+        Set<Class<T>> classes = new HashSet<>();
+        try {
+            ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
+            ImmutableSet<ClassPath.ClassInfo> classesInfo = classPath.getTopLevelClassesRecursive(scannedPackage);
+
+            for (ClassPath.ClassInfo classInfo: classesInfo) {
+                if (classInfo.getName().endsWith(classSuffix)) {
+                    try {
+                        Class cl = classInfo.load();
+                        if (classType.isAssignableFrom(cl)) {
+                            classes.add(cl);
+                        }
+                    } catch (Exception e) {
+                        log.warn("Failed to load class "+ classInfo, e);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.warn("Failed to get classes list for package "+ scannedPackage, e);
         }
         return classes;
     }

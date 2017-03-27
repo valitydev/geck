@@ -9,8 +9,7 @@ import com.rbkmoney.geck.migrator.kit.SimpleMigrationPointProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -22,9 +21,16 @@ public class ObjectMigrationPointProvider extends SimpleMigrationPointProvider {
 
     private static final String CLASS_NAME_SUFFIX = "Spec";
 
-    public static ObjectMigrationPointProvider newInstance(String migrationSpecPkg) throws MigrationException {
+    private static final String DEFAULT_SPEC_PACKAGE = "com.rbkmoney.geck.migrator.spec.object";
+
+    public static ObjectMigrationPointProvider newInstance() throws MigrationException {
+        return newInstance(Arrays.asList(DEFAULT_SPEC_PACKAGE));
+    }
+
+    public static ObjectMigrationPointProvider newInstance(Collection<String> migrationSpecPkg) throws MigrationException {
         try {
-            List<Class<ObjectSpec>> specClList = ClassFinder.find(migrationSpecPkg, CLASS_NAME_SUFFIX, ObjectSpec.class);
+            List<String> searchSpecPkgs = new ArrayList<>(migrationSpecPkg);
+            List<Class<ObjectSpec>> specClList = new ArrayList<>(ClassFinder.gFind(searchSpecPkgs, CLASS_NAME_SUFFIX, ObjectSpec.class));
             return new ObjectMigrationPointProvider(instantiateObjectSpecs(specClList));
         } catch (Exception e) {
             throw new MigrationException("Cannot create ObjectSpec list", e);
