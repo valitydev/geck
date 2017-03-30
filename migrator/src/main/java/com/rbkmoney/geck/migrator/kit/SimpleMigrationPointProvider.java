@@ -7,6 +7,7 @@ import com.rbkmoney.geck.migrator.ThriftSpec;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +18,7 @@ public class SimpleMigrationPointProvider implements MigrationPointProvider {
 
     public SimpleMigrationPointProvider(Collection<MigrationPoint> migrationPoints) {
         pointMap = Collections.unmodifiableMap(
-                migrationPoints.stream().collect(Collectors.toMap(mp -> mp.getThriftSpec(), mp -> mp))
+                migrationPoints.stream().collect(Collectors.toMap(mp -> mp.getThriftSpec(), Function.identity()))
         );
     }
 

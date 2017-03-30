@@ -71,7 +71,7 @@ public class BaseMigrationStore implements MigrationStore {
             int newOutVersion = ThriftDef.NO_VERSION;
             String newOutType = null;
             for (int i = idx; i < initResult.specList.size(); ++i) {
-                Map.Entry<ThriftSpec, MigrationPointProvider> specEntry = initResult.specList.get(idx);
+                Map.Entry<ThriftSpec, MigrationPointProvider> specEntry = initResult.specList.get(i);
                 if (isOverlaps(outTDef, specEntry.getKey().getInDef())) {
                     if (newOutVersion != ThriftDef.NO_VERSION && specEntry.getKey().getOutDef().getVersion() != newOutVersion) {
                         throw new MigrationException(String.format("Selected out version %d for in version %d doesn't match out version for examined migration point: %s", newOutVersion, outTDef.getVersion(), specEntry.getValue().toString()));

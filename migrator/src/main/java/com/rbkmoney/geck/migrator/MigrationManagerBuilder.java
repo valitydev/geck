@@ -3,10 +3,13 @@ package com.rbkmoney.geck.migrator;
 import com.rbkmoney.geck.migrator.kit.BaseMigrationManager;
 import com.rbkmoney.geck.migrator.kit.BaseMigrationStore;
 import com.rbkmoney.geck.migrator.kit.MigrationPointProvider;
-import com.rbkmoney.geck.migrator.kit.object.ObjectMigrationPointProvider;
+import com.rbkmoney.geck.migrator.kit.jolt.JoltMigrator;
 import com.rbkmoney.geck.migrator.kit.object.ObjectMigrator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vpankrashkin on 24.03.17.
@@ -16,10 +19,12 @@ public class MigrationManagerBuilder {
     private List<MigrationPointProvider> providers = new ArrayList<>();
 
     private List<MigrationPointProvider> createMPointProviders() throws MigrationException {
-        List<MigrationPointProvider> newProviders = new ArrayList<>();
+        if (providers.isEmpty()) {
+            throw new MigrationException("providers must be set");
+        }
 
+        List<MigrationPointProvider> newProviders = new ArrayList<>();
         newProviders.addAll(providers);
-        newProviders.add(ObjectMigrationPointProvider.newInstance());
         return newProviders;
     }
 
@@ -29,6 +34,9 @@ public class MigrationManagerBuilder {
         newMigrators.addAll(migratorsMap.values());
         if (!migratorsMap.containsKey(ObjectMigrator.class.getName())) {
             newMigrators.add(new ObjectMigrator());
+        }
+        if (!migratorsMap.containsKey(JoltMigrator.class.getName())) {
+            newMigrators.add(new JoltMigrator());
         }
 
         return newMigrators;

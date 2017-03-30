@@ -63,7 +63,7 @@ public class PathConditionFilterTest {
         testObject.setOtherIds(ids);
 
         Unknown unknown = new Unknown();
-        List<Type> listTypes = Arrays.asList(new Type[] {Type.BLACK, Type.GREEN});
+        List<Type> listTypes = Arrays.asList(new Type[]{Type.BLACK, Type.GREEN});
         unknown.setUnknown(UnknownType.resultTypes(listTypes));
         unknown.setDescription("wtf!?!");
         testObject.setStatus(Status.unknown_status(unknown));
@@ -80,7 +80,7 @@ public class PathConditionFilterTest {
         PathConditionRule rule2 = new PathConditionRule("other_ids.mini_id");
 
         Unknown unknown = new Unknown();
-        List<Type> listTypes = Arrays.asList(new Type[] {Type.BLACK, Type.GREEN});
+        List<Type> listTypes = Arrays.asList(new Type[]{Type.BLACK, Type.GREEN});
         unknown.setUnknown(UnknownType.resultTypes(listTypes));
         unknown.setDescription("wtf!?!");
         PathConditionRule rule3 = new PathConditionRule("status", new EqualsCondition(Status.ok_status(new Ok())).or(new EqualsCondition(Status.unknown_status(unknown))));
@@ -103,7 +103,7 @@ public class PathConditionFilterTest {
     }
 
     @Test
-    public void filterUnhappyCase(){
+    public void filterUnhappyCase() {
         PathConditionRule rule1 = new PathConditionRule("kek.kek.sdfdsf.fsdf.vv.ff.ee.dd");
         PathConditionRule rule2 = new PathConditionRule("..213123.213");
         PathConditionRule rule3 = new PathConditionRule("");

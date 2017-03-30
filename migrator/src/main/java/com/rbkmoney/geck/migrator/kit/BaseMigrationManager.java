@@ -44,7 +44,7 @@ public class BaseMigrationManager implements MigrationManager {
             if (migrator == null) {
                 throw new MigrationException("Not migrator for type: "+ mPoint.getMigrationType());
             }
-            transitionSerSpec.setOutDef( ((i < mPoints.size() - 1) ? mPoints.get(i + 1).getSerializerDef() : transitionSerSpec.getOutDef()));
+            transitionSerSpec.setOutDef( ((i < mPoints.size() - 1) ? mPoints.get(i + 1).getSerializerDef() : serializerSpec.getOutDef()));
             data = migrator.migrate(src, mPoint, transitionSerSpec);
             transitionSerSpec.setInDef(mPoint.getSerializerDef());
         }
