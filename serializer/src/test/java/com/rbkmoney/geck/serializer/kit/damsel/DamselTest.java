@@ -26,11 +26,8 @@ import org.junit.Test;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.*;
 
 /**

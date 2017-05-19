@@ -6,7 +6,6 @@ import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import org.apache.thrift.TBase;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 /**
  * Created by tolkonepiu on 24/01/2017.
@@ -15,9 +14,8 @@ public class Geck {
 
     public String toJson(TBase src) {
         try {
-            StringWriter writer = new StringWriter();
             TBaseProcessor structProcessor = new TBaseProcessor();
-            JsonHandler jsonHandler = new JsonHandler(writer);
+            JsonHandler jsonHandler = new JsonHandler();
             return  structProcessor.process(src, jsonHandler).toString();
         } catch (IOException ex) {
             throw new RuntimeException(ex);

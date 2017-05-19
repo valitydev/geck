@@ -10,7 +10,6 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.transform.dom.DOMResult;
 import java.io.IOException;
-import java.sql.Struct;
 import java.util.Arrays;
 import java.util.Base64;
 
