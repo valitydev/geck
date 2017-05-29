@@ -2,11 +2,11 @@ package com.rbkmoney.geck.serializer.kit.json;
 
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import com.rbkmoney.geck.serializer.GeckTestUtil;
+import com.rbkmoney.geck.serializer.kit.mock.FixedValueGenerator;
+import com.rbkmoney.geck.serializer.kit.mock.MockMode;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackProcessor;
-import com.rbkmoney.geck.serializer.kit.object.ObjectHandler;
-import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.test.TestObject;
@@ -38,7 +38,7 @@ public class JsonTest {
                         new JsonProcessor().process(
                                 new TBaseProcessor().process(
                                         invoice1,
-                                       new JsonHandler()),
+                                        new JsonHandler()),
                                 MsgPackHandler.newBufferedInstance(true)),
                         new TBaseHandler<>(InvoicePaymentStarted.class));
         Assert.assertEquals(invoice1, invoice2);
@@ -54,5 +54,13 @@ public class JsonTest {
         String json2 = new TBaseProcessor().process(testObject, handler).toString();
         System.out.println(json2);
         Assert.assertEquals(json1, json2);
+    }
+
+    @Test
+    public void testPretty() throws IOException {
+        TestObject testObject = new MockTBaseProcessor(MockMode.ALL, new FixedValueGenerator()).process(new TestObject(), new TBaseHandler<>( TestObject.class));
+        JsonHandler handler = JsonHandler.newPrettyJsonInstance();
+        String json1 = new TBaseProcessor().process(testObject, handler).toString();
+        System.out.println(json1);
     }
 }

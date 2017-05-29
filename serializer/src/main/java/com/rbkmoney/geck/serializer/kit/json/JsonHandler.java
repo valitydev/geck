@@ -1,92 +1,102 @@
 package com.rbkmoney.geck.serializer.kit.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.rbkmoney.geck.common.stack.ObjectStack;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.kit.StructType;
+
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Base64;
 
 /**
  * Created by tolkonepiu on 27/01/2017.
  */
-//TODO replace Writer to JsonNode or similar
-//TODO pretty out (without type identifiers into staructure)
-public class JsonHandler implements StructHandler<Writer> {
+public class JsonHandler implements StructHandler<JsonNode> {
 
     public static final String KEY = "key";
     public static final String VALUE = "value";
     public static final String ESC_SYMBOL = "@";
-    private Writer out;
-    private JsonGenerator jGenerator;
-    private JsonFactory jfactory = new JsonFactory();
+    protected ObjectStack<String> names = new ObjectStack<>();
+    protected ObjectStack<JsonNodeWrapper> nodes = new ObjectStack<>();
+    private final boolean pretty;
+    protected ObjectNode rootNode;
+    protected ObjectMapper mapper = new ObjectMapper();
 
-    {
-        try {
-            init();
-        } catch (BadFormatException e) {
-            throw new RuntimeException(e);//TODO
-        }
+    public JsonHandler() {
+        pretty = false;
     }
 
-    private void init() throws BadFormatException {
-        try {
-            out = new StringWriter();
-            jGenerator = jfactory.createGenerator(out);
-        } catch (IOException e) {
-            throw new BadFormatException("Unknown error when init", e);
-        }
+    public JsonHandler(boolean pretty) {
+        this.pretty = pretty;
+    }
+
+    /**
+     * Use only for print, not for json-processor
+     * @return
+     */
+    public static JsonHandler newPrettyJsonInstance() {
+        JsonHandler jsonHandler = new JsonHandler(true);
+        return jsonHandler;
+    }
+
+    private void beginArray(StructType type) {
+        ArrayNodeWrapper item = nodes.peek().addArray();
+        nodes.push(item);
+        if (!pretty) item.add(type.getKey());
     }
 
     @Override
     public void beginStruct(int size) throws IOException {
-        jGenerator.writeStartObject();
+        if (nodes.isEmpty()) { // start handling
+            rootNode = mapper.createObjectNode();
+            nodes.push(new ObjectNodeWrapper(names, rootNode));
+        } else {
+            nodes.push(nodes.peek().addObject(names));
+        }
     }
 
     @Override
     public void endStruct() throws IOException {
-        jGenerator.writeEndObject();
+        nodes.pop();
     }
 
     @Override
     public void beginList(int size) throws IOException {
-        jGenerator.writeStartArray();
-        jGenerator.writeString(StructType.LIST.getKey());
+        beginArray(StructType.LIST);
     }
 
     @Override
     public void endList() throws IOException {
-        jGenerator.writeEndArray();
+        nodes.pop();
     }
 
     @Override
     public void beginSet(int size) throws IOException {
-        jGenerator.writeStartArray();
-        jGenerator.writeString(StructType.SET.getKey());
+        beginArray(StructType.SET);
     }
 
     @Override
     public void endSet() throws IOException {
-        jGenerator.writeEndArray();
+        nodes.pop();
     }
 
     @Override
     public void beginMap(int size) throws IOException {
-        jGenerator.writeStartArray();
-        jGenerator.writeString(StructType.MAP.getKey());
+        beginArray(StructType.MAP);
     }
 
     @Override
     public void endMap() throws IOException {
-        jGenerator.writeEndArray();
+        nodes.pop();
     }
 
     @Override
     public void beginKey() throws IOException {
-        jGenerator.writeStartObject();
+        nodes.push(nodes.peek().addObject(names));
         name(KEY);
     }
 
@@ -101,53 +111,162 @@ public class JsonHandler implements StructHandler<Writer> {
 
     @Override
     public void endValue() throws IOException {
-        jGenerator.writeEndObject();
+        nodes.pop();
     }
 
     @Override
     public void name(String name) throws IOException {
-        jGenerator.writeFieldName(name);
+        names.push(name);
     }
 
     @Override
     public void value(boolean value) throws IOException {
-        jGenerator.writeBoolean(value);
+        nodes.peek().add(value);
     }
 
     @Override
     public void value(String value) throws IOException {
-        if (value.startsWith(ESC_SYMBOL)) {
-            value = ESC_SYMBOL+value;
+        if ((!pretty) && value.startsWith(ESC_SYMBOL)) {
+            value = ESC_SYMBOL + value;
         }
-        jGenerator.writeString(value);
+        nodes.peek().add(value);
     }
 
     @Override
     public void value(double value) throws IOException {
-        jGenerator.writeNumber(value);
+        nodes.peek().add(value);
     }
 
     @Override
     public void value(long value) throws IOException {
-        jGenerator.writeNumber(value);
+        nodes.peek().add(value);
     }
 
     @Override
     public void value(byte[] value) throws IOException {
-        jGenerator.writeString(ESC_SYMBOL+Base64.getEncoder().encodeToString(value));
+        String s = (pretty ? "" : ESC_SYMBOL) + Base64.getEncoder().encodeToString(value);
+        nodes.peek().add(s);
     }
 
     @Override
     public void nullValue() throws IOException {
-        jGenerator.writeNull();
+        nodes.peek().addNull();
     }
 
     @Override
-    public Writer getResult() throws IOException {
-        jGenerator.close();
-        out.flush();
-        Writer resultOut = out;
-        init();
-        return resultOut;
+    public JsonNode getResult() throws IOException {
+        if (!(nodes.isEmpty() && names.isEmpty())) {
+            throw new BadFormatException("Something went wrong: stacks is not empty!");
+        }
+        return rootNode;
+    }
+
+    private interface JsonNodeWrapper {
+        ArrayNodeWrapper addArray();
+        ObjectNodeWrapper addObject(ObjectStack<String> names);
+        void add(boolean value);
+        void add(String value);
+        void add(double value);
+        void add(long value);
+        void add(byte[] value);
+        void addNull();
+    }
+
+    private static class ObjectNodeWrapper implements JsonNodeWrapper {
+        private ObjectStack<String> names;
+        private ObjectNode node;
+
+        public ObjectNodeWrapper(ObjectStack<String> names, ObjectNode node) {
+            this.names = names;
+            this.node = node;
+        }
+
+        @Override
+        public ArrayNodeWrapper addArray() {
+            return new ArrayNodeWrapper(node.putArray(names.pop()));
+        }
+
+        @Override
+        public ObjectNodeWrapper addObject(ObjectStack<String> names) {
+            return new ObjectNodeWrapper(names, node.putObject(names.pop()));
+        }
+
+        @Override
+        public void add(boolean value) {
+            node.put(names.pop(), value);
+        }
+
+        @Override
+        public void add(String value) {
+            node.put(names.pop(), value);
+        }
+
+        @Override
+        public void add(double value) {
+            node.put(names.pop(), value);
+        }
+
+        @Override
+        public void add(long value) {
+            node.put(names.pop(), value);
+        }
+
+        @Override
+        public void add(byte[] value) {
+            node.put(names.pop(), value);
+        }
+
+        @Override
+        public void addNull() {
+            node.putNull(names.pop());
+        }
+    }
+
+    private static class ArrayNodeWrapper implements JsonNodeWrapper {
+        private ArrayNode node;
+
+        public ArrayNodeWrapper(ArrayNode node) {
+            this.node = node;
+        }
+
+        @Override
+        public ArrayNodeWrapper addArray() {
+            return new ArrayNodeWrapper(node.addArray());
+        }
+
+        @Override
+        public ObjectNodeWrapper addObject(ObjectStack<String> names) {
+            return new ObjectNodeWrapper(names, node.addObject());
+        }
+
+        @Override
+        public void add(boolean value) {
+            node.add(value);
+        }
+
+        @Override
+        public void add(String value) {
+            node.add(value);
+        }
+
+        @Override
+        public void add(double value) {
+            node.add(value);
+        }
+
+        @Override
+        public void add(long value) {
+            node.add(value);
+        }
+
+        @Override
+        public void add(byte[] value) {
+            node.add(value);
+        }
+
+        @Override
+        public void addNull() {
+            node.addNull();
+        }
     }
 }

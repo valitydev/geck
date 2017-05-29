@@ -1,14 +1,12 @@
 package com.rbkmoney.geck.serializer.kit.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.kit.StructType;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,12 +14,11 @@ import java.util.Map;
 /**
  * Created by inalarsanukaev on 16.03.17.
  */
-public class JsonProcessor implements StructProcessor<Writer> {
+public class JsonProcessor implements StructProcessor<JsonNode> {
+
     @Override
-    public <R> R process(Writer value, StructHandler<R> handler) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(value.toString());
-        processNode(jsonNode, null, handler);
+    public <R> R process(JsonNode value, StructHandler<R> handler) throws IOException {
+        processNode(value, null, handler);
         return handler.getResult();
     }
 
