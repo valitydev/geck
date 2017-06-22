@@ -2,6 +2,7 @@ package com.rbkmoney.geck.serializer.kit.damsel;
 
 import com.bazaarvoice.jolt.Chainr;
 import com.bazaarvoice.jolt.JsonUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rbkmoney.damsel.v113.domain.Invoice;
 import com.rbkmoney.damsel.v113.payment_processing.*;
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
@@ -18,36 +19,40 @@ import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.xml.XMLHandler;
 import com.rbkmoney.geck.serializer.kit.xml.XMLProcessor;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.xml.transform.*;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by inalarsanukaev on 22.02.17.
  */
 public class DamselTest {
     @Test
-    public void jsonInvoiceTest() throws JSONException, IOException {
+    public void jsonInvoiceTest() throws IOException {
         //com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted invoice = new MockTBaseProcessor().process(new com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted(), new TBaseHandler<>(com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted.class));
         com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted invoice = new MockTBaseProcessor().process(new com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted(), new TBaseHandler<>(com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted.class));
         String json = new TBaseProcessor().process(invoice, new JsonHandler()).toString();
-        System.out.println(json);
-        new JSONObject(json);
+        new ObjectMapper().readTree(json);
     }
+
     @Test
     public void xmlInvoiceTest() throws Exception {
         com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted invoice = new MockTBaseProcessor(MockMode.ALL, new FixedValueGenerator()).process(new com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted(), new TBaseHandler<>(com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted.class));
         String xml = new TBaseProcessor().process(invoice, new XMLHandler()).toString();
         System.out.println(xml);
     }
+
     @Test
     public void testInvoiceMsgPack() throws IOException {
         InvoicePaymentStarted invoice = GeckTestUtil.getInvoicePaymentStarted();
@@ -69,6 +74,7 @@ public class DamselTest {
                         new TBaseHandler<>(InvoicePaymentStarted.class));
         Assert.assertEquals(invoice1, invoice2);
     }
+
     @Test
     public void testInvoiceBackTransform2() throws IOException {
         InvoicePaymentStarted invoice1 = GeckTestUtil.getInvoicePaymentStarted();
@@ -151,8 +157,9 @@ public class DamselTest {
         Object inputJSON_v113 = JsonUtils.jsonToObject(json_v113);
         System.out.println(json_v113);
 
-        Assert.assertEquals(inputJSON_v113,transformedOutput);
+        Assert.assertEquals(inputJSON_v113, transformedOutput);
     }
+
     @Test
     public void testXslt() throws IOException, TransformerException {
         com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted invoice_v130 =
@@ -163,7 +170,7 @@ public class DamselTest {
         TransformerFactory factory = TransformerFactory.newInstance();
         Source xslt = new StreamSource(this.getClass().getResourceAsStream("/transform.xslt"));
         Transformer transformer = factory.newTransformer(xslt);
-       // StringWriter string_v130 = new StringWriter();
+        // StringWriter string_v130 = new StringWriter();
         DOMResult domResult_t_v113 = new DOMResult();
         transformer.transform(new DOMSource(domResult_v130.getNode()), domResult_t_v113);
         com.rbkmoney.damsel.v113.payment_processing.InvoicePaymentStarted invoice_t_v113 =

@@ -8,6 +8,6 @@ build('geck', 'docker-host') {
         javaLibPipeline = load("build_utils/jenkins_lib/pipeJavaLib.groovy")
     }
 
-    def buildImageTag = "3750c129119b83ea399dc4aa0ed923fb0e3bf0f0"
+    def buildImageTag = "4799280a02cb73761a3ba3641285aac8ec4ec482"
     javaLibPipeline(buildImageTag)
 }

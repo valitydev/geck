@@ -1,12 +1,13 @@
 package com.rbkmoney.geck.serializer;
 
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
-import com.rbkmoney.geck.serializer.test.Status;
-import com.rbkmoney.geck.serializer.test.TestObject;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
+import com.rbkmoney.geck.serializer.test.Status;
+import com.rbkmoney.geck.serializer.test.TestObject;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

@@ -2,10 +2,12 @@ package com.rbkmoney.geck.common.util;
 
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
+import org.apache.thrift.TUnion;
 import org.apache.thrift.meta_data.FieldMetaData;
 import org.apache.thrift.meta_data.FieldValueMetaData;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by tolkonepiu on 08/02/2017.
@@ -38,6 +40,11 @@ public class TBaseUtil {
             }
         }
         return size;
+    }
+
+    public static <T extends Enum<T>> T unionFieldToEnum(TUnion union, Class<T> enumType) {
+        Objects.requireNonNull(union, "Union must be set");
+        return Enum.valueOf(enumType, union.getSetField().getFieldName());
     }
 
 }

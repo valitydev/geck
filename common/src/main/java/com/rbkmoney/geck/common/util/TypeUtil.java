@@ -1,5 +1,9 @@
 package com.rbkmoney.geck.common.util;
 
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
@@ -12,12 +16,40 @@ public class TypeUtil {
 
     private static final DateTimeFormatter FORMATTER = ISO_INSTANT;
 
+    public static LocalDateTime stringToLocalDateTime(String dateTimeStr) throws IllegalArgumentException {
+        return stringToLocalDateTime(dateTimeStr, ZoneOffset.UTC);
+    }
+
+    public static LocalDateTime stringToLocalDateTime(String dateTimeStr, ZoneOffset zoneOffset) throws IllegalArgumentException {
+        try {
+            return LocalDateTime.ofInstant(stringToInstant(dateTimeStr), zoneOffset);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("Failed to convert in LocalDateTime: " + dateTimeStr, e);
+        }
+    }
+
+    public static Instant stringToInstant(String dateTimeStr) throws IllegalArgumentException {
+        try {
+            return Instant.from(stringToTemporal(dateTimeStr));
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException("Failed to convert in Instant: " + dateTimeStr, e);
+        }
+    }
+
     public static TemporalAccessor stringToTemporal(String dateTimeStr) throws IllegalArgumentException {
         try {
             return FORMATTER.parse(dateTimeStr);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse: " + dateTimeStr, e);
         }
+    }
+
+    public static String temporalToString(LocalDateTime localDateTime) throws IllegalArgumentException {
+        return temporalToString(localDateTime.toInstant(ZoneOffset.UTC));
+    }
+
+    public static String temporalToString(LocalDateTime localDateTime, ZoneOffset zoneOffset) throws IllegalArgumentException {
+        return temporalToString(localDateTime.toInstant(zoneOffset));
     }
 
     public static String temporalToString(TemporalAccessor temporalAccessor) throws IllegalArgumentException {

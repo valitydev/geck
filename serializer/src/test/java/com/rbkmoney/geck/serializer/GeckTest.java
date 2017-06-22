@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.serializer;
 
-import com.rbkmoney.geck.serializer.test.TestObject;
 import com.rbkmoney.geck.serializer.handler.HandlerStub;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackProcessor;
@@ -9,6 +8,7 @@ import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import com.rbkmoney.geck.serializer.test.Status;
+import com.rbkmoney.geck.serializer.test.TestObject;
 import com.rbkmoney.geck.serializer.test.Unknown;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
@@ -26,7 +26,6 @@ import java.util.zip.GZIPOutputStream;
 
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tolkonepiu on 25/01/2017.

@@ -28,7 +28,7 @@ public final class ObjectCache<T> {
 
     /**
      * @param updateDelay use -1 to disable delay, use 0 to always update, greater than 0 to set fixed delay
-     * */
+     */
     public ObjectCache(Supplier<T> cacheCreator, long updateDelay) {
         Objects.requireNonNull(cacheCreator);
         this.cacheCreator = cacheCreator;
