@@ -9,6 +9,8 @@ public interface Parser {
 
     String getItemPath(int item);
 
+    Parser getSubParser(int from);
+
     int size();
 
 }

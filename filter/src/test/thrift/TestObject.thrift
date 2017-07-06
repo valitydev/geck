@@ -7,6 +7,8 @@ struct TestObject {
     4: required Type type
     5: optional slist words
     6: optional list<i64> numbers
+    7: optional list<Ids> list_ids
+    8: optional list<list<Status>> statuses
 }
 
 struct Ids {

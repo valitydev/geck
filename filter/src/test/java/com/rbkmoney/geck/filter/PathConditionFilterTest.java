@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tolkonepiu on 17/03/2017.
@@ -35,6 +36,40 @@ public class PathConditionFilterTest {
         testObject.setStatus(Status.ok_status(new Ok()));
         testObject.setType(Type.BLACK);
         testObject.setNumbers(Arrays.asList(new Long[]{23L, 31L, 41L}));
+
+        List<Ids> listIds = new ArrayList<>();
+        listIds.add(ids);
+        ids = new Ids();
+        ids.setMicroId((byte) 32);
+        ids.setMiniId((short) 33);
+        ids.setId(34);
+        listIds.add(ids);
+        testObject.setListIds(listIds);
+
+        List<Status> statuses1 = new ArrayList<>();
+        statuses1.add(Status.ok_status(new Ok()));
+
+        Unknown unknownField = new Unknown();
+        List<Type> resultTypes = new ArrayList<>();
+        resultTypes.add(Type.BLACK);
+        resultTypes.add(Type.GREEN);
+        unknownField.setUnknown(UnknownType.resultTypes(resultTypes));
+        statuses1.add(Status.unknown_status(unknownField));
+        List<List<Status>> kebabStatus = new ArrayList<>();
+        kebabStatus.add(statuses1);
+
+        Unknown unknownField2 = new Unknown();
+        List<Type> resultTypes2 = new ArrayList<>();
+        resultTypes2.add(Type.BLACK);
+        resultTypes2.add(Type.GREEN);
+        unknownField2.setUnknown(UnknownType.resultTypes(resultTypes));
+        statuses1.add(Status.unknown_status(unknownField));
+
+        List<Status> statuses2 = new ArrayList<>();
+        statuses1.add(Status.ok_status(new Ok()));
+        kebabStatus.add(statuses2);
+        testObject.setStatuses(kebabStatus);
+
         testObjectList.add(testObject);
 
         testObject = new TestObject();
@@ -109,6 +144,22 @@ public class PathConditionFilterTest {
         PathConditionRule rule3 = new PathConditionRule("");
         Filter filter = new PathConditionFilter(rule1, rule2, rule3);
         assertEquals(filter.match(testObjectList.get(0)), false);
+    }
+
+    @Test
+    public void filterInCollectionTest() {
+        PathConditionRule rule = new PathConditionRule("list_ids.micro_id", new EqualsCondition((byte) 32));
+        Filter filter = new PathConditionFilter(rule);
+        assertTrue(filter.match(testObjectList.get(0)));
+
+        List<Type> resultTypes = new ArrayList<>();
+        resultTypes.add(Type.BLACK);
+        resultTypes.add(Type.GREEN);
+        rule = new PathConditionRule("statuses.unknown_status.unknown.resultTypes", new EqualsCondition(resultTypes));
+        filter = new PathConditionFilter(rule);
+        assertTrue(filter.match(testObjectList.get(0)));
+
+
     }
 
 }

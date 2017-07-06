@@ -5,8 +5,6 @@ import com.rbkmoney.geck.filter.Parser;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.filter.parser.PathParser;
 
-import java.util.Objects;
-
 /**
  * Created by tolkonepiu on 16/03/2017.
  */

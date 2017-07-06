@@ -1,6 +1,7 @@
 package com.rbkmoney.geck.common.util;
 
 import java.nio.charset.Charset;
+import java.util.StringTokenizer;
 
 /**
  * Created by vpankrashkin on 03.02.17.
@@ -83,6 +84,18 @@ public final class StringUtil {
             }
         }
         return true;
+    }
+
+    public static String[] split(String value, String delimiter) {
+        StringTokenizer tokenizer = new StringTokenizer(value, delimiter);
+        String[] items = new String[tokenizer.countTokens()];
+
+        int itemId = 0;
+        while (tokenizer.hasMoreTokens()) {
+            items[itemId++] = tokenizer.nextToken();
+        }
+
+        return items;
     }
 
 
