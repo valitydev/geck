@@ -12,6 +12,7 @@ struct TestObject {
     9: optional list<Status> statuses
     10: required bool active
     11: required map<map<set<Kek>, Status>, map<Status, set<Ids>>> kebabMap
+    12: required string another_string
 }
 
 struct SetTest {

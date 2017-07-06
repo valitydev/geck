@@ -8,6 +8,7 @@ import org.apache.thrift.*;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,6 +23,8 @@ public class MockTBaseProcessor extends TBaseProcessor {
     private final int maxContainerSize;
 
     private ValueGenerator valueGenerator;
+
+    private Map<String, FieldHandler> fieldHandlers = new HashMap<>();
 
     public MockTBaseProcessor() {
         this(MockMode.ALL);
@@ -46,11 +49,21 @@ public class MockTBaseProcessor extends TBaseProcessor {
         this.valueGenerator = valueGenerator;
     }
 
+    public void addFieldHandler(FieldHandler handler, String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            fieldHandlers.put(fieldName, handler);
+        }
+    }
+
     @Override
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
         if (needProcess(fieldMetaData)) {
             handler.name(tFieldIdEnum.getFieldName());
-            processFieldValue(fieldMetaData.valueMetaData, handler);
+            if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
+                fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
+            } else {
+                processFieldValue(fieldMetaData.valueMetaData, handler);
+            }
         }
     }
 
@@ -60,7 +73,11 @@ public class MockTBaseProcessor extends TBaseProcessor {
         TFieldIdEnum tFieldIdEnum = valueGenerator.getField(tUnion);
         FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
         handler.name(tFieldIdEnum.getFieldName());
-        processFieldValue(fieldMetaData.valueMetaData, handler);
+        if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
+            fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
+        } else {
+            processFieldValue(fieldMetaData.valueMetaData, handler);
+        }
     }
 
     protected void processFieldValue(FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {

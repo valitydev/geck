@@ -1,5 +1,6 @@
 package com.rbkmoney.geck.serializer.kit.mock;
 
+import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.ThriftType;
 import com.rbkmoney.geck.serializer.test.TestObject;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
@@ -28,6 +30,18 @@ public class MockTBaseProcessorTest {
         testObject = new MockTBaseProcessor(MockMode.REQUIRED_ONLY).process(testObject, new TBaseHandler<>(TestObject.class));
         TestCase.assertTrue(checkFields(testObject, true));
         assertFalse(checkFields(testObject, false));
+    }
+
+    @Test
+    public void fieldHandlerTest() throws IOException {
+        String testValue = "KEK";
+
+        MockTBaseProcessor processor = new MockTBaseProcessor();
+        processor.addFieldHandler(handler -> handler.value(testValue), "description", "another_string");
+        TestObject testObject = new TestObject();
+        testObject = processor.process(testObject, new TBaseHandler<>(TestObject.class));
+        assertEquals(testValue, testObject.getDescription());
+        assertEquals(testValue, testObject.getAnotherString());
     }
 
     @Test

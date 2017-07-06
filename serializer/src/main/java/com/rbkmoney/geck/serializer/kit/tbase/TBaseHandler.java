@@ -23,6 +23,7 @@ import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
 public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     private final Class<R> parentClass;
+    private final boolean checkRequiredFields;
 
     private ByteStack stateStack = new ByteStack();
     private ObjectStack elementStack = new ObjectStack();
@@ -32,7 +33,12 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
     private R result;
 
     public TBaseHandler(Class<R> parentClass) {
+        this(parentClass, true);
+    }
+
+    public TBaseHandler(Class<R> parentClass, boolean checkRequiredFields) {
         this.parentClass = parentClass;
+        this.checkRequiredFields = checkRequiredFields;
     }
 
     @Override
@@ -69,7 +75,9 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         checkState(startStruct);
 
         TBase tBase = TypeUtil.convertType(TBase.class, elementStack.peek());
-        checkRequiredFields(tBase);
+        if (checkRequiredFields) {
+            checkRequiredFields(tBase);
+        }
 
         stateStack.pop();
         elementStack.pop();
