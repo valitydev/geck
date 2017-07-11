@@ -43,7 +43,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
             TUnion union = (TUnion) value;
             if (union.isSet()) {
                 TFieldIdEnum tFieldIdEnum = union.getSetField();
-                handler.name(tFieldIdEnum.getFieldName());
+                handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
                 process(union.getFieldValue(), fieldMetaDataMap.get(tFieldIdEnum).valueMetaData, handler);
             } else {
                 processUnsetUnion(union, handler);
@@ -52,7 +52,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
             for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
                 FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
                 if (value.isSet(tFieldIdEnum)) {
-                    handler.name(tFieldIdEnum.getFieldName());
+                    handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
                     process(value.getFieldValue(tFieldIdEnum), fieldMetaData.valueMetaData, handler);
                 } else {
                     processUnsetField(tFieldIdEnum, fieldMetaData, handler);

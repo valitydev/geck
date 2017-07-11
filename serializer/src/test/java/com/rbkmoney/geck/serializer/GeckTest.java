@@ -1,15 +1,14 @@
 package com.rbkmoney.geck.serializer;
 
 import com.rbkmoney.geck.serializer.handler.HandlerStub;
+import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackProcessor;
 import com.rbkmoney.geck.serializer.kit.object.ObjectHandler;
 import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
-import com.rbkmoney.geck.serializer.test.Status;
-import com.rbkmoney.geck.serializer.test.TestObject;
-import com.rbkmoney.geck.serializer.test.Unknown;
+import com.rbkmoney.geck.serializer.test.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -72,6 +71,16 @@ public class GeckTest {
         System.out.println("GZip:Compact:" + bos3.toByteArray().length);
 
 
+    }
+
+    @Test
+    public void whenUseIdTest() throws IOException {
+        Ids ids = new Ids();
+        ids = new MockTBaseProcessor().process(ids, new TBaseHandler<>(Ids.class));
+        Ids2 ids2 = MsgPackProcessor.newBinaryInstance().process(new TBaseProcessor().process(ids, MsgPackHandler.newBufferedInstance(true)), new TBaseHandler<>(Ids2.class));
+        MsgPackProcessor.newBinaryInstance().process(
+                new TBaseProcessor().process(ids2, MsgPackHandler.newBufferedInstance(true)),
+                new TBaseHandler<>(Ids3.class, TBaseHandler.Mode.PREFER_NAME));
     }
 
     @Test

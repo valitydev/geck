@@ -23,6 +23,15 @@ public class TBaseUtil {
         return null;
     }
 
+    public static TFieldIdEnum getFieldById(short id, TBase tBase) {
+        for (TFieldIdEnum tFieldIdEnum : tBase.getFields()) {
+            if (tFieldIdEnum.getThriftFieldId() == id) {
+                return tFieldIdEnum;
+            }
+        }
+        return null;
+    }
+
     public static FieldMetaData getMetaData(TFieldIdEnum tFieldIdEnum, TBase tBase) {
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = tBase.getFieldMetaData();
         return fieldMetaDataMap.get(tFieldIdEnum);

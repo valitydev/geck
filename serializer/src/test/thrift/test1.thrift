@@ -72,3 +72,17 @@ struct Ids {
     3: required i32 id
     4: required i64 big_id
 }
+
+struct Ids2 {
+    1: required i8 another_micro_id
+    2: required i16 another_mini_id
+    3: required i32 another_id
+    4: required i64 another_big_id
+}
+
+struct Ids3 {
+    4: required i8 another_micro_id
+    3: required i16 another_mini_id
+    2: required i32 another_id
+    1: required i64 another_big_id
+}

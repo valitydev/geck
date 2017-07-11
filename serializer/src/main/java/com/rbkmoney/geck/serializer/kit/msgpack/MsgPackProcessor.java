@@ -4,6 +4,8 @@ import com.rbkmoney.geck.common.util.StringUtil;
 import com.rbkmoney.geck.serializer.exception.BadFormatException;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.StructProcessor;
+import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
+import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import gnu.trove.map.hash.TCharObjectHashMap;
 import org.msgpack.core.ExtensionTypeHeader;
 import org.msgpack.core.MessageFormat;
@@ -47,6 +49,7 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
         try {
             processStart(unpacker, handler);
         } finally {
+            dictionary.clear();
             releaseUnpacker(unpacker, value);
         }
         return handler.getResult();
@@ -69,6 +72,7 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
     }
 
     private void processName(MessageUnpacker unpacker, StructHandler handler) throws IOException {
+        byte id = unpacker.unpackByte();
         MessageFormat format = unpacker.getNextFormat();
         String name;
         switch (format.getValueType()) {
@@ -89,11 +93,12 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                     default:
                         throw new BadFormatException("Bad extension type: "+ header.getType() + " [dict point or ref expected]");
                 }
+
                 break;
             default:
                 throw new BadFormatException("Bad format type: "+ format + " [str or ext expected]");
         }
-        handler.name(name);
+        handler.name(id, name);
     }
 
     private void processValue(MessageUnpacker unpacker, StructHandler handler, MessageFormat format) throws IOException {

@@ -16,10 +16,14 @@ public class Geck {
         try {
             TBaseProcessor structProcessor = new TBaseProcessor();
             JsonHandler jsonHandler = new JsonHandler();
-            return  structProcessor.process(src, jsonHandler).toString();
+            return structProcessor.process(src, jsonHandler).toString();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public byte[] toMsgPack(TBase src) {
+        return toMsgPack(src, true);
     }
 
     public byte[] toMsgPack(TBase src, boolean useDict) {

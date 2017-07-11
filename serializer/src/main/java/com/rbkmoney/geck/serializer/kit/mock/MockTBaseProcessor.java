@@ -58,7 +58,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
     @Override
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
         if (needProcess(fieldMetaData)) {
-            handler.name(tFieldIdEnum.getFieldName());
+            handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
             if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
                 fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
             } else {
@@ -72,7 +72,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
         Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = tUnion.getFieldMetaData();
         TFieldIdEnum tFieldIdEnum = valueGenerator.getField(tUnion);
         FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
-        handler.name(tFieldIdEnum.getFieldName());
+        handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
         if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
             fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
         } else {
