@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.rbkmoney.geck</groupId>
         <artifactId>parent</artifactId>
-        <version>0.6.0</version>
+        <version>0.6.1</version>
     </parent>
 
     <artifactId>serializer</artifactId>
@@ -19,7 +19,7 @@
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.rbkmoney.thrift</groupId>
+            <groupId>com.rbkmoney.woody</groupId>
             <artifactId>libthrift</artifactId>
         </dependency>
         <dependency>
@@ -60,6 +60,11 @@
             <artifactId>damsel</artifactId>
             <version>1.130-4e4e214</version>
             <classifier>v130</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
