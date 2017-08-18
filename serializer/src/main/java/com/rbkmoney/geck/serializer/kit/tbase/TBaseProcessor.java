@@ -11,6 +11,7 @@ import org.apache.thrift.TUnion;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,16 @@ import java.util.Set;
  * Created by tolkonepiu on 27/01/2017.
  */
 public class TBaseProcessor implements StructProcessor<TBase> {
+
+    private final boolean checkRequiredFields;
+
+    public TBaseProcessor() {
+        this(true);
+    }
+
+    public TBaseProcessor(boolean checkRequiredFields) {
+        this.checkRequiredFields = checkRequiredFields;
+    }
 
     @Override
     public <R> R process(TBase value, StructHandler<R> handler) throws IOException {
@@ -68,7 +79,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
     }
 
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
-        if (fieldMetaData.requirementType == TFieldRequirementType.REQUIRED) {
+        if (checkRequiredFields && fieldMetaData.requirementType == TFieldRequirementType.REQUIRED) {
             throw new IllegalStateException(String.format("field '%s' is required and must not be null", tFieldIdEnum.getFieldName()));
         }
     }
@@ -105,7 +116,13 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                     handler.value(object.toString());
                     break;
                 case BINARY:
-                    handler.value((byte[]) object);
+                    if (object instanceof byte[]) {
+                        handler.value((byte[]) object);
+                    } else if (object instanceof ByteBuffer) {
+                        handler.value(((ByteBuffer) object).array());
+                    } else {
+                        throw new IllegalStateException(String.format("Unknown binary type, type='%s'", object.getClass().getName()));
+                    }
                     break;
                 case LIST:
                     List list = TypeUtil.convertType(List.class, object);

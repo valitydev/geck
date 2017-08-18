@@ -1,12 +1,16 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
+import com.rbkmoney.geck.serializer.kit.mock.RandomValueGenerator;
 import com.rbkmoney.geck.serializer.test.*;
 import com.rbkmoney.geck.serializer.handler.HandlerStub;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
+import org.apache.thrift.TBase;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -56,6 +60,19 @@ public class TBaseProcessorTest {
         assertThatThrownBy(() -> tBaseProcessor.process(tUnionTest, new HandlerStub()))
                 .hasMessage("field 'description' is required and must not be null");
 
+    }
+
+    @Test
+    public void binaryUnknownTypeDataTest() throws IOException {
+        BinaryTest binaryTest = new BinaryTest();
+        List byteArrayInList = new ArrayList<>();
+
+        byteArrayInList.add(5);
+
+        binaryTest.setFieldValue(BinaryTest._Fields.DATA_IN_LIST, byteArrayInList);
+        assertThatThrownBy(() -> new TBaseProcessor(false)
+                .process(binaryTest, new TBaseHandler(BinaryTest.class, TBaseHandler.Mode.PREFER_NAME, false)))
+        .hasMessage("Unknown binary type, type='java.lang.Integer'");
     }
 
 }

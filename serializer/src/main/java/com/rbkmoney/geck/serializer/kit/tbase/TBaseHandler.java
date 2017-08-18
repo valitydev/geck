@@ -13,6 +13,7 @@ import org.apache.thrift.TUnion;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
@@ -310,7 +311,7 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     @Override
     public void value(byte[] value) throws IOException {
-        value(value, ThriftType.BINARY);
+        value(ByteBuffer.wrap(value), ThriftType.BINARY);
     }
 
     @Override

@@ -38,6 +38,9 @@ struct TUnionTest {
 
 struct BinaryTest {
     1: required binary data
+    2: required list<binary> dataInList
+    3: required set<binary> dataInSet
+    4: required map<binary, binary> dataInMap
 }
 
 struct MapListTest {
