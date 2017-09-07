@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class Geck {
 
-    public String toJson(TBase src) {
+    public static String toJson(TBase src) {
         try {
             TBaseProcessor structProcessor = new TBaseProcessor();
             JsonHandler jsonHandler = new JsonHandler();
@@ -22,11 +22,11 @@ public class Geck {
         }
     }
 
-    public byte[] toMsgPack(TBase src) {
+    public static byte[] toMsgPack(TBase src) {
         return toMsgPack(src, true);
     }
 
-    public byte[] toMsgPack(TBase src, boolean useDict) {
+    public static byte[] toMsgPack(TBase src, boolean useDict) {
         try {
             MsgPackHandler<byte[]> handler = MsgPackHandler.newBufferedInstance(useDict);
             TBaseProcessor serializer = new TBaseProcessor();
@@ -37,7 +37,7 @@ public class Geck {
         }
     }
 
-    public <R> R write(TBase src, StructHandler<R> writer) {
+    public static <R> R write(TBase src, StructHandler<R> writer) {
         TBaseProcessor structProcessor = new TBaseProcessor();
         try {
             return structProcessor.process(src, writer);

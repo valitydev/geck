@@ -44,7 +44,7 @@ struct BinaryTest {
 }
 
 struct MapListTest {
-    list<string> listMapString
+    1: list<string> listMapString
 }
 
 union Status {
@@ -88,4 +88,22 @@ struct Ids3 {
     3: required i16 another_mini_id
     2: required i32 another_id
     1: required i64 another_big_id
+}
+
+struct FilterObject {
+    1: required string sname1
+    2: FilterUnion uname1;
+    3: required string sname2;
+}
+
+union FilterUnion {
+    1: FilterListObject1 list_object_1
+}
+
+struct FilterListObject1 {
+    1: list<string> strings
+}
+
+struct FilterMapObject {
+    1: required map<string, Unknown> map1;
 }

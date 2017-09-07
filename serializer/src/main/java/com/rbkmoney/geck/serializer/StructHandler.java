@@ -51,6 +51,10 @@ public interface StructHandler<R> {
 
     void nullValue() throws IOException;
 
+    default StructHandleResult getLastHandleResult() {
+        return StructHandleResult.CONTINUE;
+    }
+
     R getResult() throws IOException;
 
 }
