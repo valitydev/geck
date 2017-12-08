@@ -1,11 +1,11 @@
 package com.rbkmoney.geck.common.util;
 
-import java.time.DateTimeException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
@@ -20,9 +20,9 @@ public class TypeUtil {
         return stringToLocalDateTime(dateTimeStr, ZoneOffset.UTC);
     }
 
-    public static LocalDateTime stringToLocalDateTime(String dateTimeStr, ZoneOffset zoneOffset) throws IllegalArgumentException {
+    public static LocalDateTime stringToLocalDateTime(String dateTimeStr, ZoneId zoneId) throws IllegalArgumentException {
         try {
-            return LocalDateTime.ofInstant(stringToInstant(dateTimeStr), zoneOffset);
+            return LocalDateTime.ofInstant(stringToInstant(dateTimeStr), zoneId);
         } catch (DateTimeException e) {
             throw new IllegalArgumentException("Failed to convert in LocalDateTime: " + dateTimeStr, e);
         }
@@ -44,6 +44,20 @@ public class TypeUtil {
         }
     }
 
+    public static LocalDateTime toLocalDateTime(TemporalAccessor temporalAccessor) {
+        return toLocalDateTime(temporalAccessor, ZoneOffset.UTC);
+    }
+
+    public static LocalDateTime toLocalDateTime(TemporalAccessor temporalAccessor, ZoneId zoneId) {
+        return Optional.ofNullable(temporalAccessor)
+                .map(
+                        value -> LocalDateTime.ofInstant(
+                                Instant.from(value),
+                                zoneId
+                        )
+                ).orElse(null);
+    }
+
     public static String temporalToString(LocalDateTime localDateTime) throws IllegalArgumentException {
         return temporalToString(localDateTime.toInstant(ZoneOffset.UTC));
     }
@@ -58,6 +72,22 @@ public class TypeUtil {
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to format:" + temporalAccessor, e);
         }
+    }
+
+    public static <T extends Enum<T>> T toEnumField(String name, Class<T> enumType) {
+        return Optional.ofNullable(name)
+                .map(value -> Enum.valueOf(enumType, name))
+                .orElse(null);
+    }
+
+    public static <T extends Enum<T>> List<T> toEnumFields(List<String> names, Class<T> enumType) {
+        return Optional.ofNullable(names)
+                .map(
+                        values -> values.stream()
+                                .filter(name -> name != null)
+                                .map(name -> toEnumField(name, enumType))
+                                .collect(Collectors.toList())
+                ).orElse(null);
     }
 
     public static <T> T convertType(Class<T> tClass, Object val) throws IllegalArgumentException {
