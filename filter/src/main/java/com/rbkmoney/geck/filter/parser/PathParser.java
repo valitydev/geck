@@ -34,6 +34,11 @@ public class PathParser implements Parser {
     }
 
     @Override
+    public String[] getItems() {
+        return Arrays.copyOf(items, items.length);
+    }
+
+    @Override
     public String getItemPath(int item) {
         return String.join(delimiter, Arrays.copyOfRange(items, 0, item + 1));
     }

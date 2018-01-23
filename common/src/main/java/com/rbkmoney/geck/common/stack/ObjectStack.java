@@ -63,14 +63,19 @@ public final class ObjectStack<E> {
     }
 
     public E peek() {
-        if (size == 0) {
+        return peek(0);
+    }
+
+    public E peek(int offset) {
+        int idx = size - offset - 1;
+        if (idx < 0) {
             if (defaultValSet) {
                 return defaultVal;
             } else {
                 throw new RuntimeException("No more elements");
             }
         }
-        return (E) stack[size - 1];
+        return (E) stack[idx];
     }
 
     public int size() {

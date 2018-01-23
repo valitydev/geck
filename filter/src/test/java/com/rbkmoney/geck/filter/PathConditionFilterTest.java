@@ -17,7 +17,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by tolkonepiu on 17/03/2017.
  */
-public class PathConditionFilterTest {
+public class
+
+PathConditionFilterTest {
 
     List<TestObject> testObjectList = new ArrayList<>();
 

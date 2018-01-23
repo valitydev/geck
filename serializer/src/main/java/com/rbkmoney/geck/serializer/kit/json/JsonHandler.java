@@ -2,6 +2,7 @@ package com.rbkmoney.geck.serializer.kit.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rbkmoney.geck.common.stack.ObjectStack;
@@ -27,7 +28,7 @@ public class JsonHandler implements StructHandler<JsonNode> {
     protected ObjectMapper mapper = new ObjectMapper();
 
     public JsonHandler() {
-        pretty = false;
+        this(false);
     }
 
     public JsonHandler(boolean pretty) {

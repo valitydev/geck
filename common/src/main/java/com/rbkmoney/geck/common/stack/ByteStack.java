@@ -60,14 +60,19 @@ public final class ByteStack {
     }
 
     public byte peek() {
-        if (size == 0) {
+        return peek(0);
+    }
+
+    public byte peek(int offset) {
+        int idx = size - offset - 1;
+        if (idx < 0) {
             if (defaultValSet) {
                 return defaultVal;
             } else {
                 throw new RuntimeException("No more elements");
             }
         }
-        return stack[size - 1];
+        return stack[idx];
     }
 
     public int size() {

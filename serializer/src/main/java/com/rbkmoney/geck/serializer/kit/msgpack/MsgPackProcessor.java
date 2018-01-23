@@ -14,8 +14,7 @@ import org.msgpack.value.ValueType;
 
 import java.io.IOException;
 
-import static com.rbkmoney.geck.serializer.StructHandleResult.CONTINUE;
-import static com.rbkmoney.geck.serializer.StructHandleResult.SKIP_SIBLINGS;
+import static com.rbkmoney.geck.serializer.StructHandleResult.*;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
 
 /**
@@ -62,13 +61,16 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
         }
     }
 
-    private StructHandleResult skipOrGo(StructHandleResult handleResult, SkipAction skipAction, HandleAction goAction) throws IOException {
+    private StructHandleResult skipOrGo(StructHandleResult handleResult, HandleAction skipAction, HandleTask goAction) throws IOException {
         switch (handleResult) {
             case CONTINUE:
                 return goAction.get();
             case SKIP_SUBTREE:
                 skipAction.consume();
                 return CONTINUE;
+            case JUMP_VALUE:
+                skipAction.consume();
+                return JUMP_VALUE;
             case SKIP_SIBLINGS:
                 skipAction.consume();
                 return SKIP_SIBLINGS;
@@ -104,11 +106,14 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                                 () -> skipOrGo(
                                         processName(unpacker, handler),
                                         () -> skipValue(unpacker, unpacker.getNextFormat()),
-                                        () -> processValue(unpacker, handler, unpacker.getNextFormat())
+                                        () -> {
+                                            StructHandleResult valRest = processValue(unpacker, handler, unpacker.getNextFormat());
+                                            return (valRest == SKIP_SIBLINGS | valRest == SKIP_SUBTREE) ? CONTINUE : valRest;
+                                        }
                                 )
                         );
                     }
-                    handler.endStruct();
+                    goIfAlive(entryRes, () -> handler.endStruct());
                     return handler.getLastHandleResult();
                 });
     }
@@ -133,7 +138,6 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                         break;
                     default:
                         throw new BadFormatException("Bad extension type: " + header.getType() + " [dict point or ref expected]");
-
                 }
         }
     }
@@ -244,18 +248,22 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
         return StructHandleResult.CONTINUE;
     }
 
-    private void skipList(MessageUnpacker unpacker, MessageFormat format) throws IOException {
-        int length = unpacker.unpackArrayHeader();
+    private void skipList(MessageUnpacker unpacker, MessageFormat format, int length) throws IOException {
         for (int i = 0; i < length; ++i) {
             skipValue(unpacker, unpacker.getNextFormat());
         }
+    }
+
+    private void skipList(MessageUnpacker unpacker, MessageFormat format) throws IOException {
+        int length = unpacker.unpackArrayHeader();
+        skipList(unpacker, format, length);
     }
 
     private StructHandleResult processList(MessageUnpacker unpacker, StructHandler handler, MessageFormat format) throws IOException {
         int length = unpacker.unpackArrayHeader();
         handler.beginList(length);
         return skipOrGo(handler.getLastHandleResult(),
-                () -> skipList(unpacker, format),
+                () -> skipList(unpacker, format, length),
                 () -> {
                     StructHandleResult entryRes = CONTINUE;
                     for (int i = 0; i < length; ++i) {
@@ -263,25 +271,30 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                                 () -> skipValue(unpacker, unpacker.getNextFormat()),
                                 () -> processValue(unpacker, handler, unpacker.getNextFormat())
                         );
+                        entryRes = entryRes == SKIP_SUBTREE ? CONTINUE : entryRes;
                     }
-                    handler.endList();
+                    goIfAlive(entryRes, () -> handler.endList());
                     return handler.getLastHandleResult();
                 });
     }
 
-    private void skipMap(MessageUnpacker unpacker, MessageFormat format) throws IOException {
-        int length = unpacker.unpackMapHeader();
+    private void skipMap(MessageUnpacker unpacker, MessageFormat format, int length) throws IOException {
         for (int i = 0; i < length; ++i) {
             skipValue(unpacker, unpacker.getNextFormat());//skip key
             skipValue(unpacker, unpacker.getNextFormat());//skip value
         }
     }
 
+    private void skipMap(MessageUnpacker unpacker, MessageFormat format) throws IOException {
+        int length = unpacker.unpackMapHeader();
+        skipMap(unpacker, format, length);
+    }
+
     private StructHandleResult processMap(MessageUnpacker unpacker, StructHandler handler, MessageFormat format) throws IOException {
         int length = unpacker.unpackMapHeader();
         handler.beginMap(length);
         return skipOrGo(handler.getLastHandleResult(),
-                () -> skipMap(unpacker, format),
+                () -> skipMap(unpacker, format, length),
                 () -> {
                     StructHandleResult entryRes = CONTINUE;
                     for (int i = 0; i < length; ++i) {
@@ -297,7 +310,7 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                                 )
                         );
                     }
-                    handler.endMap();
+                    goIfAlive(entryRes, () -> handler.endMap());
                     return handler.getLastHandleResult();
                 });
     }
@@ -310,7 +323,7 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
             handler.endKey();
         }
         //handler.getLastHandleResult();// > /dev/null
-        return handleResult;
+        return handleResult == JUMP_VALUE ? CONTINUE : handleResult;
     }
 
     private StructHandleResult processMapValue(MessageUnpacker unpacker, StructHandler handler) throws IOException {
@@ -321,7 +334,7 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
             handler.endValue();
         }
         //handler.getLastHandleResult();// > /dev/null
-        return handleResult;
+        return handleResult == SKIP_SUBTREE ? CONTINUE : handleResult;
     }
 
     private void skipSet(MessageUnpacker unpacker, ExtensionTypeHeader typeHeader) throws IOException {
@@ -343,10 +356,16 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
                                 () -> skipValue(unpacker, unpacker.getNextFormat()),
                                 () -> processValue(unpacker, handler, unpacker.getNextFormat()));
                     }
-                    handler.endSet();
+                    goIfAlive(entryRes, () -> handler.endSet());
                     return handler.getLastHandleResult();
                 });
 
+    }
+
+    private void goIfAlive(StructHandleResult result, HandleAction goAction) throws IOException {
+        if (result != TERMINATE && result != JUMP_VALUE) {
+            goAction.consume();
+        }
     }
 
     private String putInDictionary(int key, byte[] data) throws BadFormatException {
@@ -405,11 +424,11 @@ public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
         throw new BadFormatException("MsgPack bad format: " + message + ", expected type: " + expectedType + ", actual type: " + actualType);
     }
 
-    private interface SkipAction {
+    private interface HandleAction {
         void consume() throws IOException;
     }
 
-    private interface HandleAction {
+    private interface HandleTask {
         StructHandleResult get() throws IOException;
     }
 }

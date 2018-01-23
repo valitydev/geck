@@ -7,7 +7,9 @@ import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TUnion;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by tolkonepiu on 17/03/2017.
@@ -30,6 +32,30 @@ public class PathConditionFilter implements Filter<TBase> {
         }
 
         return true;
+    }
+
+    @Override
+    public List<Rule> matchRules(TBase value) {
+        List<Rule> matched = new ArrayList<>(rules.length);
+        for (PathConditionRule rule : rules) {
+            Parser parser = rule.getParser();
+            if (match(value, parser, rule.getConditions())) {
+                matched.add(rule);
+            }
+        }
+        return matched;
+    }
+
+    @Override
+    public Rule matchRule(TBase value) {
+        for (PathConditionRule rule : rules) {
+            Parser parser = rule.getParser();
+            if (match(value, parser, rule.getConditions())) {
+                return rule;
+            }
+        }
+
+        return null;
     }
 
     public boolean match(Object value, Parser parser, Condition... conditions) {
