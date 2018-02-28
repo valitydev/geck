@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.rbkmoney.geck</groupId>
         <artifactId>parent</artifactId>
-        <version>0.6.5</version>
+        <version>0.6.6</version>
     </parent>
 
     <artifactId>filter</artifactId>
