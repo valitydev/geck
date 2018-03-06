@@ -2,6 +2,8 @@ package com.rbkmoney.geck.serializer;
 
 import com.rbkmoney.geck.serializer.kit.json.JsonHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackHandler;
+import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackProcessor;
+import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
 import org.apache.thrift.TBase;
 
@@ -32,6 +34,14 @@ public class Geck {
             TBaseProcessor serializer = new TBaseProcessor();
 
             return serializer.process(src, handler);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T extends TBase> T msgPackToTBase(byte[] data, Class<T> tClass) {
+        try {
+            return MsgPackProcessor.newBinaryInstance().process(data, new TBaseHandler<>(tClass));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
