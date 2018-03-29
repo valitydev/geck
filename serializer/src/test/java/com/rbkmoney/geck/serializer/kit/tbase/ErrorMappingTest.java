@@ -1,6 +1,7 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
 import com.rbkmoney.damsel.domain.Failure;
+import com.rbkmoney.damsel.domain.SubFailure;
 import com.rbkmoney.damsel.payment_processing.errors.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,5 +40,12 @@ public class ErrorMappingTest {
     public void testStringToSubFailure() {
         String strFailure = "authorization_failed:payment_tool_rejected:bank_card_rejected:card_expired";
         Assert.assertEquals(strFailure, toStringVal(toGeneral(strFailure)));
+    }
+
+    @Test
+    public void testWhenDelimiterInCode() {
+        Failure failure = new Failure("delimiter:here");
+        failure.setSub(new SubFailure("another:delimiter:here"));
+        Assert.assertEquals("delimiter here:another delimiter here", TErrorUtil.toStringVal(failure));
     }
 }

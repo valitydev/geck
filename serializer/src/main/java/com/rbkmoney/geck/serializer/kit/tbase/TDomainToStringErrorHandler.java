@@ -49,6 +49,6 @@ public class TDomainToStringErrorHandler extends TErrorHandler<String> {
         if (builder.length() > 0) {
             builder.append(':');
         }
-        builder.append(code);
+        builder.append(code.replaceAll(":", " "));
     }
 }
