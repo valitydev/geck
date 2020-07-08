@@ -2,9 +2,6 @@ package com.rbkmoney.geck.filter.kit.msgpack;
 
 import com.rbkmoney.geck.filter.Rule;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 class ArrayIndexSelector extends Selector {
     private final Rule rule;
 

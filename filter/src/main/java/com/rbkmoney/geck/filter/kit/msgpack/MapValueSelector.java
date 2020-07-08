@@ -7,9 +7,6 @@ import static com.rbkmoney.geck.serializer.kit.EventFlags.endMapKey;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.endMapValue;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.endStruct;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 class MapValueSelector extends Selector {
     private final Rule rule;
 

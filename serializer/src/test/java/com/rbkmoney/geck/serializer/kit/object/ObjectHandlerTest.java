@@ -22,9 +22,7 @@ import java.util.List;
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by vpankrashkin on 09.02.17.
- */
+
 @Ignore
 public class ObjectHandlerTest {
 

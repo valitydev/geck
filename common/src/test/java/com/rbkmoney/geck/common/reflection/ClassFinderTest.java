@@ -9,9 +9,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by tolkonepiu on 27/03/2017.
- */
 public class ClassFinderTest {
 
     @Test

@@ -4,9 +4,7 @@ import com.rbkmoney.geck.serializer.StructHandler;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
+
 abstract class TErrorHandler<R> implements StructHandler<R> {
 
     @Override

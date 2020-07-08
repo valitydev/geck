@@ -4,9 +4,6 @@ import com.rbkmoney.geck.filter.Condition;
 
 import java.util.Collection;
 
-/**
- * Created by tolkonepiu on 17/03/2017.
- */
 public class InCondition<T> implements Condition {
 
     private final Collection<T> collection;

@@ -14,9 +14,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-/**
- * Created by vpankrashkin on 08.02.17.
- */
+
 public class MsgPackTest {
     Geck geck = new Geck();
     @Test

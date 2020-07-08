@@ -1,8 +1,5 @@
 package com.rbkmoney.geck.common.stack;
 
-/**
- * Created by vpankrashkin on 31.01.17.
- */
 public final class ByteStack {
     private static final int INITIAL_CAPACITY = 16;
     private byte[] stack;

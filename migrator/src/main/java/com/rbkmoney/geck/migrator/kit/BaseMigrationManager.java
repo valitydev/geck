@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by vpankrashkin on 13.03.17.
- */
+
 public class BaseMigrationManager implements MigrationManager {
     private final ConcurrentHashMap<ThriftSpec, List<MigrationPoint>> cache = new ConcurrentHashMap<>();
     private final Map<String, Migrator> migrators = new HashMap<>();

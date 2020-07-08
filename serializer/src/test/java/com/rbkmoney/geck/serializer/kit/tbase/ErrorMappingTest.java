@@ -9,9 +9,6 @@ import org.junit.Test;
 import java.io.IOException;
 import static com.rbkmoney.geck.serializer.kit.tbase.TErrorUtil.*;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
 public class ErrorMappingTest {
 
     @Test

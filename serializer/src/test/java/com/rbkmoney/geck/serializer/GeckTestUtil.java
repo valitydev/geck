@@ -12,9 +12,7 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * Created by vpankrashkin on 08.02.17.
- */
+
 public class GeckTestUtil {
     public static TestObject getTestObject(int statusCount, IntFunction<Status> statusGen) throws IOException {
         TestObject testObject = getTestObject();

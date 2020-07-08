@@ -1,8 +1,6 @@
 package com.rbkmoney.geck.filter.kit.msgpack;
 
-/**
- * Created by vpankrashkin on 20.09.17.
- */
+
 abstract class MultiSelector extends Selector {
 
     public MultiSelector(Type type) {

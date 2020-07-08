@@ -13,9 +13,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-/**
- * Created by inalarsanukaev on 17.03.17.
- */
+
 public class XMLTest {
     @Test
     public void testInvoiceBackTransform1() throws IOException {

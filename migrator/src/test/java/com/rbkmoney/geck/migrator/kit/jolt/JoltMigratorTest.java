@@ -16,9 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by tolkonepiu on 22/03/2017.
- */
+
 public class JoltMigratorTest {
 
     @Test

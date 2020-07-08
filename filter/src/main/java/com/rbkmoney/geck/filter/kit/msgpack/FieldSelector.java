@@ -3,9 +3,6 @@ package com.rbkmoney.geck.filter.kit.msgpack;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.serializer.kit.EventFlags;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 class FieldSelector extends Selector {
     private final Rule rule;
     private final boolean jumpValue;

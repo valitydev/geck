@@ -5,9 +5,6 @@ import com.rbkmoney.geck.serializer.kit.EventFlags;
 
 import static com.rbkmoney.geck.serializer.kit.EventFlags.startMapKey;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 class MapKeySelector extends Selector {
     private final Rule rule;
 

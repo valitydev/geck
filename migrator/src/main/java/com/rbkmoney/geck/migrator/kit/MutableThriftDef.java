@@ -2,9 +2,7 @@ package com.rbkmoney.geck.migrator.kit;
 
 import com.rbkmoney.geck.migrator.ThriftDef;
 
-/**
- * Created by vpankrashkin on 16.03.17.
- */
+
 public class MutableThriftDef extends ThriftDef {
     private int version;
     private String type;

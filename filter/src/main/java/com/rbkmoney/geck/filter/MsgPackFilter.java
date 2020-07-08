@@ -3,9 +3,7 @@ package com.rbkmoney.geck.filter;
 import com.rbkmoney.geck.filter.rule.PathConditionRule;
 
 import java.util.List;
-/**
- * Created by vpankrashkin on 13.09.17.
- */
+
 public class MsgPackFilter implements Filter<byte[]> {
     private final PathConditionRule[] rules;
 

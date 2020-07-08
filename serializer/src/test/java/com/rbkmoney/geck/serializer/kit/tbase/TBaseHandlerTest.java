@@ -11,9 +11,6 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Created by tolkonepiu on 14/02/2017.
- */
 public class TBaseHandlerTest {
 
     @Test

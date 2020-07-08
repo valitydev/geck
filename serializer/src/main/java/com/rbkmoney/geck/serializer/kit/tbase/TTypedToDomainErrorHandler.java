@@ -7,9 +7,7 @@ import com.rbkmoney.geck.serializer.exception.BadFormatException;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
+
 public class TTypedToDomainErrorHandler extends TErrorHandler<Failure> {
     private Failure failure;
     private ObjectStack<SubFailure> subFailures = new ObjectStack<>();

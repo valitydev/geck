@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by tolkonepiu on 27/01/2017.
- */
+
 public class TBaseProcessor implements StructProcessor<TBase> {
 
     private final boolean checkRequiredFields;

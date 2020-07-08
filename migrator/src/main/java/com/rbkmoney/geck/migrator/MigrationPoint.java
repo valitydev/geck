@@ -1,8 +1,6 @@
 package com.rbkmoney.geck.migrator;
 
-/**
- * Created by vpankrashkin on 01.03.17.
- */
+
 public class MigrationPoint {
     private final long id;
     private final ThriftSpec thriftSpec;

@@ -13,9 +13,7 @@ import java.util.*;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
 import static com.rbkmoney.geck.serializer.kit.object.ObjectHandlerConstants.*;
 
-/**
- * Created by vpankrashkin on 09.02.17.
- */
+
 public class ObjectHandler implements StructHandler<Object> {
     private final ByteStack state = new ByteStack(nop);
     private final ObjectStack context = new ObjectStack(null);

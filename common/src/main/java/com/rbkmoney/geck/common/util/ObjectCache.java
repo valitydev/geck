@@ -1,9 +1,5 @@
 package com.rbkmoney.geck.common.util;
 
-/**
- * Created by vpankrashkin on 17.03.17.
- */
-
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;

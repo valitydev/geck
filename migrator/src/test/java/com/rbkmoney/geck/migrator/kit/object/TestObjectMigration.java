@@ -12,9 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by vpankrashkin on 24.03.17.
- */
+
 public class TestObjectMigration {
 
     @Test

@@ -5,9 +5,6 @@ import com.rbkmoney.geck.filter.Rule;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.endMap;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.startMap;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 class MapSelector extends Selector {
     private final Rule rule;
 

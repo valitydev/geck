@@ -9,9 +9,6 @@ import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
-/**
- * Created by vpankrashkin on 14.02.17.
- */
 public class TypeUtil {
 
     private static final DateTimeFormatter FORMATTER = ISO_INSTANT;

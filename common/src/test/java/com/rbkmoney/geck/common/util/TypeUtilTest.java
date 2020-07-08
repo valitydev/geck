@@ -7,9 +7,6 @@ import java.time.ZoneOffset;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by tolkonepiu on 22/06/2017.
- */
 public class TypeUtilTest {
 
     String dateTime = "2017-06-19T10:21:09.539909Z";

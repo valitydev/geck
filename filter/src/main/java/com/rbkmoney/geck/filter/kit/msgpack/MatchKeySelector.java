@@ -3,9 +3,6 @@ package com.rbkmoney.geck.filter.kit.msgpack;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.filter.rule.ConditionRule;
 
-/**
- * Created by vpankrashkin on 15.01.18.
- */
 public class MatchKeySelector extends Selector {
     public static final Rule MATCH_RULE = new ConditionRule(obj -> true);
 

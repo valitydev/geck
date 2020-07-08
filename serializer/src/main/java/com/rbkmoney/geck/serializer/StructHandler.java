@@ -2,9 +2,7 @@ package com.rbkmoney.geck.serializer;
 
 import java.io.IOException;
 
-/**
- * Created by tolkonepiu on 26/01/2017.
- */
+
 public interface StructHandler<R> {
 
     byte DEFAULT_FIELD_ID = Byte.MIN_VALUE;

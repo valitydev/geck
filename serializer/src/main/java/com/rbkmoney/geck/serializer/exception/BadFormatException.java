@@ -2,9 +2,7 @@ package com.rbkmoney.geck.serializer.exception;
 
 import java.io.IOException;
 
-/**
- * Created by tolkonepiu on 31/01/2017.
- */
+
 public class BadFormatException extends IOException {
 
     public BadFormatException() {

@@ -2,9 +2,6 @@ package com.rbkmoney.geck.filter;
 
 import java.util.Objects;
 
-/**
- * Created by tolkonepiu on 16/03/2017.
- */
 public interface Condition<T> {
 
     boolean accept(T t);

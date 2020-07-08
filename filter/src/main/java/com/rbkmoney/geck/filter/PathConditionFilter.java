@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by tolkonepiu on 17/03/2017.
- */
 public class PathConditionFilter implements Filter<TBase> {
 
     private final PathConditionRule[] rules;

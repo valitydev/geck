@@ -2,9 +2,7 @@ package com.rbkmoney.geck.serializer.kit.object;
 
 import com.rbkmoney.geck.serializer.kit.StructType;
 
-/**
- * Created by vpankrashkin on 11.02.17.
- */
+
 class ObjectHandlerConstants {
     public static final char ESCAPE_CHAR = '\\';
     public static final char TYPE_DELIMITER = '@';

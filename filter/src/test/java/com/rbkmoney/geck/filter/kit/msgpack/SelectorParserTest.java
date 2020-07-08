@@ -20,9 +20,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by vpankrashkin on 26.09.17.
- */
+
 public class SelectorParserTest {
 
     @Test

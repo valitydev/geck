@@ -5,9 +5,7 @@ import com.rbkmoney.damsel.payment_processing.errors.PaymentFailure;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
+
 public class TErrorUtil {
     public static Failure toGeneral(PaymentFailure failure) {
         try {

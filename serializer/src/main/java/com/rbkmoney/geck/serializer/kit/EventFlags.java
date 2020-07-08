@@ -1,8 +1,6 @@
 package com.rbkmoney.geck.serializer.kit;
 
-/**
- * Created by vpankrashkin on 07.02.17.
- */
+
 public class EventFlags {
      public static final byte nop = 0;
      public static final byte startStruct = 1;

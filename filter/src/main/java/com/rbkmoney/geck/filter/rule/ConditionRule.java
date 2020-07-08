@@ -3,9 +3,6 @@ package com.rbkmoney.geck.filter.rule;
 import com.rbkmoney.geck.filter.Condition;
 import com.rbkmoney.geck.filter.Rule;
 
-/**
- * Created by vpankrashkin on 22.09.17.
- */
 public class ConditionRule implements Rule {
     private final Condition[] conditions;
 

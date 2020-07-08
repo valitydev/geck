@@ -2,9 +2,7 @@ package com.rbkmoney.geck.migrator;
 
 import java.util.Objects;
 
-/**
- * Created by vpankrashkin on 01.03.17.
- */
+
 public class ThriftDef {
     public static final int NO_VERSION = -1;
     private final String type;

@@ -7,13 +7,32 @@
     <parent>
         <groupId>com.rbkmoney</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.5</version>
     </parent>
 
     <groupId>com.rbkmoney.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.9</version>
+    <version>0.6.10</version>
     <packaging>pom</packaging>
+
+    <name>Geck</name>
+    <description>A set of tools for serializing, migrating, filtering and generating thrift objects.</description>
+    <url>https://github.com/rbkmoney/geck.git</url>
+
+    <developers>
+        <developer>
+            <name>Pavel Popov</name>
+            <email>p.popov@rbkmoney.com</email>
+            <organization>RBK.money</organization>
+            <organizationUrl>https://rbk.money</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/rbkmoney/geck.git</connection>
+        <developerConnection>scm:git:ssh://github.com/rbkmoney/geck.git</developerConnection>
+        <url>https://github.com/rbkmoney/geck/tree/master</url>
+    </scm>
 
     <modules>
         <module>serializer</module>
@@ -47,7 +66,7 @@
             <dependency>
                 <groupId>com.rbkmoney.woody</groupId>
                 <artifactId>libthrift</artifactId>
-                <version>1.1.7</version>
+                <version>1.1.21</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -73,7 +92,7 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.11</version>
+                <version>0.9.12</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -83,7 +102,8 @@
             <dependency>
                 <groupId>com.rbkmoney</groupId>
                 <artifactId>damsel</artifactId>
-                <version>1.217-3dd66ac</version>
+                <version>1.431-2f62a8c</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

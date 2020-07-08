@@ -7,9 +7,7 @@ import com.rbkmoney.geck.migrator.kit.object.ObjectSpec;
 
 import java.util.Map;
 
-/**
- * Created by vpankrashkin on 24.03.17.
- */
+
 public class ObjectMigration4Spec implements ObjectSpec {
     @Override
     public Object apply(Object in) throws MigrationException {

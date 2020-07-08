@@ -9,9 +9,7 @@ import org.apache.thrift.TBase;
 
 import java.io.IOException;
 
-/**
- * Created by tolkonepiu on 24/01/2017.
- */
+
 public class Geck {
 
     public static String toJson(TBase src) {

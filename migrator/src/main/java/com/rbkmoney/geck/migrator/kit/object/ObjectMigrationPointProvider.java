@@ -13,9 +13,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * Created by vpankrashkin on 22.03.17.
- */
+
 public class ObjectMigrationPointProvider extends SimpleMigrationPointProvider {
     private static final Logger log = LoggerFactory.getLogger(ObjectMigrationPointProvider.class);
 

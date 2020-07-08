@@ -15,9 +15,7 @@ import java.util.List;
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Created by tolkonepiu on 08/02/2017.
- */
+
 public class TBaseProcessorTest {
 
     @Test

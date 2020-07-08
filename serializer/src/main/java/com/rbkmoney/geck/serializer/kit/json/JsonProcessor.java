@@ -11,9 +11,7 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by inalarsanukaev on 16.03.17.
- */
+
 public class JsonProcessor implements StructProcessor<JsonNode> {
 
     @Override

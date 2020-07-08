@@ -11,9 +11,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * Created by vpankrashkin on 17.03.17.
- */
+
 public class TestBaseMigrationManager {
 
     @Test

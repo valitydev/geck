@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by vpankrashkin on 24.03.17.
- */
+
 public class MigrationManagerBuilder {
     private Map<String, Migrator> migratorsMap = new HashMap<>();
     private List<MigrationPointProvider> providers = new ArrayList<>();

@@ -14,9 +14,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by tolkonepiu on 17/03/2017.
- */
+
 public class
 
 PathConditionFilterTest {

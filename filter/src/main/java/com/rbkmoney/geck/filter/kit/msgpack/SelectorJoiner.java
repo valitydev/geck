@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by vpankrashkin on 03.10.17.
- */
 class SelectorJoiner {
     Map.Entry<Selector, Selector.Context[]> join(List<Map.Entry<Selector, Selector.Context[]>> selectorEntries) {
         List<Selector.Context> contexts = new ArrayList<>(selectorEntries.size());

@@ -2,9 +2,7 @@ package com.rbkmoney.geck.serializer.kit.tbase;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
+
 public class TTypedToStringErrorHandler extends TDomainToStringErrorHandler {
 
     @Override

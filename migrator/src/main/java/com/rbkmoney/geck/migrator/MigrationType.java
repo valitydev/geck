@@ -3,9 +3,7 @@ package com.rbkmoney.geck.migrator;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by vpankrashkin on 01.03.17.
- */
+
 public enum MigrationType {
     JOLT("JOLT"),
     JOBJECT("JOBJECT"),

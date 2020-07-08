@@ -2,9 +2,7 @@ package com.rbkmoney.geck.migrator;
 
 import java.util.Objects;
 
-/**
- * Created by vpankrashkin on 01.03.17.
- */
+
 public class ThriftSpec {
     private final ThriftDef inDef;
     private final ThriftDef outDef;

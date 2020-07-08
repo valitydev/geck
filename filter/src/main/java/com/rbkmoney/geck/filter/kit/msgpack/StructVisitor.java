@@ -10,9 +10,7 @@ import java.util.function.Supplier;
 
 import static com.rbkmoney.geck.serializer.StructHandleResult.*;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
+
 class StructVisitor {
     private final Supplier<Selector.Config[]> cnfSupplier;
     private Selector.Config config;

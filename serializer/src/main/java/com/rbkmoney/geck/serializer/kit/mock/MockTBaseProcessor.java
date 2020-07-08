@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by tolkonepiu on 11/02/2017.
- */
+
 public class MockTBaseProcessor extends TBaseProcessor {
 
     private final MockMode mode;

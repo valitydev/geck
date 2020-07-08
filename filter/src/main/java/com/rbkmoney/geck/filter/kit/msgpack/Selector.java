@@ -5,9 +5,6 @@ import com.rbkmoney.geck.filter.Condition;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.serializer.StructHandleResult;
 
-/**
- * Created by vpankrashkin on 13.09.17.
- */
 abstract class Selector {
     private static final SelectionResult.Mismatch mismatchResult = new SelectionResult.Mismatch();
 

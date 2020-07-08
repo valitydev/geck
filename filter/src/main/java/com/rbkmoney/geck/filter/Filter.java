@@ -2,9 +2,7 @@ package com.rbkmoney.geck.filter;
 
 import java.util.List;
 
-/**
- * Created by tolkonepiu on 16/03/2017.
- */
+
 public interface Filter<T> {
 
     /**

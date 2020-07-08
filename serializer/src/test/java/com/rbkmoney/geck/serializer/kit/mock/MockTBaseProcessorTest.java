@@ -23,9 +23,6 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
-/**
- * Created by tolkonepiu on 12/02/2017.
- */
 public class MockTBaseProcessorTest {
 
     @Test

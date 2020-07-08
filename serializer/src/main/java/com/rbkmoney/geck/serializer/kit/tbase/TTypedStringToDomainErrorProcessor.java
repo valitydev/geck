@@ -5,9 +5,7 @@ import com.rbkmoney.geck.serializer.StructProcessor;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 27.02.18.
- */
+
 public class TTypedStringToDomainErrorProcessor implements StructProcessor<String> {
     @Override
     public <R> R process(String value, StructHandler<R> handler) throws IOException {

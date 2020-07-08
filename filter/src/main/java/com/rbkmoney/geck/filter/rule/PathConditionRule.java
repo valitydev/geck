@@ -5,9 +5,7 @@ import com.rbkmoney.geck.filter.Parser;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.filter.parser.PathParser;
 
-/**
- * Created by tolkonepiu on 16/03/2017.
- */
+
 public class PathConditionRule implements Rule {
 
     private final Parser parser;

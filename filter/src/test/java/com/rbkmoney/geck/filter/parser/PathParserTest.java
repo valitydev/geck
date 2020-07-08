@@ -5,9 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by tolkonepiu on 16/03/2017.
- */
+
 public class PathParserTest {
 
     @Test

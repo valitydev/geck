@@ -3,9 +3,7 @@ package com.rbkmoney.geck.migrator.kit.jolt;
 import com.bazaarvoice.jolt.Chainr;
 import com.rbkmoney.geck.migrator.ThriftSpec;
 
-/**
- * Created by tolkonepiu on 26/03/2017.
- */
+
 public class JoltSpec {
 
     private final ThriftSpec thriftSpec;

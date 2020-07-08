@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Created by vpankrashkin on 22.03.17.
- */
 public class SimpleMigrationPointProvider implements MigrationPointProvider {
     private final Map<ThriftSpec, MigrationPoint> pointMap;
 

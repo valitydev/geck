@@ -10,9 +10,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by tolkonepiu on 12/02/2017.
- */
+
 public class RandomValueGeneratorTest {
 
     RandomValueGenerator randomValueGenerator = new RandomValueGenerator();

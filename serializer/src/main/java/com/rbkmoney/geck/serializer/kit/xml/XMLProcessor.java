@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 
-/**
- * Created by inalarsanukaev on 16.03.17.
- */
+
 public class XMLProcessor implements StructProcessor<DOMResult> {
     @Override
     public <R> R process(DOMResult value, StructHandler<R> handler) throws IOException {

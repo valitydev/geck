@@ -4,9 +4,7 @@ import com.rbkmoney.geck.serializer.StructHandler;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 03.02.17.
- */
+
 public class HandlerStub implements StructHandler<byte[]> {
     @Override
     public void beginStruct(int size) throws IOException {

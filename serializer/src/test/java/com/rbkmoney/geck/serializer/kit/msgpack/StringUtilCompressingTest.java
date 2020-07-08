@@ -12,9 +12,7 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 import static java.lang.System.*;
 
-/**
- * Created by vpankrashkin on 03.02.17.
- */
+
 @RunWith(Parameterized.class)
 public class StringUtilCompressingTest {
     private String testString;

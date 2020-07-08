@@ -6,9 +6,7 @@ import com.rbkmoney.geck.serializer.StructProcessor;
 
 import java.io.IOException;
 
-/**
- * Created by vpankrashkin on 15.03.17.
- */
+
 public abstract class AbstractMigrator implements Migrator {
     private final SerializerProvider serializerProvider;
 

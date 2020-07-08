@@ -11,9 +11,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * Created by vpankrashkin on 22.03.17.
- */
 
 
 public class ClassFinder {

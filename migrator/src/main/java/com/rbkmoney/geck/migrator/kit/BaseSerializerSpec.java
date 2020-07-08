@@ -5,9 +5,6 @@ import com.rbkmoney.geck.migrator.SerializerSpec;
 
 import java.util.Objects;
 
-/**
- * Created by vpankrashkin on 01.03.17.
- */
 public class BaseSerializerSpec<I, O> implements SerializerSpec<I, O> {
     private final SerializerDef<I> inDef;
     private final SerializerDef<O> outDef;

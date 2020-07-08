@@ -16,9 +16,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * Created by tolkonepiu on 23/03/2017.
- */
 public class JoltMigrationPointProvider extends SimpleMigrationPointProvider {
 
     public static String DEFAULT_REGEX = ".*_spec\\.json";

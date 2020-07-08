@@ -4,9 +4,7 @@ import org.apache.thrift.TBase;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TFieldIdEnum;
 
-/**
- * Created by inalarsanukaev on 03.03.17.
- */
+
 public class FixedValueGenerator implements ValueGenerator {
     @Override
     public byte getByte() {
