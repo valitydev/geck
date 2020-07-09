@@ -7,7 +7,7 @@ import com.rbkmoney.geck.serializer.kit.mock.MockMode;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
-import com.rbkmoney.geck.serializer.test.TestObject;
+import com.rbkmoney.geck.serializer.domain.TestObject;
 import org.junit.Assert;
 import org.junit.Test;
 

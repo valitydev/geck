@@ -5,7 +5,7 @@ import com.rbkmoney.geck.serializer.StructHandleResult;
 import com.rbkmoney.geck.serializer.StructHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.supply.NoFilterMsgPackProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
-import com.rbkmoney.geck.serializer.test.*;
+import com.rbkmoney.geck.serializer.domain.*;
 import org.apache.thrift.TBase;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,7 +15,6 @@ import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,6 @@ import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static com.rbkmoney.geck.serializer.StructHandleResult.CONTINUE;
 import static com.rbkmoney.geck.serializer.StructHandleResult.SKIP_SIBLINGS;
 import static com.rbkmoney.geck.serializer.StructHandleResult.SKIP_SUBTREE;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class TestFilterMsgPackProcessor {
@@ -226,7 +224,7 @@ public class TestFilterMsgPackProcessor {
     }
 
     private FilterObject genSample1() {
-        return new FilterObject("val1", FilterUnion.list_object_1(new FilterListObject1(Arrays.asList("lval1", "lval2", "lval3"))), "val2");
+        return new FilterObject("val1", FilterUnion.list_object_1(new FilterListObject(Arrays.asList("lval1", "lval2", "lval3"))), "val2");
     }
 
     private FilterMapObject genSample2() {

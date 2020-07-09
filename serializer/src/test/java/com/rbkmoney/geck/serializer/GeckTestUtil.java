@@ -3,8 +3,8 @@ package com.rbkmoney.geck.serializer;
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
-import com.rbkmoney.geck.serializer.test.Status;
-import com.rbkmoney.geck.serializer.test.TestObject;
+import com.rbkmoney.geck.serializer.domain.Status;
+import com.rbkmoney.geck.serializer.domain.TestObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 public class GeckTestUtil {
     public static TestObject getTestObject(int statusCount, IntFunction<Status> statusGen) throws IOException {
         TestObject testObject = getTestObject();
-        List<Status> lists = IntStream.range(0, statusCount).mapToObj(statusGen::apply).collect(Collectors.toList());
+        List<Status> lists = IntStream.range(0, statusCount).mapToObj(statusGen).collect(Collectors.toList());
         testObject.setStatuses(lists);
         return testObject;
     }

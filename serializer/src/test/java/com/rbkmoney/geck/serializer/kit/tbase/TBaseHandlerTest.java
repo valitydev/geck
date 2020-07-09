@@ -1,10 +1,10 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
 import com.rbkmoney.geck.serializer.kit.EventFlags;
-import com.rbkmoney.geck.serializer.test.HandlerTest;
-import com.rbkmoney.geck.serializer.test.MapTest;
-import com.rbkmoney.geck.serializer.test.SetTest;
-import com.rbkmoney.geck.serializer.test.TUnionTest;
+import com.rbkmoney.geck.serializer.domain.HandlerTest;
+import com.rbkmoney.geck.serializer.domain.MapTest;
+import com.rbkmoney.geck.serializer.domain.SetTest;
+import com.rbkmoney.geck.serializer.domain.TUnionTest;
 import org.junit.Test;
 
 import java.io.IOException;

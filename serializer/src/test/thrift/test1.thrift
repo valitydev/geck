@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.geck.serializer.test
+namespace java com.rbkmoney.geck.serializer.domain
 
 struct TestObject {
     1: required Ids ids
@@ -7,11 +7,11 @@ struct TestObject {
     4: optional binary data
     5: required list<i32> numbers
     6: required Status status
-    7: required list<set<string>> fuck
+    7: required list<set<string>> set_in_list
     8: optional map<string, i32> maps
     9: optional list<Status> statuses
     10: required bool active
-    11: required map<map<set<Kek>, Status>, map<Status, set<Ids>>> kebabMap
+    11: required map<map<set<Enums>, Status>, map<Status, set<Ids>>> kebabMap
     12: required string another_string
 }
 
@@ -21,7 +21,7 @@ struct SetTest {
 }
 
 struct MapTest {
-    1: required map<Kek, string> enumMap
+    1: required map<Enums, string> enumMap
     2: optional map<Ids, string> idsMap
     3: optional map<Status, string> statusMap
 }
@@ -65,7 +65,7 @@ struct Ok {
 
 }
 
-enum Kek {
+enum Enums {
     TEST1, TEST2, TEST3
 }
 
@@ -97,10 +97,10 @@ struct FilterObject {
 }
 
 union FilterUnion {
-    1: FilterListObject1 list_object_1
+    1: FilterListObject list_object_1
 }
 
-struct FilterListObject1 {
+struct FilterListObject {
     1: list<string> strings
 }
 

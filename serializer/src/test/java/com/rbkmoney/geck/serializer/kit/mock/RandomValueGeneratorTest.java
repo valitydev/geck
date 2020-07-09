@@ -1,7 +1,7 @@
 package com.rbkmoney.geck.serializer.kit.mock;
 
-import com.rbkmoney.geck.serializer.test.Kek;
-import com.rbkmoney.geck.serializer.test.Status;
+import com.rbkmoney.geck.serializer.domain.Enums;
+import com.rbkmoney.geck.serializer.domain.Status;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TFieldIdEnum;
 import org.junit.Test;
@@ -35,8 +35,8 @@ public class RandomValueGeneratorTest {
 
     @Test
     public void generateTEnumTest() {
-        TEnum tEnum = randomValueGenerator.getTEnum(Kek.class);
-        Enum.valueOf(Kek.class, tEnum.toString());
+        TEnum tEnum = randomValueGenerator.getTEnum(Enums.class);
+        Enum.valueOf(Enums.class, tEnum.toString());
     }
 
     @Test

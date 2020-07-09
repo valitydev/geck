@@ -1,10 +1,8 @@
 package com.rbkmoney.geck.serializer.kit.tbase;
 
-import com.rbkmoney.geck.serializer.kit.mock.RandomValueGenerator;
-import com.rbkmoney.geck.serializer.test.*;
+import com.rbkmoney.geck.serializer.domain.*;
 import com.rbkmoney.geck.serializer.handler.HandlerStub;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
-import org.apache.thrift.TBase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,7 +48,7 @@ public class TBaseProcessorTest {
 
         //unset tUnion
         assertThatThrownBy(() -> tBaseProcessor.process(tUnionTest, new HandlerStub()))
-        .hasMessage("one of fields in union 'Status' must be set");
+                .hasMessage("one of fields in union 'Status' must be set");
 
         tUnionTest.setStatus(Status.unknown(new Unknown()));
 
@@ -70,7 +68,7 @@ public class TBaseProcessorTest {
         binaryTest.setFieldValue(BinaryTest._Fields.DATA_IN_LIST, byteArrayInList);
         assertThatThrownBy(() -> new TBaseProcessor(false)
                 .process(binaryTest, new TBaseHandler(BinaryTest.class, TBaseHandler.Mode.PREFER_NAME, false)))
-        .hasMessage("Unknown binary type, type='java.lang.Integer'");
+                .hasMessage("Unknown binary type, type='java.lang.Integer'");
     }
 
 }

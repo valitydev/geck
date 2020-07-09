@@ -9,7 +9,7 @@ import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackHandler;
 import com.rbkmoney.geck.serializer.kit.msgpack.MsgPackProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
-import com.rbkmoney.geck.serializer.test.TestObject;
+import com.rbkmoney.geck.serializer.domain.TestObject;
 import org.junit.Assert;
 import org.junit.Test;
 

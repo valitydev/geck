@@ -1,11 +1,9 @@
 package com.rbkmoney.geck.serializer.kit.mock;
 
-import com.rbkmoney.geck.serializer.StructHandler;
+import com.rbkmoney.geck.serializer.domain.BinaryTest;
+import com.rbkmoney.geck.serializer.domain.TestObject;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.geck.serializer.kit.tbase.ThriftType;
-import com.rbkmoney.geck.serializer.test.BinaryTest;
-import com.rbkmoney.geck.serializer.test.TestObject;
-import junit.framework.TestCase;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.TFieldRequirementType;
@@ -15,13 +13,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 public class MockTBaseProcessorTest {
 

@@ -12,7 +12,7 @@
 
     <groupId>com.rbkmoney.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.10</version>
+    <version>0.6.11</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>
@@ -126,7 +126,7 @@
                 <plugin>
                     <groupId>org.apache.thrift</groupId>
                     <artifactId>thrift-maven-plugin</artifactId>
-                    <version>0.9.3-1</version>
+                    <version>0.10.0</version>
                     <configuration>
                         <thriftExecutable>thrift</thriftExecutable>
                         <generator>java:fullcamel</generator>
