@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!--    we need to suppress modules by reason of 3DS domain specific -->
+    <suppress checks="Indentation"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="EmptyLineSeparator"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="LineLength"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="MissingSwitchDefault"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="EmptyBlock"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="NeedBraces"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="LeftCurly"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="LocalVariableName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="TypeName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="WhitespaceAround"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="MemberName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="ParameterName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="NoWhitespaceBefore"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="ParenPad"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="AbbreviationAsWordInName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="MethodName"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="ArrayTypeStyle"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="VariableDeclarationUsageDistance"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="RightCurlySame"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="RightCurlyAlone"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="FallThrough"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="NoWhitespaceBefore"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="NonEmptyAtclauseDescription"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="ModifierOrder"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="OverloadMethodsDeclarationOrder"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="OperatorWrap"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+    <suppress checks="GenericWhitespace"
+              files="com[\\/]rbkmoney[\\/]geck[\\/].*.java"/>
+</suppressions>

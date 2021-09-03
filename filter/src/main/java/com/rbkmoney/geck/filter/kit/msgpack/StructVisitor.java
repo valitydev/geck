@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 
 import static com.rbkmoney.geck.serializer.StructHandleResult.*;
 
-
 class StructVisitor {
     private final Supplier<Selector.Config[]> cnfSupplier;
     private Selector.Config config;
@@ -113,7 +112,7 @@ class StructVisitor {
                 return currConfig.context;
             }
             currConfig = currConfig.prevConfig;
-        } while (currConfig != null);
-        return currConfig == null ? null : currConfig.context;
+        } while (currConfig != null);//NOSONAR
+        return currConfig == null ? null : currConfig.context;//NOSONAR
     }
 }

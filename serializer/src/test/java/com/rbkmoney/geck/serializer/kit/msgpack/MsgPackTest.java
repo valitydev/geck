@@ -13,7 +13,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-
 public class MsgPackTest {
     Geck geck = new Geck();
 

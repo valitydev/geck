@@ -4,7 +4,6 @@ import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.geck.migrator.*;
 import com.rbkmoney.geck.migrator.kit.AbstractMigrator;
 
-
 public class ObjectMigrator extends AbstractMigrator {
     public static final SerializerDef<Object> SERIALIZER_DEF = new SerializerDef<>(MigrationType.JOBJECT.getKey());
     @Override

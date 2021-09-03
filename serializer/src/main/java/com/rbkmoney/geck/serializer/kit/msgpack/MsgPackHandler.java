@@ -13,7 +13,6 @@ import org.msgpack.core.buffer.ArrayBufferOutput;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 public abstract class MsgPackHandler<R> implements StructHandler<R> {
 
     private final boolean useDictionary;

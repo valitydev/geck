@@ -14,7 +14,6 @@ import java.util.List;
 import static com.rbkmoney.geck.filter.kit.msgpack.MatchKeySelector.MATCH_RULE;
 import static com.rbkmoney.geck.filter.kit.msgpack.SelectorParser.State.*;
 
-
 public class SelectorParser {
     enum State {
         EVAL_READY,

@@ -7,10 +7,15 @@
     <parent>
         <groupId>com.rbkmoney.geck</groupId>
         <artifactId>parent</artifactId>
-        <version>0.6.11</version>
+        <version>0.6.12</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>migrator</artifactId>
+
+    <properties>
+        <checkstyle.config.suppressions.path>./src/main/resources/checkstyle/checkstyle-suppressions.xml</checkstyle.config.suppressions.path>
+    </properties>
 
     <dependencies>
         <dependency>

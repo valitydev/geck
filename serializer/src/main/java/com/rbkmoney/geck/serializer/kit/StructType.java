@@ -3,7 +3,6 @@ package com.rbkmoney.geck.serializer.kit;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public enum StructType {
     MAP("map"),
     SET("set"),

@@ -16,7 +16,6 @@ import javax.xml.transform.dom.DOMResult;
 import java.io.IOException;
 import java.util.Base64;
 
-
 public class XMLHandler implements StructHandler<DOMResult> {
 
     private ByteStack stack = new ByteStack();

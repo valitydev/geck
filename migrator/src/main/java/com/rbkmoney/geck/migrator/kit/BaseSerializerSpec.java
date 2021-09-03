@@ -27,8 +27,8 @@ public class BaseSerializerSpec<I, O> implements SerializerSpec<I, O> {
         if (this == o) return true;
         if (!(o instanceof BaseSerializerSpec)) return false;
         BaseSerializerSpec that = (BaseSerializerSpec) o;
-        return Objects.equals(inDef, that.inDef) &&
-                Objects.equals(outDef, that.outDef);
+        return Objects.equals(inDef, that.inDef)
+                && Objects.equals(outDef, that.outDef);
     }
 
     @Override

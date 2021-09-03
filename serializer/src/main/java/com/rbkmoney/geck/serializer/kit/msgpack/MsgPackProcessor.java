@@ -17,7 +17,6 @@ import java.io.IOException;
 import static com.rbkmoney.geck.serializer.StructHandleResult.*;
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
 
-
 public abstract class MsgPackProcessor<S> implements StructProcessor<S> {
     private final TCharObjectHashMap<String> dictionary;
     private final char noDictEntryValue = 0;

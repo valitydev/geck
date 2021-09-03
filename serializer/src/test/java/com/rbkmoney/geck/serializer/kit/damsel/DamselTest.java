@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class DamselTest {
     @Test
     public void jsonInvoiceTest() throws IOException {

@@ -17,7 +17,9 @@ public class ClassFinderTest {
         assertNotNull(resources);
         assertTrue(resources.size() == 2);
         for (String resource : resources) {
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)))
+            ) {
                 assertEquals("{ \"tipa\": \"json\" }", bufferedReader.readLine());
             }
         }

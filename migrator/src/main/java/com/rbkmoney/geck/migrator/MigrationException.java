@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.migrator;
 
-
 public class MigrationException extends Exception {
     public MigrationException() {
     }

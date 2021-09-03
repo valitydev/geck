@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.migrator;
 
-
 public interface Migrator {
     /**
      * @param serializerSpec specifies input data format and expected output data format

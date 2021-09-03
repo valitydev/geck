@@ -3,7 +3,6 @@ package com.rbkmoney.geck.migrator.kit.jolt;
 import com.bazaarvoice.jolt.Chainr;
 import com.rbkmoney.geck.migrator.ThriftSpec;
 
-
 public class JoltSpec {
 
     private final ThriftSpec thriftSpec;

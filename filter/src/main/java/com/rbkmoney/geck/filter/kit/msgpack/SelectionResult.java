@@ -5,7 +5,6 @@ import com.rbkmoney.geck.filter.Rule;
 import java.util.Arrays;
 import java.util.List;
 
-
 class SelectionResult {
     final SelectionType type;
 

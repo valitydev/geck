@@ -5,7 +5,6 @@ import com.rbkmoney.geck.migrator.SerializerSpec;
 
 import java.util.Objects;
 
-
 public class MutableSerializerSpec<I, O> implements SerializerSpec<I, O> {
     private SerializerDef<I> inDef;
     private SerializerDef<O> outDef;

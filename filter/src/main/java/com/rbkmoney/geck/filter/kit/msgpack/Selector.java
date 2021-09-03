@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.filter.kit.msgpack;
 
-
 import com.rbkmoney.geck.filter.Condition;
 import com.rbkmoney.geck.filter.Rule;
 import com.rbkmoney.geck.serializer.StructHandleResult;

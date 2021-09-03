@@ -13,7 +13,6 @@ import java.util.List;
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-
 public class TBaseProcessorTest {
 
     @Test

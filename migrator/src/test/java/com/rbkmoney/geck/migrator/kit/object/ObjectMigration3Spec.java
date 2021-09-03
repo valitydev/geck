@@ -6,7 +6,6 @@ import com.rbkmoney.geck.migrator.ThriftSpec;
 
 import java.util.Map;
 
-
 public class ObjectMigration3Spec implements ObjectSpec {
     @Override
     public Object apply(Object in) throws MigrationException {

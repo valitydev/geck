@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-
 public interface MigrationPointProvider {
     /**
      * Get all thrift version transitions known to this provider. If provider knows about specific thrift version but doesn't have migration spec,

@@ -12,7 +12,6 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 import static java.lang.System.*;
 
-
 @RunWith(Parameterized.class)
 public class StringUtilCompressingTest {
     private String testString;

@@ -3,7 +3,6 @@ package com.rbkmoney.geck.serializer.kit.tbase;
 import org.apache.thrift.meta_data.FieldValueMetaData;
 import org.apache.thrift.protocol.TType;
 
-
 public enum ThriftType {
 
     NULL(-1),

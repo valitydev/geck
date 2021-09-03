@@ -2,7 +2,6 @@ package com.rbkmoney.geck.migrator;
 
 import java.util.Objects;
 
-
 public class SerializerDef<T> {
     private final String type;
 

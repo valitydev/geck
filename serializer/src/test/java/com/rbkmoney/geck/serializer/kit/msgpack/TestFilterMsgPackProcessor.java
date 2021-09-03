@@ -3,9 +3,15 @@ package com.rbkmoney.geck.serializer.kit.msgpack;
 import com.rbkmoney.geck.serializer.Geck;
 import com.rbkmoney.geck.serializer.StructHandleResult;
 import com.rbkmoney.geck.serializer.StructHandler;
+import com.rbkmoney.geck.serializer.domain.FilterListObject;
+import com.rbkmoney.geck.serializer.domain.FilterMapObject;
+import com.rbkmoney.geck.serializer.domain.FilterObject;
+import com.rbkmoney.geck.serializer.domain.FilterUnion;
+import com.rbkmoney.geck.serializer.domain.Status;
+import com.rbkmoney.geck.serializer.domain.TestObject;
+import com.rbkmoney.geck.serializer.domain.Unknown;
 import com.rbkmoney.geck.serializer.kit.msgpack.supply.NoFilterMsgPackProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseProcessor;
-import com.rbkmoney.geck.serializer.domain.*;
 import org.apache.thrift.TBase;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,7 +30,17 @@ import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static com.rbkmoney.geck.serializer.StructHandleResult.CONTINUE;
 import static com.rbkmoney.geck.serializer.StructHandleResult.SKIP_SIBLINGS;
 import static com.rbkmoney.geck.serializer.StructHandleResult.SKIP_SUBTREE;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyByte;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 public class TestFilterMsgPackProcessor {
     @Test
@@ -44,35 +60,39 @@ public class TestFilterMsgPackProcessor {
                 return tbp.process(getTestObject(100, j -> Status.unknown(new Unknown("unknown"))), handler);
             } catch (IOException e) {
                 return null;
-            }}).collect(Collectors.toList());
+            }
+        }).collect(Collectors.toList());
 
         long start = System.currentTimeMillis();
         iterate(nfp, handler, list, 1);
         long time = System.currentTimeMillis() - start;
-        System.out.println("NoFilter Time(ms):"+time);
+        System.out.println("NoFilter Time(ms):" + time);
 
         start = System.currentTimeMillis();
         iterate(fp, handler, list, 1);
         time = System.currentTimeMillis() - start;
-        System.out.println("Filter Time(ms):"+time);
+        System.out.println("Filter Time(ms):" + time);
 
         start = System.currentTimeMillis();
         iterate(nfp, handler, list, 1);
         time = System.currentTimeMillis() - start;
-        System.out.println("NoFilter Time(ms):"+time);
+        System.out.println("NoFilter Time(ms):" + time);
 
         start = System.currentTimeMillis();
         iterate(fp, handler, list, 1);
         time = System.currentTimeMillis() - start;
-        System.out.println("Filter Time(ms):"+time);
+        System.out.println("Filter Time(ms):" + time);
 
 
     }
 
-    private void iterate(MsgPackProcessor processor, MsgPackHandler handler, List<byte[]> elements, int iterCount) throws IOException {
-        for (int i = 0; i < iterCount; i++)
-            for (byte[] bytes : elements)
+    private void iterate(MsgPackProcessor processor, MsgPackHandler handler, List<byte[]> elements, int iterCount)
+            throws IOException {
+        for (int i = 0; i < iterCount; i++) {
+            for (byte[] bytes : elements) {
                 processor.process(bytes, handler);
+            }
+        }
     }
 
     @Test
@@ -190,13 +210,15 @@ public class TestFilterMsgPackProcessor {
         verifyZeroInteractions(mocked);
     }
 
-    private void nStrAndLastResult(InOrder inOrder, StructHandler mock, T1BiConsumer<Byte, String> method, String val) throws Exception {
+    private void nStrAndLastResult(InOrder inOrder, StructHandler mock, T1BiConsumer<Byte, String> method, String val)
+            throws Exception {
         inOrder.verify(mock);
         method.accept(anyByte(), eq(val));
         inOrder.verify(mock).getLastHandleResult();
     }
 
-    private void strAndLastResult(InOrder inOrder, StructHandler mock, T1Consumer<String> method, String str) throws Exception {
+    private void strAndLastResult(InOrder inOrder, StructHandler mock, T1Consumer<String> method, String str)
+            throws Exception {
         inOrder.verify(mock);
         method.accept(eq(str));
         inOrder.verify(mock).getLastHandleResult();
@@ -224,19 +246,41 @@ public class TestFilterMsgPackProcessor {
     }
 
     private FilterObject genSample1() {
-        return new FilterObject("val1", FilterUnion.list_object_1(new FilterListObject(Arrays.asList("lval1", "lval2", "lval3"))), "val2");
+        return new FilterObject("val1",
+                FilterUnion.list_object_1(new FilterListObject(Arrays.asList("lval1", "lval2", "lval3"))), "val2");
     }
 
     private FilterMapObject genSample2() {
-        return new FilterMapObject(new LinkedHashMap(){{
-            put("mkey1", new Unknown("descr1"));
-            put("mkey2", new Unknown("descr2"));
-        }});
+        return new FilterMapObject(new LinkedHashMap() {
+            {
+                put("mkey1", new Unknown("descr1"));
+                put("mkey2", new Unknown("descr2"));
+            }
+        });
+    }
+
+    @FunctionalInterface
+    private interface T0Consumer {
+        void accept() throws Exception;
+    }
+
+    @FunctionalInterface
+    private interface T1Consumer<T> {
+        void accept(T val) throws Exception;
+
+    }
+
+
+    @FunctionalInterface
+    private interface T1BiConsumer<T, TT> {
+        void accept(T val1, TT val2) throws Exception;
+
     }
 
     static class HandleResultAnswer implements Answer<StructHandleResult> {
-        private StructHandleResult responseStatus;
+        private final StructHandleResult responseStatus;
         public StructHandleResult newResponseStatus;
+
         public HandleResultAnswer(StructHandleResult responseStatus) {
             this.responseStatus = responseStatus;
             this.newResponseStatus = responseStatus;
@@ -250,13 +294,15 @@ public class TestFilterMsgPackProcessor {
 
         }
     }
-    static class OnValueAnswer implements Answer<Void> {
-        private int argIdx;
-        private String condition;
-        private StructHandleResult newResult;
-        private HandleResultAnswer handleResultAnswer;
 
-        public OnValueAnswer(HandleResultAnswer handleResultAnswer, String condition, StructHandleResult newResult, int argIdx) {
+    static class OnValueAnswer implements Answer<Void> {
+        private final int argIdx;
+        private final String condition;
+        private final StructHandleResult newResult;
+        private final HandleResultAnswer handleResultAnswer;
+
+        public OnValueAnswer(HandleResultAnswer handleResultAnswer, String condition, StructHandleResult newResult,
+                             int argIdx) {
             this.handleResultAnswer = handleResultAnswer;
             this.newResult = newResult;
             this.condition = condition;
@@ -270,23 +316,5 @@ public class TestFilterMsgPackProcessor {
             }
             return null;
         }
-    }
-
-
-    @FunctionalInterface
-    private interface T0Consumer {
-        void accept() throws Exception;
-    }
-
-    @FunctionalInterface
-    private interface T1Consumer<T> {
-        void accept(T val) throws Exception;
-
-    }
-
-    @FunctionalInterface
-    private interface T1BiConsumer<T, TT> {
-        void accept(T val1, TT val2) throws Exception;
-
     }
 }

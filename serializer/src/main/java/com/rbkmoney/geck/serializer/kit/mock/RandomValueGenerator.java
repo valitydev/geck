@@ -6,7 +6,6 @@ import org.apache.thrift.TFieldIdEnum;
 
 import java.util.Random;
 
-
 public class RandomValueGenerator implements ValueGenerator {
 
     public int randomNumber(int bitSize) {

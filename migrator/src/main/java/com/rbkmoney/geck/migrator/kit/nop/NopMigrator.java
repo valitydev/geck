@@ -6,7 +6,6 @@ import com.rbkmoney.geck.migrator.MigrationType;
 import com.rbkmoney.geck.migrator.SerializerSpec;
 import com.rbkmoney.geck.migrator.kit.AbstractMigrator;
 
-
 public class NopMigrator extends AbstractMigrator {
 
     @Override

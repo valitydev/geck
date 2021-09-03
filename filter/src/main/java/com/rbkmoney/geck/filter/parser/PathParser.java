@@ -5,7 +5,6 @@ import com.rbkmoney.geck.filter.Parser;
 
 import java.util.Arrays;
 
-
 public class PathParser implements Parser {
 
     private final String[] items;

@@ -12,7 +12,6 @@ import java.util.*;
 
 import static com.rbkmoney.geck.serializer.kit.object.ObjectHandlerConstants.TYPE_DELIMITER;
 
-
 public class ObjectProcessor implements StructProcessor<Object> {
     @Override
     public <R> R process(Object value, StructHandler<R> handler) throws IOException {

@@ -4,7 +4,6 @@ import org.apache.thrift.TBase;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TFieldIdEnum;
 
-
 public interface ValueGenerator {
     byte getByte();
 

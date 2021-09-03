@@ -18,7 +18,6 @@ import java.util.*;
 
 import static com.rbkmoney.geck.serializer.kit.EventFlags.*;
 
-
 public class TBaseHandler<R extends TBase> implements StructHandler<R> {
 
     private final Class<R> parentClass;

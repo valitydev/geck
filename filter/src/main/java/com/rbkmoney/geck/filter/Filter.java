@@ -2,7 +2,6 @@ package com.rbkmoney.geck.filter;
 
 import java.util.List;
 
-
 public interface Filter<T> {
 
     /**

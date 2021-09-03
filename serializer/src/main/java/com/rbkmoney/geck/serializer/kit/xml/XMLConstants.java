@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.serializer.kit.xml;
 
-
 public interface XMLConstants {
     String KEY = "key";
     String VALUE = "value";

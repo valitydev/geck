@@ -4,7 +4,6 @@ import com.bazaarvoice.jolt.Chainr;
 import com.rbkmoney.geck.migrator.*;
 import com.rbkmoney.geck.migrator.kit.AbstractMigrator;
 
-
 public class JoltMigrator extends AbstractMigrator {
     public static final SerializerDef<Object> SERIALIZER_DEF = new SerializerDef<>(MigrationType.JOLT.getKey());
 

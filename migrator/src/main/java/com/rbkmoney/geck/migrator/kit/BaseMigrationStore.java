@@ -5,7 +5,6 @@ import com.rbkmoney.geck.migrator.*;
 
 import java.util.*;
 
-
 public class BaseMigrationStore implements MigrationStore {
 
     private final List<MigrationPointProvider> providers;

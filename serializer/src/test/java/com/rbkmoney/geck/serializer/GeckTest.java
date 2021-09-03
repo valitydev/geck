@@ -26,7 +26,6 @@ import java.util.zip.GZIPOutputStream;
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.junit.Assert.assertEquals;
 
-
 public class GeckTest {
     Geck geck = new Geck();
 

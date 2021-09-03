@@ -7,7 +7,6 @@ import com.rbkmoney.geck.migrator.kit.object.ObjectSpec;
 
 import java.util.Map;
 
-
 public class ObjectMigration0Spec implements ObjectSpec {
     @Override
     public Object apply(Object in) throws MigrationException {

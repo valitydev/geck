@@ -22,7 +22,6 @@ import java.util.List;
 import static com.rbkmoney.geck.serializer.GeckTestUtil.getTestObject;
 import static org.junit.Assert.assertEquals;
 
-
 @Ignore
 public class ObjectHandlerTest {
 

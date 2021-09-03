@@ -6,13 +6,13 @@
 
     <parent>
         <groupId>com.rbkmoney</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.5</version>
+        <artifactId>library-parent-pom</artifactId>
+        <version>1.0.6</version>
     </parent>
 
     <groupId>com.rbkmoney.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.11</version>
+    <version>0.6.12</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>

@@ -1,6 +1,5 @@
 package com.rbkmoney.geck.filter;
 
-
 public interface Parser {
 
     String getItem(int item);

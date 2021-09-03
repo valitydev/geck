@@ -2,7 +2,6 @@ package com.rbkmoney.geck.serializer.kit.tbase;
 
 import java.io.IOException;
 
-
 public class TDomainToStringErrorHandler extends TErrorHandler<String> {
     private StringBuilder builder;
     private final String CODE_NAME = "code";

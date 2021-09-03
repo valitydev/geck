@@ -2,7 +2,6 @@ package com.rbkmoney.geck.migrator;
 
 import java.util.Objects;
 
-
 public class ThriftSpec {
     private final ThriftDef inDef;
     private final ThriftDef outDef;
@@ -25,8 +24,8 @@ public class ThriftSpec {
         if (this == o) return true;
         if (!(o instanceof ThriftSpec)) return false;
         ThriftSpec that = (ThriftSpec) o;
-        return Objects.equals(inDef, that.inDef) &&
-                Objects.equals(outDef, that.outDef);
+        return Objects.equals(inDef, that.inDef)
+                && Objects.equals(outDef, that.outDef);
     }
 
     @Override

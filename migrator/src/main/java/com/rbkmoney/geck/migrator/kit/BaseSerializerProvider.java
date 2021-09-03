@@ -12,7 +12,6 @@ import com.rbkmoney.geck.serializer.kit.object.ObjectProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BaseSerializerProvider implements SerializerProvider {
     private final List<SerializerProvider> providers;
 

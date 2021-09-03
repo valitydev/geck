@@ -13,7 +13,6 @@ import com.rbkmoney.geck.serializer.kit.StructType;
 import java.io.IOException;
 import java.util.Base64;
 
-
 public class JsonHandler implements StructHandler<JsonNode> {
 
     public static final String KEY = "key";

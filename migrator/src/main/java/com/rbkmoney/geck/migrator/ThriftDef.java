@@ -2,7 +2,6 @@ package com.rbkmoney.geck.migrator;
 
 import java.util.Objects;
 
-
 public class ThriftDef {
     public static final int NO_VERSION = -1;
     private final String type;
@@ -30,8 +29,8 @@ public class ThriftDef {
         if (this == o) return true;
         if (!(o instanceof ThriftDef)) return false;
         ThriftDef thriftDef = (ThriftDef) o;
-        return getVersion() == thriftDef.getVersion() &&
-                Objects.equals(getType(), thriftDef.getType());
+        return getVersion() == thriftDef.getVersion()
+                && Objects.equals(getType(), thriftDef.getType());
     }
 
     @Override

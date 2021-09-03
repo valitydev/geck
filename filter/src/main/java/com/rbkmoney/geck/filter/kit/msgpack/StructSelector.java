@@ -5,7 +5,6 @@ import com.rbkmoney.geck.serializer.kit.EventFlags;
 
 import static com.rbkmoney.geck.serializer.kit.EventFlags.endStruct;
 
-
 class StructSelector extends Selector {
     private final Rule rule;
 
