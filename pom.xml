@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>library-parent-pom</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <groupId>dev.vality.geck</groupId>
@@ -41,7 +41,6 @@
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <!--        <maven.compiler.source>15</maven.compiler.source>-->
 <!--        <maven.compiler.target>15</maven.compiler.target>-->
 
@@ -129,29 +128,29 @@
         </dependencies>
     </dependencyManagement>
 
-<!--    <build>-->
-<!--        <pluginManagement>-->
-<!--            <plugins>-->
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.thrift</groupId>-->
-<!--                    <artifactId>thrift-maven-plugin</artifactId>-->
-<!--                    <version>0.10.0</version>-->
-<!--                    <configuration>-->
-<!--                        <thriftExecutable>thrift</thriftExecutable>-->
-<!--                        <generator>java:fullcamel</generator>-->
-<!--                    </configuration>-->
-<!--                    <executions>-->
-<!--                        <execution>-->
-<!--                            <id>thrift-test-sources</id>-->
-<!--                            <phase>generate-test-sources</phase>-->
-<!--                            <goals>-->
-<!--                                <goal>testCompile</goal>-->
-<!--                            </goals>-->
-<!--                        </execution>-->
-<!--                    </executions>-->
-<!--                </plugin>-->
-<!--            </plugins>-->
-<!--        </pluginManagement>-->
-<!--    </build>-->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.thrift</groupId>
+                    <artifactId>thrift-maven-plugin</artifactId>
+                    <version>0.10.0</version>
+                    <configuration>
+                        <thriftExecutable>thrift</thriftExecutable>
+                        <generator>java:fullcamel</generator>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>thrift-test-sources</id>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
