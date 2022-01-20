@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.geck.serializer.domain
+namespace java dev.vality.geck.serializer.domain
 
 struct TestObject {
     1: required Ids ids

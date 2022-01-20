@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.rbkmoney</groupId>
+        <groupId>dev.vality</groupId>
         <artifactId>library-parent-pom</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.2</version>
     </parent>
 
-    <groupId>com.rbkmoney.geck</groupId>
+    <groupId>dev.vality.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.12</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>
@@ -21,17 +21,16 @@
 
     <developers>
         <developer>
-            <name>Pavel Popov</name>
-            <email>p.popov@rbkmoney.com</email>
-            <organization>RBK.money</organization>
-            <organizationUrl>https://rbk.money</organizationUrl>
+            <email>devs@vality.dev</email>
+            <organization>Vality</organization>
+            <organizationUrl>https://vality.dev</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/rbkmoney/geck.git</connection>
-        <developerConnection>scm:git:ssh://github.com/rbkmoney/geck.git</developerConnection>
-        <url>https://github.com/rbkmoney/geck/tree/master</url>
+        <connection>scm:git:git://github.com/valitydev/geck.git</connection>
+        <developerConnection>scm:git:ssh://github.com/valitydev/geck.git</developerConnection>
+        <url>https://github.com/valitydev/geck/tree/master</url>
     </scm>
 
     <modules>
@@ -41,32 +40,38 @@
         <module>common</module>
     </modules>
 
+    <properties>
+        <damsel.version>1.543-98ca5c1</damsel.version>
+        <cds-proto.version>1.66-01353ce</cds-proto.version>
+        <woody.version>1.0.4</woody.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.rbkmoney.geck</groupId>
+                <groupId>dev.vality.geck</groupId>
                 <artifactId>migrator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.rbkmoney.geck</groupId>
+                <groupId>dev.vality.geck</groupId>
                 <artifactId>serializer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.rbkmoney.geck</groupId>
+                <groupId>dev.vality.geck</groupId>
                 <artifactId>filter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.rbkmoney.geck</groupId>
+                <groupId>dev.vality.geck</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.rbkmoney.woody</groupId>
+                <groupId>dev.vality.woody</groupId>
                 <artifactId>libthrift</artifactId>
-                <version>1.1.21</version>
+                <version>${woody.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -100,9 +105,9 @@
                 <version>1.7.25</version>
             </dependency>
             <dependency>
-                <groupId>com.rbkmoney</groupId>
+                <groupId>dev.vality</groupId>
                 <artifactId>damsel</artifactId>
-                <version>1.431-2f62a8c</version>
+                <version>${damsel.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

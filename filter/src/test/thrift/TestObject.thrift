@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.geck.filter.test
+namespace java dev.vality.geck.filter.test
 
 struct TestObject {
     1: required i64 id
