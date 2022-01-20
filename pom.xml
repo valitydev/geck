@@ -19,6 +19,14 @@
     <description>A set of tools for serializing, migrating, filtering and generating thrift objects.</description>
     <url>https://github.com/rbkmoney/geck.git</url>
 
+    <developers>
+        <developer>
+            <email>devs@vality.dev</email>
+            <organization>Vality</organization>
+            <organizationUrl>https://vality.dev</organizationUrl>
+        </developer>
+    </developers>
+
     <scm>
         <connection>scm:git:git://github.com/valitydev/geck.git</connection>
         <developerConnection>scm:git:ssh://github.com/valitydev/geck.git</developerConnection>
@@ -33,6 +41,10 @@
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
         <damsel.version>1.543-98ca5c1</damsel.version>
         <cds-proto.version>1.66-01353ce</cds-proto.version>
         <woody.version>1.0.4</woody.version>
