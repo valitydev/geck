@@ -2,6 +2,8 @@ name: Build Artifact
 
 on:
   pull_request:
+    branches:
+      - '*'
 
 jobs:
   build:
@@ -11,7 +13,7 @@ jobs:
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '15'
           distribution: 'adopt'
       - name: Build package
-        run: mvn --batch-mode clean package
+        run: mvn --batch-mode clean compile
