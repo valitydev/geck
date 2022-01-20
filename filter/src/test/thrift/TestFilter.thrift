@@ -1,4 +1,4 @@
-namespace java com.rbkmoney.geck.filter.test.filter
+namespace java dev.vality.geck.filter.test.filter
 
 struct IStatusPaid {
 1: string date
