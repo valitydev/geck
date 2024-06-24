@@ -5,7 +5,7 @@ import org.apache.thrift.protocol.TType;
 
 public enum ThriftType {
 
-    NULL(-1),
+    NULL(-2),
     BOOLEAN(TType.BOOL),
     BYTE(TType.BYTE),
     DOUBLE(TType.DOUBLE),

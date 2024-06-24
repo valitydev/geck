@@ -7,17 +7,24 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>library-parent-pom</artifactId>
-        <version>1.0.2</version>
+        <version>2.0.2</version>
     </parent>
 
     <groupId>dev.vality.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>
     <description>A set of tools for serializing, migrating, filtering and generating thrift objects.</description>
-    <url>https://github.com/rbkmoney/geck.git</url>
+    <url>https://github.com/valitydev/geck.git</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -41,9 +48,10 @@
     </modules>
 
     <properties>
-        <damsel.version>1.543-98ca5c1</damsel.version>
-        <cds-proto.version>1.66-01353ce</cds-proto.version>
-        <woody.version>1.0.4</woody.version>
+        <damsel.version>1.639-4856124</damsel.version>
+        <cds-proto.version>1.71-b3db02c</cds-proto.version>
+        <woody.version>2.0.1</woody.version>
+        <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
     </properties>
 
     <dependencyManagement>
@@ -102,7 +110,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>1.7.36</version>
             </dependency>
             <dependency>
                 <groupId>dev.vality</groupId>
@@ -113,7 +121,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -121,6 +129,11 @@
                 <artifactId>assertj-core</artifactId>
                 <version>3.6.2</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -134,7 +147,7 @@
                     <version>0.10.0</version>
                     <configuration>
                         <thriftExecutable>thrift</thriftExecutable>
-                        <generator>java:fullcamel</generator>
+                        <generator>java:fullcamel,jakarta_annotations</generator>
                     </configuration>
                     <executions>
                         <execution>

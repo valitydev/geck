@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.vality.geck</groupId>
         <artifactId>parent</artifactId>
-        <version>0.0.1</version>
+        <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -26,12 +26,10 @@
         <dependency>
             <groupId>dev.vality.woody</groupId>
             <artifactId>libthrift</artifactId>
-            <version>${woody.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>${damsel.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -51,9 +49,9 @@
             <artifactId>json-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.1</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -102,6 +100,7 @@
                         <artifactId>thrift-maven-plugin</artifactId>
                         <configuration>
                             <thriftExecutable>thrift</thriftExecutable>
+                            <generator>java:fullcamel,jakarta_annotations</generator>
                         </configuration>
                         <executions>
                             <execution>
