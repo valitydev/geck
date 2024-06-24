@@ -12,7 +12,7 @@
 
     <groupId>dev.vality.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>
@@ -41,7 +41,7 @@
     </modules>
 
     <properties>
-        <damsel.version>1.543-98ca5c1</damsel.version>
+        <damsel.version>1.639-4856124</damsel.version>
         <cds-proto.version>1.66-01353ce</cds-proto.version>
         <woody.version>1.0.4</woody.version>
     </properties>
