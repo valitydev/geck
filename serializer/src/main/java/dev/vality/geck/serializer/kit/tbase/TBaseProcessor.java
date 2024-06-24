@@ -109,7 +109,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                 case DOUBLE:
                     handler.value((double) object);
                     break;
-                case ENUM:
+                case ENUM, OLD_ENUM:
                     handler.value(object.toString());
                     break;
                 case BINARY:

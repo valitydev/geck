@@ -5,7 +5,7 @@ import org.apache.thrift.protocol.TType;
 
 public enum ThriftType {
 
-    NULL(-1),
+    NULL(-2),
     BOOLEAN(TType.BOOL),
     BYTE(TType.BYTE),
     DOUBLE(TType.DOUBLE),
@@ -14,6 +14,8 @@ public enum ThriftType {
     LONG(TType.I64),
     STRING(TType.STRING),
     ENUM(TType.ENUM),
+    // если в гек сунуть трифт uuid все сломается , тк старый энам пересекается с новым uuid
+    OLD_ENUM(TType.UUID),
     LIST(TType.LIST),
     SET(TType.SET),
     MAP(TType.MAP),

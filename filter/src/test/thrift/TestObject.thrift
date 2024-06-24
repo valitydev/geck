@@ -5,7 +5,9 @@ struct TestObject {
     2: required Ids other_ids
     3: required Status status
     4: required Type type
-    5: optional slist words
+// https://github.com/apache/thrift/blob/master/CHANGES.md#compiler-general-3
+// в 9 версии как depracated, в 17 удален
+//    5: optional slist words
     6: optional list<i64> numbers
     7: optional list<Ids> list_ids
     8: optional list<list<Status>> statuses
@@ -40,7 +42,9 @@ struct Unknown {
 }
 
 union UnknownType {
-    1: slist result
+// https://github.com/apache/thrift/blob/master/CHANGES.md#compiler-general-3
+// в 9 версии как depracated, в 17 удален
+//    1: slist result
     2: list<Type> resultTypes
     3: double value
 }
