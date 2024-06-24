@@ -292,12 +292,14 @@ public class TBaseHandler<R extends TBase> implements StructHandler<R> {
         FieldValueMetaData valueMetaData = getChildValueMetaData();
         ThriftType type = ThriftType.findByMetaData(valueMetaData);
 
-        if (type == ThriftType.ENUM) {
+        if (type == ThriftType.OLD_ENUM) {
+            Class enumClass = ((EnumMetaData) valueMetaData).getEnumClass();
+            value(Enum.valueOf(enumClass, value), ThriftType.OLD_ENUM);
+        } else if (type == ThriftType.ENUM) {
             Class enumClass = ((EnumMetaData) valueMetaData).getEnumClass();
             value(Enum.valueOf(enumClass, value), ThriftType.ENUM);
         } else {
             value(value, ThriftType.STRING);
-
         }
     }
 

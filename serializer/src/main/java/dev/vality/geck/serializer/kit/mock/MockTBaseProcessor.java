@@ -120,7 +120,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
                 MapMetaData mapMetaData = TypeUtil.convertType(MapMetaData.class, valueMetaData);
                 processMap(mapMetaData, handler);
                 break;
-            case ENUM:
+            case ENUM, OLD_ENUM:
                 Class<? extends TEnum> tEnumClass = ((EnumMetaData) valueMetaData).getEnumClass();
                 handler.value(valueGenerator.getTEnum(tEnumClass).toString());
                 break;

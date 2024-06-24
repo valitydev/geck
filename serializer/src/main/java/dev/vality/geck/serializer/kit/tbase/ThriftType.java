@@ -14,6 +14,8 @@ public enum ThriftType {
     LONG(TType.I64),
     STRING(TType.STRING),
     ENUM(TType.ENUM),
+    // если в гек сунуть трифт uuid все сломается , тк старый энам пересекается с новым uuid
+    OLD_ENUM(TType.UUID),
     LIST(TType.LIST),
     SET(TType.SET),
     MAP(TType.MAP),
