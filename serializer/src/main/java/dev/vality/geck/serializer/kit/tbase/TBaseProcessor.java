@@ -12,10 +12,7 @@ import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TBaseProcessor implements StructProcessor<TBase> {
 
@@ -84,6 +81,13 @@ public class TBaseProcessor implements StructProcessor<TBase> {
     private void process(Object object, FieldValueMetaData fieldValueMetaData, StructHandler handler) throws IOException {
         if (object == null) {
             handler.nullValue();
+        } else if (object instanceof Optional<?> optional) {
+            if (optional.isPresent()) {
+                Object value = optional.get();
+                process(value, fieldValueMetaData, handler);
+            } else {
+                handler.nullValue();
+            }
         } else {
             ThriftType type = ThriftType.findByMetaData(fieldValueMetaData);
 
