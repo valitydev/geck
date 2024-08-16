@@ -12,7 +12,7 @@
 
     <groupId>dev.vality.geck</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
     <name>Geck</name>
@@ -110,7 +110,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.36</version>
+                <version>2.0.16</version>
             </dependency>
             <dependency>
                 <groupId>dev.vality</groupId>
