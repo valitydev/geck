@@ -66,14 +66,14 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.113-7404322</version>
+            <version>1.541-e13784f-epic</version>
             <classifier>v113</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.130-00f2abe</version>
+            <version>1.541-e13784f-epic</version>
             <classifier>v130</classifier>
             <scope>test</scope>
         </dependency>
