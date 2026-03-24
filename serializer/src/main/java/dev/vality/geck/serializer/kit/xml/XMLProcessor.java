@@ -88,7 +88,7 @@ public class XMLProcessor implements StructProcessor<DOMResult> {
                     handler.endValue();
                     break;
                 default:
-                    new BadFormatException("Unknown type of node: "+type+". Must be on of them : "+ Arrays.toString(StructType.values()));
+                    throw new BadFormatException("Unknown type of node: "+type+". Must be on of them : "+ Arrays.toString(StructType.values()));
             }
         }
     }

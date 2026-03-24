@@ -41,9 +41,13 @@ public class ObjectProcessor implements StructProcessor<Object> {
         handler.beginMap(mapList.size());
         Iterator it = mapList.iterator();
         if (!named) {
-            assert it.hasNext();
+            if (!it.hasNext()) {
+                throw new BadFormatException("Incorrect structure of map. First element should exist!");
+            }
             Object mapSign = it.next();
-            assert getType(String.valueOf(mapSign)) == StructType.MAP;
+            if (getType(String.valueOf(mapSign)) != StructType.MAP) {
+                throw new BadFormatException("Incorrect structure of map. First element should contain map marker!");
+            }
         }
         for (Object entry; it.hasNext(); ) {
             entry = it.next();
@@ -81,6 +85,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
                 break;
             case SET:
                 processSet(TypeUtil.convertType(Collection.class, value), named, handler);
+                break;
             case OTHER:
                 if (value instanceof Map) {
                     processStruct((Map) value, handler);
@@ -115,7 +120,10 @@ public class ObjectProcessor implements StructProcessor<Object> {
                 } else if (value instanceof Boolean) {
                     handler.value(((Boolean) value).booleanValue());
                 } else if (value instanceof ByteBuffer) {
-                    handler.value(((ByteBuffer) value).array());
+                    ByteBuffer duplicate = ((ByteBuffer) value).duplicate();
+                    byte[] bytes = new byte[duplicate.remaining()];
+                    duplicate.get(bytes);
+                    handler.value(bytes);
                 } else if (value == null) {
                     handler.nullValue();
                 } else {

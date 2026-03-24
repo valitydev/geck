@@ -1,7 +1,10 @@
 package dev.vality.geck.serializer.kit.json;
 
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import dev.vality.geck.serializer.GeckTestUtil;
+import dev.vality.geck.serializer.exception.BadFormatException;
+import dev.vality.geck.serializer.handler.HandlerStub;
 import dev.vality.geck.serializer.kit.mock.FixedValueGenerator;
 import dev.vality.geck.serializer.kit.mock.MockMode;
 import dev.vality.geck.serializer.kit.mock.MockTBaseProcessor;
@@ -14,6 +17,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JsonTest {
 
@@ -59,5 +64,14 @@ public class JsonTest {
         JsonHandler handler = JsonHandler.newPrettyJsonInstance();
         String json1 = new TBaseProcessor().process(testObject, handler).toString();
         System.out.println(json1);
+    }
+
+    @Test
+    public void unknownArrayTypeShouldFailFast() {
+        assertThatThrownBy(() -> new JsonProcessor().process(
+                JsonNodeFactory.instance.arrayNode().add("unsupported"),
+                new HandlerStub()))
+                .isInstanceOf(BadFormatException.class)
+                .hasMessageContaining("Unknown type of node: unsupported");
     }
 }

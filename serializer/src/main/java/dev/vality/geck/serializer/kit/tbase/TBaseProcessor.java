@@ -17,6 +17,7 @@ import java.util.*;
 public class TBaseProcessor implements StructProcessor<TBase> {
 
     private final boolean checkRequiredFields;
+    private final IdentityHashMap<TBase, Boolean> visitingStructs = new IdentityHashMap<>();
 
     public TBaseProcessor() {
         this(true);
@@ -38,34 +39,44 @@ public class TBaseProcessor implements StructProcessor<TBase> {
     }
 
     protected void processStruct(TBase value, StructHandler handler) throws IOException {
-        TFieldIdEnum[] tFieldIdEnums = value.getFields();
-        Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = value.getFieldMetaData();
+        if (visitingStructs.put(value, Boolean.TRUE) != null) {
+            throw new IllegalStateException(String.format(
+                    "Cyclic reference detected while processing thrift struct '%s'",
+                    value.getClass().getName()
+            ));
+        }
+        try {
+            TFieldIdEnum[] tFieldIdEnums = value.getFields();
+            Map<TFieldIdEnum, FieldMetaData> fieldMetaDataMap = value.getFieldMetaData();
 
-        int size = TBaseUtil.getSetFieldsCount(value);
-        handler.beginStruct(size);
+            int size = TBaseUtil.getSetFieldsCount(value);
+            handler.beginStruct(size);
 
-        if (value instanceof TUnion) {
-            TUnion union = (TUnion) value;
-            if (union.isSet()) {
-                TFieldIdEnum tFieldIdEnum = union.getSetField();
-                handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-                process(union.getFieldValue(), fieldMetaDataMap.get(tFieldIdEnum).valueMetaData, handler);
-            } else {
-                processUnsetUnion(union, handler);
-            }
-        } else {
-            for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
-                FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
-                if (value.isSet(tFieldIdEnum)) {
+            if (value instanceof TUnion) {
+                TUnion union = (TUnion) value;
+                if (union.isSet()) {
+                    TFieldIdEnum tFieldIdEnum = union.getSetField();
                     handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-                    process(value.getFieldValue(tFieldIdEnum), fieldMetaData.valueMetaData, handler);
+                    process(union.getFieldValue(), fieldMetaDataMap.get(tFieldIdEnum).valueMetaData, handler);
                 } else {
-                    processUnsetField(tFieldIdEnum, fieldMetaData, handler);
+                    processUnsetUnion(union, handler);
+                }
+            } else {
+                for (TFieldIdEnum tFieldIdEnum : tFieldIdEnums) {
+                    FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
+                    if (value.isSet(tFieldIdEnum)) {
+                        handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
+                        process(value.getFieldValue(tFieldIdEnum), fieldMetaData.valueMetaData, handler);
+                    } else {
+                        processUnsetField(tFieldIdEnum, fieldMetaData, handler);
+                    }
                 }
             }
-        }
 
-        handler.endStruct();
+            handler.endStruct();
+        } finally {
+            visitingStructs.remove(value);
+        }
     }
 
     protected void processUnsetUnion(TUnion tUnion, StructHandler handler) throws IOException {
@@ -120,7 +131,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
                     if (object instanceof byte[]) {
                         handler.value((byte[]) object);
                     } else if (object instanceof ByteBuffer) {
-                        handler.value(((ByteBuffer) object).array());
+                        handler.value(copyBinary((ByteBuffer) object));
                     } else {
                         throw new IllegalStateException(String.format("Unknown binary type, type='%s'", object.getClass().getName()));
                     }
@@ -178,5 +189,11 @@ public class TBaseProcessor implements StructProcessor<TBase> {
         handler.endMap();
     }
 
+    protected byte[] copyBinary(ByteBuffer buffer) {
+        ByteBuffer duplicate = buffer.duplicate();
+        byte[] bytes = new byte[duplicate.remaining()];
+        duplicate.get(bytes);
+        return bytes;
+    }
 
 }

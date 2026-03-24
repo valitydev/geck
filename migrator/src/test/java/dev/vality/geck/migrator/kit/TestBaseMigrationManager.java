@@ -25,6 +25,21 @@ public class TestBaseMigrationManager {
         Assert.assertEquals("A", res);
     }
 
+    @Test
+    public void shouldPassIntermediateMigrationResultToNextStep() throws MigrationException {
+        BaseMigrationStore migrationStore = new BaseMigrationStore(Arrays.asList(new MigrationPointProviderImpl(Arrays.asList(
+                new ThriftSpec(new ThriftDef(1, "t1"), new ThriftDef(2, "t2")),
+                new ThriftSpec(new ThriftDef(2, "t2"), new ThriftDef(3, "t2")),
+                new ThriftSpec(new ThriftDef(3, "t2"), new ThriftDef(4, "t3"))
+        ))));
+        BaseMigrationManager migrationManager =
+                new BaseMigrationManager(migrationStore, Arrays.asList(new AccumulatingMigrator()));
+
+        String res = migrationManager.migrate("A", new ThriftDef(1), new SerializerDef<>("TEST"));
+
+        Assert.assertEquals("A123", res);
+    }
+
     private static class MigrationPointProviderImpl implements MigrationPointProvider {
         private List<MigrationPoint> migrationPoints;
 
@@ -76,6 +91,19 @@ public class TestBaseMigrationManager {
         @Override
         public <I, O> O migrate(I data, MigrationPoint mPoint, SerializerSpec<I, O> serializerSpec) throws MigrationException {
             return serialize(data, serializerSpec, mPoint.getThriftSpec());
+        }
+
+        @Override
+        public String getMigrationType() {
+            return "TEST";
+        }
+    }
+
+    private static class AccumulatingMigrator implements Migrator {
+
+        @Override
+        public <I, O> O migrate(I data, MigrationPoint mPoint, SerializerSpec<I, O> serializerSpec) {
+            return (O) (String.valueOf(data) + ((MigrationSpecImpl) mPoint.getMigrationSpec()).getSpec().replace("TEST", ""));
         }
 
         @Override

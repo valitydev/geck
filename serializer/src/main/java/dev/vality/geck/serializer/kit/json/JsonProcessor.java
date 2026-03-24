@@ -59,6 +59,9 @@ public class JsonProcessor implements StructProcessor<JsonNode> {
                 }
                 String arrCode = elements.next().textValue();
                 StructType arrType = StructType.valueOfKey(arrCode);
+                if (arrType == null) {
+                    throw new BadFormatException("Unknown type of node: " + arrCode + ". Must be on of them : " + StructType.LIST + ", " + StructType.SET + ", " + StructType.MAP);
+                }
                 int size = jsonNode.size() - 1;
                 switch (arrType) {
                     case LIST:
@@ -85,7 +88,7 @@ public class JsonProcessor implements StructProcessor<JsonNode> {
                         handler.endMap();
                         break;
                     default:
-                        new BadFormatException("Unknown type of node: " + arrType + ". Must be on of them : " + StructType.LIST + ", " + StructType.SET + ", " + StructType.MAP);
+                        throw new BadFormatException("Unknown type of node: " + arrType + ". Must be on of them : " + StructType.LIST + ", " + StructType.SET + ", " + StructType.MAP);
                 }
             }
         }

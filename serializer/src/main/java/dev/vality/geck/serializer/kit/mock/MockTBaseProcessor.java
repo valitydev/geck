@@ -8,6 +8,8 @@ import org.apache.thrift.*;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
     private ValueGenerator valueGenerator;
 
     private Map<String, FieldHandler> fieldHandlers = new HashMap<>();
+    private final Deque<Class<? extends TBase>> structPath = new ArrayDeque<>();
 
     public MockTBaseProcessor() {
         this(MockMode.ALL);
@@ -56,7 +59,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
         if (needProcess(fieldMetaData)) {
             handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-            if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
+            if (fieldHandlers.containsKey(tFieldIdEnum.getFieldName())) {
                 fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
             } else {
                 processFieldValue(fieldMetaData.valueMetaData, handler);
@@ -70,7 +73,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
         TFieldIdEnum tFieldIdEnum = valueGenerator.getField(tUnion);
         FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
         handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-        if (fieldHandlers.containsKey(fieldMetaData.fieldName)) {
+        if (fieldHandlers.containsKey(tFieldIdEnum.getFieldName())) {
             fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
         } else {
             processFieldValue(fieldMetaData.valueMetaData, handler);
@@ -130,11 +133,21 @@ public class MockTBaseProcessor extends TBaseProcessor {
     }
 
     private void processStruct(StructMetaData structMetaData, StructHandler handler) throws IOException {
+        Class<? extends TBase> structClass = structMetaData.getStructClass();
+        if (structPath.contains(structClass)) {
+            throw new IllegalStateException(String.format(
+                    "Recursive thrift type detected while generating mock for '%s'",
+                    structClass.getName()
+            ));
+        }
+        structPath.push(structClass);
         try {
-            TBase tBase = structMetaData.getStructClass().newInstance();
+            TBase tBase = structClass.newInstance();
             super.processStruct(tBase, handler);
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new IOException(ex);
+        } finally {
+            structPath.pop();
         }
     }
 
