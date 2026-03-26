@@ -8,10 +8,10 @@ import org.apache.thrift.*;
 import org.apache.thrift.meta_data.*;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class MockTBaseProcessor extends TBaseProcessor {
 
@@ -21,10 +21,10 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private final int maxContainerSize;
 
-    private ValueGenerator valueGenerator;
+    private final ValueGenerator valueGenerator;
 
-    private Map<String, FieldHandler> fieldHandlers = new HashMap<>();
-    private final Deque<Class<? extends TBase>> structPath = new ArrayDeque<>();
+    private final Map<String, FieldHandler> fieldHandlers = new HashMap<>();
+    private final Set<Class<? extends TBase>> structTypesInProgress = new HashSet<>();
 
     public MockTBaseProcessor() {
         this(MockMode.ALL);
@@ -59,11 +59,10 @@ public class MockTBaseProcessor extends TBaseProcessor {
     protected void processUnsetField(TFieldIdEnum tFieldIdEnum, FieldMetaData fieldMetaData, StructHandler handler) throws IOException {
         if (needProcess(fieldMetaData)) {
             handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-            if (fieldHandlers.containsKey(tFieldIdEnum.getFieldName())) {
-                fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
-            } else {
-                processFieldValue(fieldMetaData.valueMetaData, handler);
+            if (handleField(tFieldIdEnum, handler)) {
+                return;
             }
+            processFieldValue(fieldMetaData.valueMetaData, handler);
         }
     }
 
@@ -73,11 +72,10 @@ public class MockTBaseProcessor extends TBaseProcessor {
         TFieldIdEnum tFieldIdEnum = valueGenerator.getField(tUnion);
         FieldMetaData fieldMetaData = fieldMetaDataMap.get(tFieldIdEnum);
         handler.name((byte) tFieldIdEnum.getThriftFieldId(), tFieldIdEnum.getFieldName());
-        if (fieldHandlers.containsKey(tFieldIdEnum.getFieldName())) {
-            fieldHandlers.get(tFieldIdEnum.getFieldName()).handle(handler);
-        } else {
-            processFieldValue(fieldMetaData.valueMetaData, handler);
+        if (handleField(tFieldIdEnum, handler)) {
+            return;
         }
+        processFieldValue(fieldMetaData.valueMetaData, handler);
     }
 
     protected void processFieldValue(FieldValueMetaData valueMetaData, StructHandler handler) throws IOException {
@@ -134,20 +132,19 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private void processStruct(StructMetaData structMetaData, StructHandler handler) throws IOException {
         Class<? extends TBase> structClass = structMetaData.getStructClass();
-        if (structPath.contains(structClass)) {
+        if (!structTypesInProgress.add(structClass)) {
             throw new IllegalStateException(String.format(
                     "Recursive thrift type detected while generating mock for '%s'",
                     structClass.getName()
             ));
         }
-        structPath.push(structClass);
         try {
             TBase tBase = structClass.newInstance();
             super.processStruct(tBase, handler);
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new IOException(ex);
         } finally {
-            structPath.pop();
+            structTypesInProgress.remove(structClass);
         }
     }
 
@@ -191,6 +188,15 @@ public class MockTBaseProcessor extends TBaseProcessor {
         return fieldMetaData.requirementType == TFieldRequirementType.REQUIRED
                 || (mode == MockMode.RANDOM && valueGenerator.getBoolean())
                 || mode == MockMode.ALL;
+    }
+
+    private boolean handleField(TFieldIdEnum field, StructHandler handler) throws IOException {
+        FieldHandler fieldHandler = fieldHandlers.get(field.getFieldName());
+        if (fieldHandler == null) {
+            return false;
+        }
+        fieldHandler.handle(handler);
+        return true;
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.*;
 public class TBaseProcessor implements StructProcessor<TBase> {
 
     private final boolean checkRequiredFields;
-    private final IdentityHashMap<TBase, Boolean> visitingStructs = new IdentityHashMap<>();
+    private final Set<TBase> structsInProgress = newIdentitySet();
 
     public TBaseProcessor() {
         this(true);
@@ -39,7 +39,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
     }
 
     protected void processStruct(TBase value, StructHandler handler) throws IOException {
-        if (visitingStructs.put(value, Boolean.TRUE) != null) {
+        if (!structsInProgress.add(value)) {
             throw new IllegalStateException(String.format(
                     "Cyclic reference detected while processing thrift struct '%s'",
                     value.getClass().getName()
@@ -75,7 +75,7 @@ public class TBaseProcessor implements StructProcessor<TBase> {
 
             handler.endStruct();
         } finally {
-            visitingStructs.remove(value);
+            structsInProgress.remove(value);
         }
     }
 
@@ -194,6 +194,10 @@ public class TBaseProcessor implements StructProcessor<TBase> {
         byte[] bytes = new byte[duplicate.remaining()];
         duplicate.get(bytes);
         return bytes;
+    }
+
+    private static <T> Set<T> newIdentitySet() {
+        return Collections.newSetFromMap(new IdentityHashMap<>());
     }
 
 }

@@ -96,7 +96,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
                     if (named) {
                         processList(list, handler);
                     } else {
-                        if (list.size() > 0) {
+                        if (!list.isEmpty()) {
                             StructType lType = getType(String.valueOf(list.get(0)));
                             switch (lType) {
                                 case OTHER:
@@ -112,18 +112,16 @@ public class ObjectProcessor implements StructProcessor<Object> {
                 } else if (value instanceof String) {
                     handler.value(unescapeString((String) value));
                 } else if (value instanceof Number) {
+                    Number number = (Number) value;
                     if (value instanceof Double || value instanceof Float) {
-                        handler.value(((Number) value).doubleValue());
+                        handler.value(number.doubleValue());
                     } else {
-                        handler.value(((Number) value).longValue());
+                        handler.value(number.longValue());
                     }
                 } else if (value instanceof Boolean) {
-                    handler.value(((Boolean) value).booleanValue());
+                    handler.value((Boolean) value);
                 } else if (value instanceof ByteBuffer) {
-                    ByteBuffer duplicate = ((ByteBuffer) value).duplicate();
-                    byte[] bytes = new byte[duplicate.remaining()];
-                    duplicate.get(bytes);
-                    handler.value(bytes);
+                    handler.value(readBinary((ByteBuffer) value));
                 } else if (value == null) {
                     handler.nullValue();
                 } else {
@@ -182,5 +180,12 @@ public class ObjectProcessor implements StructProcessor<Object> {
         } else {
             return name;
         }
+    }
+
+    private byte[] readBinary(ByteBuffer buffer) {
+        ByteBuffer duplicate = buffer.duplicate();
+        byte[] bytes = new byte[duplicate.remaining()];
+        duplicate.get(bytes);
+        return bytes;
     }
 }
