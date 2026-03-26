@@ -2,6 +2,7 @@ package dev.vality.geck.serializer.kit.xml;
 
 import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import dev.vality.geck.serializer.GeckTestUtil;
+import dev.vality.geck.serializer.domain.TestObject;
 import dev.vality.geck.serializer.exception.BadFormatException;
 import dev.vality.geck.serializer.handler.HandlerStub;
 import dev.vality.geck.serializer.kit.StructType;
@@ -10,7 +11,6 @@ import dev.vality.geck.serializer.kit.mock.MockMode;
 import dev.vality.geck.serializer.kit.mock.MockTBaseProcessor;
 import dev.vality.geck.serializer.kit.tbase.TBaseHandler;
 import dev.vality.geck.serializer.kit.tbase.TBaseProcessor;
-import dev.vality.geck.serializer.domain.TestObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -42,6 +42,10 @@ public class XMLTest {
         System.out.println(xml);
     }
 
+    /**
+     * Проверяет, что XML с неподдерживаемым типом узла падает сразу.
+     * Без этого некорректный XML проходил глубже в парсер и ломался уже в полусобранном состоянии.
+     */
     @Test
     public void unknownNodeTypeShouldFailFast() throws Exception {
         Document document = DocumentBuilderFactory.newInstance()

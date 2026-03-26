@@ -1,8 +1,9 @@
 package dev.vality.geck.serializer.kit.json;
 
-import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.rbkmoney.damsel.v130.payment_processing.InvoicePaymentStarted;
 import dev.vality.geck.serializer.GeckTestUtil;
+import dev.vality.geck.serializer.domain.TestObject;
 import dev.vality.geck.serializer.exception.BadFormatException;
 import dev.vality.geck.serializer.handler.HandlerStub;
 import dev.vality.geck.serializer.kit.mock.FixedValueGenerator;
@@ -12,7 +13,6 @@ import dev.vality.geck.serializer.kit.msgpack.MsgPackHandler;
 import dev.vality.geck.serializer.kit.msgpack.MsgPackProcessor;
 import dev.vality.geck.serializer.kit.tbase.TBaseHandler;
 import dev.vality.geck.serializer.kit.tbase.TBaseProcessor;
-import dev.vality.geck.serializer.domain.TestObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,6 +66,10 @@ public class JsonTest {
         System.out.println(json1);
     }
 
+    /**
+     * Проверяет, что JSON с неподдерживаемым маркером массива падает сразу.
+     * Без этого парсер уходил дальше с некорректным типом узла и ломался менее явно.
+     */
     @Test
     public void unknownArrayTypeShouldFailFast() {
         assertThatThrownBy(() -> new JsonProcessor().process(

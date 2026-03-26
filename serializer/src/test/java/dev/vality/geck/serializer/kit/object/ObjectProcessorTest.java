@@ -11,6 +11,10 @@ import java.io.IOException;
 
 public class ObjectProcessorTest {
 
+    /**
+     * Проверяет, что set не меняется после сериализации и обратного чтения.
+     * Ловит баг, при котором после обработки set код проваливался в следующую ветку switch.
+     */
     @Test
     public void shouldRoundTripSetsWithoutFallingThroughToOtherBranch() throws IOException {
         SetTest source = new MockTBaseProcessor().process(new SetTest(), new TBaseHandler<>(SetTest.class));

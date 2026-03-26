@@ -64,6 +64,10 @@ public class MockTBaseProcessorTest {
         assertTrue(hasExpectedFields(result, false));
     }
 
+    /**
+     * Проверяет, что mock-генерация останавливается на рекурсивном thrift-типе.
+     * Без этой защиты генератор продолжал создавать вложенные объекты, пока не заканчивался стек.
+     */
     @Test
     public void recursiveSchemaShouldFailFastInsteadOfInfiniteMockGeneration() {
         assertThatThrownBy(() -> new MockTBaseProcessor(MockMode.ALL)

@@ -73,6 +73,10 @@ public class TBaseProcessorTest {
                 .hasMessage("Unknown binary type, type='java.lang.Integer'");
     }
 
+    /**
+     * Проверяет, что бинарные данные берутся только из активного диапазона ByteBuffer.
+     * Ловит случай, когда сериализация читала весь backing array и подтягивала лишние байты.
+     */
     @Test
     public void binaryByteBufferShouldRespectPositionAndLimit() throws IOException {
         BinaryTest binaryTest = new BinaryTest();
@@ -91,6 +95,10 @@ public class TBaseProcessorTest {
         Assert.assertArrayEquals(new byte[]{1, 2}, handler.getResult());
     }
 
+    /**
+     * Проверяет, что циклический граф объектов падает с понятной ошибкой, а не со stack overflow.
+     * Процессор умеет сериализовать дерево, но должен остановиться на петле в ссылках.
+     */
     @Test
     public void cyclicThriftGraphShouldFailFastInsteadOfStackOverflow() {
         RecursiveStruct first = new RecursiveStruct();

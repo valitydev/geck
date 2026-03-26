@@ -13,6 +13,10 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Минимальная рекурсивная thrift-подобная структура только для тестов.
+ * Нужна, чтобы собрать цикл в ссылках без зависимости от сгенерированных моделей проекта.
+ */
 public class RecursiveStruct implements TBase<RecursiveStruct, RecursiveStruct._Fields> {
 
     private static final Map<_Fields, FieldMetaData> META_DATA_MAP;
@@ -103,6 +107,10 @@ public class RecursiveStruct implements TBase<RecursiveStruct, RecursiveStruct._
         return META_DATA_MAP;
     }
 
+    /**
+     * Описывает единственное рекурсивное поле тестовой структуры.
+     * TBase требует такой enum, чтобы выдавать id и имя поля так же, как обычный thrift-класс.
+     */
     public enum _Fields implements TFieldIdEnum {
         NEXT((short) 1, "next");
 

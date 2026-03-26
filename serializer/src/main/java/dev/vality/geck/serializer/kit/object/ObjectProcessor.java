@@ -1,5 +1,6 @@
 package dev.vality.geck.serializer.kit.object;
 
+import dev.vality.geck.common.util.BinaryUtil;
 import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.geck.serializer.StructHandler;
 import dev.vality.geck.serializer.StructProcessor;
@@ -121,7 +122,7 @@ public class ObjectProcessor implements StructProcessor<Object> {
                 } else if (value instanceof Boolean) {
                     handler.value((Boolean) value);
                 } else if (value instanceof ByteBuffer) {
-                    handler.value(readBinary((ByteBuffer) value));
+                    handler.value(BinaryUtil.toByteArray((ByteBuffer) value));
                 } else if (value == null) {
                     handler.nullValue();
                 } else {
@@ -182,10 +183,4 @@ public class ObjectProcessor implements StructProcessor<Object> {
         }
     }
 
-    private byte[] readBinary(ByteBuffer buffer) {
-        ByteBuffer currentRange = buffer.slice();
-        byte[] bytes = new byte[currentRange.remaining()];
-        currentRange.get(bytes);
-        return bytes;
-    }
 }

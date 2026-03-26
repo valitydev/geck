@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 public class TestBaseMigrationManager {
 
+    /**
+     * Проверяет, что сама цепочка миграций не меняет данные.
+     * Если мигратор только перегоняет значение дальше, на выходе должен остаться исходный payload.
+     */
     @Test
     public void shouldKeepSourceDataWhenMigratorDoesNotTransformIt() throws MigrationException {
         BaseMigrationStore migrationStore =
@@ -29,6 +33,10 @@ public class TestBaseMigrationManager {
         Assert.assertEquals("A", result);
     }
 
+    /**
+     * Проверяет, что каждый следующий шаг получает результат предыдущего шага.
+     * Ловит баг, при котором все шаги вызывались с исходным значением.
+     */
     @Test
     public void shouldPassIntermediateMigrationResultToNextStep() throws MigrationException {
         BaseMigrationStore migrationStore =
@@ -45,6 +53,10 @@ public class TestBaseMigrationManager {
         Assert.assertEquals("A123", result);
     }
 
+    /**
+     * Собирает простой упорядоченный маршрут миграции для теста.
+     * Этого достаточно, чтобы проверить chaining без лишнего проектного окружения.
+     */
     private static class MigrationPointProviderStub implements MigrationPointProvider {
         private final List<MigrationPoint> migrationPoints;
 
@@ -73,6 +85,10 @@ public class TestBaseMigrationManager {
         }
     }
 
+    /**
+     * Хранит тестовый идентификатор шага, например TEST1 или TEST2.
+     * Нужен, чтобы было видно, какие шаги реально применились и в каком порядке.
+     */
     private static class TestMigrationSpec implements MigrationSpec<String> {
         private final String spec;
 
@@ -91,6 +107,10 @@ public class TestBaseMigrationManager {
         }
     }
 
+    /**
+     * Имитирует мигратор, который просто пропускает данные через сериализацию.
+     * Нужен, чтобы проверить поведение самого migration manager без дополнительных преобразований.
+     */
     private static class PassThroughMigrator extends AbstractMigrator {
 
         @Override
@@ -104,6 +124,10 @@ public class TestBaseMigrationManager {
         }
     }
 
+    /**
+     * Дописывает к payload номер текущего шага миграции.
+     * Так видно, получают ли поздние шаги накопленный результат или снова исходный input.
+     */
     private static class StepNumberAppendingMigrator implements Migrator {
 
         @Override

@@ -24,7 +24,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
     private final ValueGenerator valueGenerator;
 
     private final Map<String, FieldHandler> fieldHandlers = new HashMap<>();
-    private final Set<Class<? extends TBase>> structTypesInProgress = new HashSet<>();
+    private final ThreadLocal<Set<Class<? extends TBase>>> structTypesInProgress = new ThreadLocal<>();
 
     public MockTBaseProcessor() {
         this(MockMode.ALL);
@@ -52,6 +52,20 @@ public class MockTBaseProcessor extends TBaseProcessor {
     public void addFieldHandler(FieldHandler handler, String... fieldNames) {
         for (String fieldName : fieldNames) {
             fieldHandlers.put(fieldName, handler);
+        }
+    }
+
+    @Override
+    public <R> R process(TBase value, StructHandler<R> handler) throws IOException {
+        structTypesInProgress.set(new HashSet<>());
+        try {
+            if (value == null) {
+                handler.nullValue();
+                return handler.getResult();
+            }
+            return super.process(value, handler);
+        } finally {
+            structTypesInProgress.remove();
         }
     }
 
@@ -132,7 +146,8 @@ public class MockTBaseProcessor extends TBaseProcessor {
 
     private void processStruct(StructMetaData structMetaData, StructHandler handler) throws IOException {
         Class<? extends TBase> structClass = structMetaData.getStructClass();
-        if (!structTypesInProgress.add(structClass)) {
+        Set<Class<? extends TBase>> currentStructTypes = currentStructTypes();
+        if (!currentStructTypes.add(structClass)) {
             throw new IllegalStateException(String.format(
                     "Recursive thrift type detected while generating mock for '%s'",
                     structClass.getName()
@@ -144,7 +159,7 @@ public class MockTBaseProcessor extends TBaseProcessor {
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new IOException(ex);
         } finally {
-            structTypesInProgress.remove(structClass);
+            currentStructTypes.remove(structClass);
         }
     }
 
@@ -197,6 +212,14 @@ public class MockTBaseProcessor extends TBaseProcessor {
         }
         fieldHandler.handle(handler);
         return true;
+    }
+
+    private Set<Class<? extends TBase>> currentStructTypes() {
+        Set<Class<? extends TBase>> currentStructTypes = structTypesInProgress.get();
+        if (currentStructTypes == null) {
+            throw new IllegalStateException("Mock generation context is not initialized");
+        }
+        return currentStructTypes;
     }
 
 }
