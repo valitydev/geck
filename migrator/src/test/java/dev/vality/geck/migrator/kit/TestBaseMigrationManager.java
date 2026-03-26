@@ -14,41 +14,46 @@ import java.util.stream.Collectors;
 public class TestBaseMigrationManager {
 
     @Test
-    public void test() throws MigrationException {
-        BaseMigrationStore migrationStore = new BaseMigrationStore(Arrays.asList(new MigrationPointProviderImpl(Arrays.asList(
+    public void shouldKeepSourceDataWhenMigratorDoesNotTransformIt() throws MigrationException {
+        BaseMigrationStore migrationStore =
+                new BaseMigrationStore(Arrays.asList(new MigrationPointProviderStub(Arrays.asList(
                 new ThriftSpec(new ThriftDef(1, "t1"), new ThriftDef(2, "t2")),
                 new ThriftSpec(new ThriftDef(2, "t2"), new ThriftDef(3, "t2")),
                 new ThriftSpec(new ThriftDef(3, "t2"), new ThriftDef(30, "t3"))
         ))));
-        BaseMigrationManager migrationManager = new BaseMigrationManager(migrationStore, Arrays.asList(new MigratorImpl()));
-        String res = migrationManager.migrate("A", new ThriftDef(1), new SerializerDef<>("TEST"));
-        Assert.assertEquals("A", res);
+        BaseMigrationManager migrationManager =
+                new BaseMigrationManager(migrationStore, Arrays.asList(new PassThroughMigrator()));
+
+        String result = migrationManager.migrate("A", new ThriftDef(1), new SerializerDef<>("TEST"));
+
+        Assert.assertEquals("A", result);
     }
 
     @Test
     public void shouldPassIntermediateMigrationResultToNextStep() throws MigrationException {
-        BaseMigrationStore migrationStore = new BaseMigrationStore(Arrays.asList(new MigrationPointProviderImpl(Arrays.asList(
+        BaseMigrationStore migrationStore =
+                new BaseMigrationStore(Arrays.asList(new MigrationPointProviderStub(Arrays.asList(
                 new ThriftSpec(new ThriftDef(1, "t1"), new ThriftDef(2, "t2")),
                 new ThriftSpec(new ThriftDef(2, "t2"), new ThriftDef(3, "t2")),
                 new ThriftSpec(new ThriftDef(3, "t2"), new ThriftDef(4, "t3"))
         ))));
         BaseMigrationManager migrationManager =
-                new BaseMigrationManager(migrationStore, Arrays.asList(new AccumulatingMigrator()));
+                new BaseMigrationManager(migrationStore, Arrays.asList(new StepNumberAppendingMigrator()));
 
-        String res = migrationManager.migrate("A", new ThriftDef(1), new SerializerDef<>("TEST"));
+        String result = migrationManager.migrate("A", new ThriftDef(1), new SerializerDef<>("TEST"));
 
-        Assert.assertEquals("A123", res);
+        Assert.assertEquals("A123", result);
     }
 
-    private static class MigrationPointProviderImpl implements MigrationPointProvider {
-        private List<MigrationPoint> migrationPoints;
+    private static class MigrationPointProviderStub implements MigrationPointProvider {
+        private final List<MigrationPoint> migrationPoints;
 
-        public MigrationPointProviderImpl(Collection<ThriftSpec> tSpecs) {
+        MigrationPointProviderStub(Collection<ThriftSpec> thriftSpecs) {
             AtomicInteger idx = new AtomicInteger();
             SerializerDef serializerDef = new SerializerDef("TEST");
-            migrationPoints = tSpecs.stream().map(thriftSpec -> {
+            migrationPoints = thriftSpecs.stream().map(thriftSpec -> {
                 int i = idx.incrementAndGet();
-                return new MigrationPoint(i, thriftSpec, serializerDef, new MigrationSpecImpl("TEST"+i));
+                return new MigrationPoint(i, thriftSpec, serializerDef, new TestMigrationSpec("TEST" + i));
             }).collect(Collectors.toList());
         }
 
@@ -68,10 +73,10 @@ public class TestBaseMigrationManager {
         }
     }
 
-    private static class MigrationSpecImpl implements MigrationSpec<String> {
-        private String spec;
+    private static class TestMigrationSpec implements MigrationSpec<String> {
+        private final String spec;
 
-        public MigrationSpecImpl(String spec) {
+        TestMigrationSpec(String spec) {
             this.spec = spec;
         }
 
@@ -86,7 +91,7 @@ public class TestBaseMigrationManager {
         }
     }
 
-    private static class MigratorImpl extends AbstractMigrator {
+    private static class PassThroughMigrator extends AbstractMigrator {
 
         @Override
         public <I, O> O migrate(I data, MigrationPoint mPoint, SerializerSpec<I, O> serializerSpec) throws MigrationException {
@@ -99,11 +104,12 @@ public class TestBaseMigrationManager {
         }
     }
 
-    private static class AccumulatingMigrator implements Migrator {
+    private static class StepNumberAppendingMigrator implements Migrator {
 
         @Override
         public <I, O> O migrate(I data, MigrationPoint mPoint, SerializerSpec<I, O> serializerSpec) {
-            return (O) (String.valueOf(data) + ((MigrationSpecImpl) mPoint.getMigrationSpec()).getSpec().replace("TEST", ""));
+            String stepNumber = ((TestMigrationSpec) mPoint.getMigrationSpec()).getSpec().replace("TEST", "");
+            return (O) (String.valueOf(data) + stepNumber);
         }
 
         @Override

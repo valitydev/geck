@@ -183,9 +183,9 @@ public class ObjectProcessor implements StructProcessor<Object> {
     }
 
     private byte[] readBinary(ByteBuffer buffer) {
-        ByteBuffer duplicate = buffer.duplicate();
-        byte[] bytes = new byte[duplicate.remaining()];
-        duplicate.get(bytes);
+        ByteBuffer currentRange = buffer.slice();
+        byte[] bytes = new byte[currentRange.remaining()];
+        currentRange.get(bytes);
         return bytes;
     }
 }
